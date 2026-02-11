@@ -1,0 +1,31 @@
+﻿using System.Configuration;
+using System.Data;
+using System.Windows;
+
+namespace PointofSale
+{
+    /// <summary>
+    /// Interaction logic for App.xaml
+    /// </summary>
+    public partial class App : Application
+    {
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            base.OnStartup(e);
+
+            // Show login window instead of the default StartupUri
+            LoginWindow login = new LoginWindow();
+            if (login.ShowDialog() == true)
+            {
+                // If login successful, show main dashboard (MainWindow)
+                MainWindow dashboard = new MainWindow();
+                dashboard.Show();
+            }
+            else
+            {
+                // If login cancelled, shut down the app
+                this.Shutdown();
+            }
+        }
+    }
+}

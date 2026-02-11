@@ -1,0 +1,213 @@
+﻿using System.Windows;
+using System.Windows.Controls;
+using PointofSale.Services;
+
+namespace PointofSale
+{
+    public partial class MainWindow : Window
+    {
+        public MainWindow()
+        {
+            InitializeComponent();
+            ApplyPermissions();
+
+        }
+
+        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            // When main window first appears, prompt for login if no user
+            if (Session.CurrentUser == null)
+            {
+                var login = new LoginWindow();
+                // Show as dialog so LoginWindow can set DialogResult
+                bool? ok = login.ShowDialog();
+                // After the dialog closes, update UI based on session
+                ApplyPermissions();
+            }
+        }
+
+        private void SignIn_Click(object sender, RoutedEventArgs e)
+        {
+            // If no user, show login. If already signed in, perform logout immediately.
+            if (Session.CurrentUser == null)
+            {
+                var login = new LoginWindow();
+                bool? ok = login.ShowDialog();
+                ApplyPermissions();
+
+                if (Session.CurrentUser != null)
+                {
+                    MessageBox.Show($"Signed in as {Session.CurrentUser.Role}: {Session.CurrentUser.Username}");
+                }
+            }
+            else
+            {
+                // Immediately sign out the current user
+                Session.Logout();
+                ApplyPermissions();
+                MessageBox.Show("Signed out.");
+            }
+        }
+
+
+        private void ApplyPermissions()
+        {
+            var user = Session.CurrentUser;
+
+            if (user == null)
+            {
+                // Cahsier permission
+                SignInBtn.Content = "Sign In";
+
+                // Permission settings
+                MakeSaleBtn.IsEnabled = true;
+                ProductsBtn.IsEnabled = false;
+                CustomersListBtn.IsEnabled = false;
+                EmployeesBtn.IsEnabled = false;
+                ReportsBtn.IsEnabled = false;
+                EndOfDayBtn.IsEnabled = false;
+                SalesHistoryBtn.IsEnabled = false;
+                ReceiveStockBtn.IsEnabled = false;
+                SettingsBtn.IsEnabled = false;
+                ItemsListBtn.IsEnabled = false;
+
+                UpdateButtonVisuals();
+                return;
+            }
+
+            // Logedin
+            SignInBtn.Content =$"{user.Role}: {user.Username}";
+
+            if (user.Role == "Admin")
+            {
+                // Admin permission
+                MakeSaleBtn.IsEnabled = true;
+                ProductsBtn.IsEnabled = true;
+                CustomersListBtn.IsEnabled = true;
+                EmployeesBtn.IsEnabled = true;
+                ReportsBtn.IsEnabled = true;
+                EndOfDayBtn.IsEnabled = true;
+                SalesHistoryBtn.IsEnabled = true;
+                ReceiveStockBtn.IsEnabled = true;
+                SettingsBtn.IsEnabled = true;
+                ItemsListBtn.IsEnabled = true;
+            }
+            else
+            {
+                // Cahsier permission
+                MakeSaleBtn.IsEnabled = true;
+                ProductsBtn.IsEnabled = false;
+                CustomersListBtn.IsEnabled = false;
+                EmployeesBtn.IsEnabled = false;
+                ReportsBtn.IsEnabled = false;
+                EndOfDayBtn.IsEnabled = true;
+                SalesHistoryBtn.IsEnabled = false;
+                ReceiveStockBtn.IsEnabled = false;
+                SettingsBtn.IsEnabled = false;
+                ItemsListBtn.IsEnabled = true;
+            }
+
+            UpdateButtonVisuals();
+        }
+
+        // Set a visual cue for disabled buttons (grayed out)
+        private void UpdateButtonVisuals()
+        {
+            // Helper to set opacity for a button based on IsEnabled
+            void ApplyVisual(Button? btn)
+            {
+                if (btn == null) return;
+                btn.Opacity = btn.IsEnabled ? 1.0 : 0.5;
+                // Optionally make it non-focusable when disabled
+                btn.IsTabStop = btn.IsEnabled;
+            }
+
+            ApplyVisual(MakeSaleBtn);
+            ApplyVisual(ProductsBtn);
+            ApplyVisual(CustomersListBtn);
+            ApplyVisual(EmployeesBtn);
+            ApplyVisual(ReportsBtn);
+            ApplyVisual(EndOfDayBtn);
+            ApplyVisual(SalesHistoryBtn);
+            ApplyVisual(ReceiveStockBtn);
+            ApplyVisual(SettingsBtn);
+            ApplyVisual(ItemsListBtn);
+
+            // Also update the SignIn button appearance
+            if (SignInBtn != null)
+                SignInBtn.Opacity = string.IsNullOrEmpty(SignInBtn.Content?.ToString()) ? 1.0 : SignInBtn.Opacity;
+        }
+
+        private void MakeSale_Click(object sender, RoutedEventArgs e)
+        {
+            // Open POS screen (MainWindow)
+            var user = PointofSale.Services.Session.CurrentUser;
+            if (user == null)
+            {
+                MessageBox.Show("Session expired. Please login again.");
+                var login = new LoginWindow();
+                login.ShowDialog();
+                return;
+            }
+
+            var win = new Views.PointOfSaleWindow(user);
+            win.Show();
+            Close();
+        }
+
+        private void Products_Click(object sender, RoutedEventArgs e)
+        {
+            var win = new ProductsWindow();
+            win.ShowDialog();
+        }
+
+        private void CustomersList_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("Customers screen coming next.");
+        }
+
+        private void Users_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("Users screen coming next.");
+        }
+
+        private void Reports_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("Reports screen coming next.");
+        }
+
+        private void EndOfDay_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("End of Day screen coming next.");
+        }
+
+        private void SalesHistory_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("Sales History screen coming next.");
+        }
+
+        private void ReceiveStock_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("Receive Stock screen coming next.");
+        }
+
+        private void ItemsList_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("Items List screen coming next.");
+        }
+
+        private void Settings_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("Settings screen coming next.");
+        }
+
+        private void Logout_Click(object sender, RoutedEventArgs e)
+        {
+            Session.Logout();
+
+            var login = new LoginWindow();
+            login.ShowDialog();
+            Close();
+        }
+    }
+}
