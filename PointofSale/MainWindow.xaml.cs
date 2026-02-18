@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using PointofSale.Services;
+using PointofSale.Views;
 
 namespace PointofSale
 {
@@ -69,7 +70,9 @@ namespace PointofSale
                 SalesHistoryBtn.IsEnabled = false;
                 ReceiveStockBtn.IsEnabled = false;
                 SettingsBtn.IsEnabled = false;
-                ItemsListBtn.IsEnabled = false;
+                SupplierTileBtn.IsEnabled = false;
+                DepartmentsTileBtn.IsEnabled = false;
+
 
                 UpdateButtonVisuals();
                 return;
@@ -90,7 +93,9 @@ namespace PointofSale
                 SalesHistoryBtn.IsEnabled = true;
                 ReceiveStockBtn.IsEnabled = true;
                 SettingsBtn.IsEnabled = true;
-                ItemsListBtn.IsEnabled = true;
+                SupplierTileBtn.IsEnabled = true;
+                DepartmentsTileBtn.IsEnabled = true;
+                
             }
             else
             {
@@ -104,7 +109,9 @@ namespace PointofSale
                 SalesHistoryBtn.IsEnabled = false;
                 ReceiveStockBtn.IsEnabled = false;
                 SettingsBtn.IsEnabled = false;
-                ItemsListBtn.IsEnabled = true;
+                SupplierTileBtn.IsEnabled = false;
+                DepartmentsTileBtn.IsEnabled = false;
+                
             }
 
             UpdateButtonVisuals();
@@ -131,7 +138,9 @@ namespace PointofSale
             ApplyVisual(SalesHistoryBtn);
             ApplyVisual(ReceiveStockBtn);
             ApplyVisual(SettingsBtn);
-            ApplyVisual(ItemsListBtn);
+            ApplyVisual(SupplierTileBtn);
+            ApplyVisual(DepartmentsTileBtn);
+
 
             // Also update the SignIn button appearance
             if (SignInBtn != null)
@@ -157,7 +166,7 @@ namespace PointofSale
 
         private void Products_Click(object sender, RoutedEventArgs e)
         {
-            var win = new ProductsWindow();
+            var win = new Views.ProductsWindow();
             win.ShowDialog();
         }
 
@@ -191,14 +200,23 @@ namespace PointofSale
             MessageBox.Show("Receive Stock screen coming next.");
         }
 
-        private void ItemsList_Click(object sender, RoutedEventArgs e)
-        {
-            MessageBox.Show("Items List screen coming next.");
-        }
-
         private void Settings_Click(object sender, RoutedEventArgs e)
         {
             MessageBox.Show("Settings screen coming next.");
+        }
+
+        private void Supplier_Click(object sender, RoutedEventArgs e)
+        {
+            var win = new SuppliersWindow();
+            win.Owner = this;
+            win.ShowDialog();
+        }
+
+        private void Departments_Click(object sender, RoutedEventArgs e)
+        {
+            var win = new DepartmentsWindow();
+            win.Owner = this;
+            win.ShowDialog();
         }
 
         private void Logout_Click(object sender, RoutedEventArgs e)

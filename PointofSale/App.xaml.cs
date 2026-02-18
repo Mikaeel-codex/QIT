@@ -1,14 +1,17 @@
-﻿using System.Configuration;
-using System.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using PointofSale.Data; 
 using System.Windows;
 
-namespace PointofSale
+namespace QuickInventoryTill
 {
-    /// <summary>
-    /// Interaction logic for App.xaml
-    /// </summary>
     public partial class App : Application
     {
-        // Startup is handled by StartupUri in App.xaml (MainWindow.xaml).
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            base.OnStartup(e);
+
+            using var db = new AppDbContext();
+            db.Database.Migrate(); // creates missing tables like Suppliers automatically
+        }
     }
 }

@@ -1,0 +1,31 @@
+﻿using System.Windows;
+
+namespace PointofSale.Views
+{
+    public partial class SupplierEditWindow : Window
+    {
+        public SupplierEditWindow()
+        {
+            InitializeComponent();
+        }
+
+        private void Save_Click(object sender, RoutedEventArgs e)
+        {
+            // We'll wire DB saving after you confirm Supplier table + fields.
+            DialogResult = true;
+            Close();
+        }
+
+        private void SaveAndNew_Click(object sender, RoutedEventArgs e)
+        {
+            // Save then clear fields (we’ll implement properly after DB wiring)
+            MessageBox.Show("Saved (placeholder). Now ready for a new supplier.");
+        }
+
+        private void Cancel_Click(object sender, RoutedEventArgs e)
+        {
+            DialogResult = false;
+            Close();
+        }
+    }
+}

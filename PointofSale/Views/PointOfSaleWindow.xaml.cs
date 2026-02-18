@@ -40,7 +40,7 @@ namespace PointofSale.Views
                 return;
             }
 
-            var win = new ProductsWindow
+            var win = new Views.ProductsWindow
             {
                 Owner = this
             };

@@ -1,0 +1,432 @@
+﻿<Window x:Class="PointofSale.Views.ProductEditWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Add Inventory Item"
+        Width="900" Height="620"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        Background="#ECECEC">
+
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Top title bar -->
+        <DockPanel Grid.Row="0" LastChildFill="True" Margin="0,0,0,10">
+            <TextBlock Text="Add Inventory Item"
+                       FontSize="16"
+                       FontWeight="SemiBold"
+                       VerticalAlignment="Center"/>
+        </DockPanel>
+
+        <!-- Body -->
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- Inventory Item Info (top strip) -->
+            <Border Grid.Row="0"
+                    Background="White"
+                    CornerRadius="3"
+                    BorderBrush="#CFCFCF"
+                    BorderThickness="1"
+                    Padding="10"
+                    Margin="0,0,0,10">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="110"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Picture box -->
+                    <Border Width="90" Height="70"
+                            Background="#F4F4F4"
+                            BorderBrush="#D0D0D0"
+                            BorderThickness="1"
+                            CornerRadius="2"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top">
+                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                            <TextBlock Text="No picture"
+                                       Foreground="#777"
+                                       FontSize="11"
+                                       HorizontalAlignment="Center"/>
+                            <TextBlock Text="Click here to assign"
+                                       Foreground="#999"
+                                       FontSize="10"
+                                       HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Item Name -->
+                    <StackPanel Grid.Column="1" Margin="10,0,0,0">
+                        <TextBlock Text="Item Name"
+                                   Foreground="#333"
+                                   FontWeight="SemiBold"
+                                   Margin="0,0,0,6"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="14"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBox x:Name="NameBox"
+                                     Height="26"
+                                     VerticalContentAlignment="Center"
+                                     BorderBrush="#BFBFBF"
+                                     Background="White"/>
+                            <TextBlock Grid.Column="1"
+                                       Text="*"
+                                       Foreground="Red"
+                                       FontSize="16"
+                                       VerticalAlignment="Center"
+                                       Margin="6,0,0,0"/>
+                        </Grid>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Main form area -->
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1.35*"/>
+                    <ColumnDefinition Width="1.2*"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- BASIC INFO -->
+                <Border Grid.Column="0"
+                        Background="White"
+                        CornerRadius="3"
+                        BorderBrush="#CFCFCF"
+                        BorderThickness="1"
+                        Padding="0"
+                        Margin="0,0,10,0">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="32"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Header -->
+                        <Border Background="#F2F2F2" BorderBrush="#CFCFCF" BorderThickness="0,0,0,1">
+                            <DockPanel Margin="10,0">
+                                <TextBlock Text="Basic Info"
+                                           FontWeight="SemiBold"
+                                           VerticalAlignment="Center"
+                                           Foreground="#2A5DB0"/>
+                                <TextBlock Text="▾" Foreground="#555" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                            </DockPanel>
+                        </Border>
+
+                        <!-- Content -->
+                        <Grid Grid.Row="1" Margin="12">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="120"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="16"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Department -->
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Department" VerticalAlignment="Center"/>
+                            <ComboBox x:Name="DepartmentBox"
+                                      Grid.Row="0" Grid.Column="1"
+                                      Height="26"
+                                      IsEditable="True"
+                                      BorderBrush="#BFBFBF"
+                                      Background="White"/>
+                            <TextBlock Grid.Row="0" Grid.Column="2" Text="*" Foreground="Red" FontSize="14" VerticalAlignment="Center"/>
+
+                            <!-- Item Description -->
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Item Description" Margin="0,10,0,0"/>
+                            <TextBox x:Name="DescriptionBox"
+                                     Grid.Row="1" Grid.Column="1"
+                                     Margin="0,10,0,0"
+                                     Height="56"
+                                     TextWrapping="Wrap"
+                                     AcceptsReturn="True"
+                                     VerticalScrollBarVisibility="Auto"
+                                     BorderBrush="#BFBFBF"
+                                     Background="White"/>
+
+                            <!-- Size -->
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Size" VerticalAlignment="Center" Margin="0,10,0,0"/>
+                            <TextBox x:Name="SizeBox"
+                                     Grid.Row="2" Grid.Column="1"
+                                     Margin="0,10,0,0"
+                                     Height="26"
+                                     VerticalContentAlignment="Center"
+                                     BorderBrush="#BFBFBF"
+                                     Background="White"/>
+
+                            <!-- Reg Price -->
+                            <TextBlock Grid.Row="3" Grid.Column="0" Text="Reg Price" VerticalAlignment="Center" Margin="0,10,0,0"/>
+                            <TextBox x:Name="PriceBox"
+                                     Grid.Row="3" Grid.Column="1"
+                                     Margin="0,10,0,0"
+                                     Height="26"
+                                     VerticalContentAlignment="Center"
+                                     BorderBrush="#BFBFBF"
+                                     Background="White"/>
+
+                            <!-- Avg. Unit Cost -->
+                            <TextBlock Grid.Row="4" Grid.Column="0" Text="Avg. Unit Cost" VerticalAlignment="Center" Margin="0,10,0,0"/>
+                            <TextBox x:Name="AvgUnitCostBox"
+                                     Grid.Row="4" Grid.Column="1"
+                                     Margin="0,10,0,0"
+                                     Height="26"
+                                     VerticalContentAlignment="Center"
+                                     BorderBrush="#BFBFBF"
+                                     Background="White"/>
+
+                            <!-- On-Hand Qty -->
+                            <TextBlock Grid.Row="5" Grid.Column="0" Text="On-Hand Qty" VerticalAlignment="Center" Margin="0,10,0,0"/>
+                            <TextBox x:Name="StockBox"
+                                     Grid.Row="5" Grid.Column="1"
+                                     Margin="0,10,0,0"
+                                     Height="26"
+                                     VerticalContentAlignment="Center"
+                                     BorderBrush="#BFBFBF"
+                                     Background="White"/>
+
+                            <!-- Tax -->
+                            <TextBlock Grid.Row="6" Grid.Column="0" Text="Tax" VerticalAlignment="Center" Margin="0,10,0,0"/>
+                            <ComboBox x:Name="TaxBox"
+                                      Grid.Row="6" Grid.Column="1"
+                                      Margin="0,10,0,0"
+                                      Height="26"
+                                      BorderBrush="#BFBFBF"
+                                      Background="White">
+                                <ComboBoxItem Content="Tax"/>
+                                <ComboBoxItem Content="No Tax"/>
+                            </ComboBox>
+
+                            <!-- UPC -->
+                            <TextBlock Grid.Row="7" Grid.Column="0" Text="UPC" VerticalAlignment="Center" Margin="0,10,0,0"/>
+                            <TextBox x:Name="UpcBox"
+                                     Grid.Row="7" Grid.Column="1"
+                                     Margin="0,10,0,0"
+                                     Height="26"
+                                     VerticalContentAlignment="Center"
+                                     BorderBrush="#BFBFBF"
+                                     Background="White"
+                                     TextChanged="UpcBox_TextChanged"/>
+                        </Grid>
+                    </Grid>
+                </Border>
+
+                <!-- MORE INFO -->
+                <Border Grid.Column="1"
+                        Background="White"
+                        CornerRadius="3"
+                        BorderBrush="#CFCFCF"
+                        BorderThickness="1"
+                        Padding="0"
+                        Margin="0,0,10,0">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="32"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <Border Background="#F2F2F2" BorderBrush="#CFCFCF" BorderThickness="0,0,0,1">
+                            <DockPanel Margin="10,0">
+                                <TextBlock Text="More Info"
+                                           FontWeight="SemiBold"
+                                           VerticalAlignment="Center"
+                                           Foreground="#2A5DB0"/>
+                                <TextBlock Text="▾" Foreground="#555" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                            </DockPanel>
+                        </Border>
+
+                        <Grid Grid.Row="1" Margin="12">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="110"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="110"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Vendor + Add Supplier -->
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Vendor" VerticalAlignment="Center"/>
+                            <ComboBox x:Name="VendorBox"
+                                      Grid.Row="0" Grid.Column="1"
+                                      Height="26"
+                                      IsEditable="True"
+                                      BorderBrush="#BFBFBF"
+                                      Background="White"/>
+                            <Button Grid.Row="0" Grid.Column="2"
+                                    Content="Add Supplier"
+                                    Height="26"
+                                    Margin="8,0,0,0"
+                                    Click="AddSupplier_Click"/>
+
+                            <!-- Order Cost -->
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Order Cost" VerticalAlignment="Center" Margin="0,10,0,0"/>
+                            <TextBox x:Name="OrderCostBox"
+                                     Grid.Row="1" Grid.Column="1"
+                                     Grid.ColumnSpan="2"
+                                     Margin="0,10,0,0"
+                                     Height="26"
+                                     VerticalContentAlignment="Center"
+                                     BorderBrush="#BFBFBF"
+                                     Background="White"/>
+
+                            <!-- Reorder Point -->
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Reorder Point" VerticalAlignment="Center" Margin="0,10,0,0"/>
+                            <TextBox x:Name="ReorderPointBox"
+                                     Grid.Row="2" Grid.Column="1"
+                                     Grid.ColumnSpan="2"
+                                     Margin="0,10,0,0"
+                                     Height="26"
+                                     VerticalContentAlignment="Center"
+                                     BorderBrush="#BFBFBF"
+                                     Background="White"/>
+
+                            <!-- Item No -->
+                            <TextBlock Grid.Row="3" Grid.Column="0" Text="Item No." VerticalAlignment="Center" Margin="0,10,0,0"/>
+                            <TextBox x:Name="ItemNoBox"
+                                     Grid.Row="3" Grid.Column="1"
+                                     Grid.ColumnSpan="2"
+                                     Margin="0,10,0,0"
+                                     Height="26"
+                                     IsReadOnly="True"
+                                     Background="#F6F6F6"
+                                     BorderBrush="#BFBFBF"/>
+
+                            <!-- ALU (cannot be used with UPC) -->
+                            <TextBlock Grid.Row="4" Grid.Column="0" Text="ALU" VerticalAlignment="Center" Margin="0,10,0,0"/>
+                            <TextBox x:Name="AluBox"
+                                     Grid.Row="4" Grid.Column="1"
+                                     Grid.ColumnSpan="2"
+                                     Margin="0,10,0,0"
+                                     Height="26"
+                                     VerticalContentAlignment="Center"
+                                     BorderBrush="#BFBFBF"
+                                     Background="White"
+                                     TextChanged="AluBox_TextChanged"/>
+
+                            <!-- Unit of Measure -->
+                            <TextBlock Grid.Row="5" Grid.Column="0" Text="Unit of Measure" VerticalAlignment="Center" Margin="0,10,0,0"/>
+                            <ComboBox x:Name="UomBox"
+                                      Grid.Row="5" Grid.Column="1"
+                                      Grid.ColumnSpan="2"
+                                      Margin="0,10,0,0"
+                                      Height="26"
+                                      BorderBrush="#BFBFBF"
+                                      Background="White">
+                                <ComboBoxItem Content="Each"/>
+                                <ComboBoxItem Content="Box"/>
+                                <ComboBoxItem Content="Carton"/>
+                            </ComboBox>
+
+                            <!-- Manufacturer -->
+                            <TextBlock Grid.Row="6" Grid.Column="0" Text="Manufacturer" VerticalAlignment="Center" Margin="0,10,0,0"/>
+                            <TextBox x:Name="ManufacturerBox"
+                                     Grid.Row="6" Grid.Column="1"
+                                     Grid.ColumnSpan="2"
+                                     Margin="0,10,0,0"
+                                     Height="26"
+                                     VerticalContentAlignment="Center"
+                                     BorderBrush="#BFBFBF"
+                                     Background="White"/>
+
+                            <!-- Sync to Mobile -->
+                            <CheckBox x:Name="SyncToMobileBox"
+                                      Grid.Row="7" Grid.Column="1"
+                                      Margin="0,12,0,0"
+                                      Content="Sync to Mobile"/>
+                        </Grid>
+                    </Grid>
+                </Border>
+
+                <!-- COMMENTS -->
+                <Border Grid.Column="2"
+                        Background="White"
+                        CornerRadius="3"
+                        BorderBrush="#CFCFCF"
+                        BorderThickness="1"
+                        Padding="0">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="32"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <Border Background="#F2F2F2" BorderBrush="#CFCFCF" BorderThickness="0,0,0,1">
+                            <DockPanel Margin="10,0">
+                                <TextBlock Text="Comments"
+                                           FontWeight="SemiBold"
+                                           VerticalAlignment="Center"
+                                           Foreground="#2A5DB0"/>
+                                <TextBlock Text="▾" Foreground="#555" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                            </DockPanel>
+                        </Border>
+
+                        <TextBox x:Name="CommentsBox"
+                                 Grid.Row="1"
+                                 Margin="10,94,10,248"
+                                 AcceptsReturn="True"
+                                 TextWrapping="Wrap"
+                                 VerticalScrollBarVisibility="Auto"
+                                 Background="#FFF7C7"
+                                 BorderBrush="#D8D8D8"/>
+                    </Grid>
+                </Border>
+            </Grid>
+        </Grid>
+
+        <!-- Bottom buttons -->
+        <Grid Grid.Row="2" Margin="0,10,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="0"
+                    Content="Save &amp; New"
+                    Width="120"
+                    Height="30"
+                    HorizontalAlignment="Left"
+                    Click="SaveAndNew_Click"/>
+
+            <Button Grid.Column="1"
+                    Content="Save"
+                    Width="110"
+                    Height="30"
+                    Margin="0,0,10,0"
+                    Click="Save_Click"/>
+
+            <Button Grid.Column="2"
+                    Content="Cancel"
+                    Width="110"
+                    Height="30"
+                    Click="Cancel_Click"/>
+        </Grid>
+    </Grid>
+</Window>

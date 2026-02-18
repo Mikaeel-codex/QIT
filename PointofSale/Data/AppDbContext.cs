@@ -23,6 +23,8 @@ namespace PointofSale.Data
         public DbSet<PointofSale.Models.AppUser> Users { get; set; }
         public DbSet<PointofSale.Models.Sale> Sales { get; set; }
         public DbSet<PointofSale.Models.SaleItem> SaleItems { get; set; }
+        public DbSet<Supplier> Suppliers { get; set; }
+        public DbSet<Department> Departments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -30,6 +32,8 @@ namespace PointofSale.Data
             modelBuilder.Entity<Sale>().Property(s => s.Total).HasConversion<double>();
             modelBuilder.Entity<SaleItem>().Property(si => si.UnitPrice).HasConversion<double>();
             modelBuilder.Entity<SaleItem>().Property(si => si.LineTotal).HasConversion<double>();
+            modelBuilder.Entity<Supplier>().HasIndex(s => s.Name).IsUnique();
+            modelBuilder.Entity<Department>().HasIndex(d => d.Name).IsUnique();
         }
     }
 }

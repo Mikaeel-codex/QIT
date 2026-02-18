@@ -2,19 +2,19 @@
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup />
   <ItemGroup>
-    <Compile Update="InputDialog.xaml.cs">
+    <Compile Update="Views\DepartmentEditWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="LoginWindow.xaml.cs">
+    <Compile Update="Views\DepartmentsWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="PostSaleActionWindow.xaml.cs">
+    <Compile Update="Views\ProductEditWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="ProductsWindow.xaml.cs">
+    <Compile Update="Views\SupplierEditWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="ReceiptWindow.xaml.cs">
+    <Compile Update="Views\SuppliersWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>

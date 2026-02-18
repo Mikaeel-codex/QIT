@@ -1,0 +1,145 @@
+﻿<Window x:Class="PointofSale.ProductsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Products"
+        Width="1100" Height="700"
+        WindowStartupLocation="CenterScreen"
+        Background="{StaticResource BgBrush}">
+
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Border Grid.Row="0"
+                Background="{StaticResource PanelBrush}"
+                BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="1"
+                CornerRadius="14"
+                Padding="14"
+                Margin="0,0,0,12">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel>
+                    <TextBlock Text="Products" FontSize="22" FontWeight="Bold"/>
+                    <TextBlock Text="Add, edit, and manage stock"
+                               Foreground="{StaticResource MutedBrush}"
+                               Margin="0,4,0,0"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Button Style="{StaticResource ModernButton}"
+                            Content="Refresh"
+                            Margin="0,0,8,0"
+                            Click="RefreshBtn_Click"/>
+                    <Button Style="{StaticResource GoldButton}"
+                            Content="Add Product"
+                            Click="AddBtn_Click"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Body -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2.2*"/>
+                <ColumnDefinition Width="1.3*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Left: Table -->
+            <Border Grid.Column="0"
+                    Background="{StaticResource PanelBrush}"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="14"
+                    Padding="12"
+                    Margin="0,0,12,0">
+
+                <DataGrid x:Name="ProductsGrid"
+                          AutoGenerateColumns="False"
+                          CanUserAddRows="False"
+                          IsReadOnly="True"
+                          HeadersVisibility="Column"
+                          GridLinesVisibility="None"
+                          Background="{StaticResource PanelBrush}"
+                          Foreground="White"
+                          RowBackground="{StaticResource PanelBrush}"
+                          AlternatingRowBackground="{StaticResource Panel2Brush}"
+                          BorderThickness="0"
+                          SelectionMode="Single">
+
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="60"/>
+                        <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*"/>
+                        <DataGridTextColumn Header="SKU" Binding="{Binding SKU}" Width="140"/>
+                        <DataGridTextColumn Header="Price" Binding="{Binding Price, StringFormat=R {0:0.00}}" Width="120"/>
+                        <DataGridTextColumn Header="Stock" Binding="{Binding StockQty}" Width="90"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Border>
+
+            <!-- Right: Editor -->
+            <Border Grid.Column="1"
+                    Background="{StaticResource PanelBrush}"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="14"
+                    Padding="14">
+
+                <StackPanel>
+                    <TextBlock Text="Product Details" FontSize="18" FontWeight="SemiBold"/>
+                    <TextBlock Text="Select a product to edit"
+                               Foreground="{StaticResource MutedBrush}"
+                               Margin="0,6,0,16"/>
+
+                    <TextBlock Text="Name" Foreground="{StaticResource MutedBrush}" Margin="0,0,0,6"/>
+                    <TextBox x:Name="NameBox"/>
+
+                    <TextBlock Text="SKU" Foreground="{StaticResource MutedBrush}" Margin="0,12,0,6"/>
+                    <TextBox x:Name="SkuBox"
+                             Text="{Binding SKU, UpdateSourceTrigger=PropertyChanged}"
+                             KeyDown="SkuScan_KeyDown"
+                             Style="{StaticResource HintTextBox}"
+                             Tag="Scan / Enter SKU"/>   
+
+
+                    <TextBlock Text="Price" Foreground="{StaticResource MutedBrush}" Margin="0,12,0,6"/>
+                    <TextBox x:Name="PriceBox"/>
+
+                    <TextBlock Text="Stock Qty" Foreground="{StaticResource MutedBrush}" Margin="0,12,0,6"/>
+                    <TextBox x:Name="StockBox"/>
+
+                    <StackPanel Orientation="Horizontal" Margin="0,18,0,0">
+                        <Button Style="{StaticResource ModernButton}"
+                                Content="Clear"
+                                Width="110"
+                                Margin="0,0,8,0"
+                                Click="ClearBtn_Click"/>
+
+                        <Button Style="{StaticResource GoldButton}"
+                                Content="Save"
+                                Width="110"
+                                Click="SaveBtn_Click"/>
+                    </StackPanel>
+
+                    <Button Style="{StaticResource ModernButton}"
+                            Content="Delete"
+                            Margin="0,10,0,0"
+                            Click="DeleteBtn_Click"/>
+
+                    <TextBlock x:Name="MsgText"
+                               Foreground="{StaticResource MutedBrush}"
+                               Margin="0,14,0,0"
+                               TextWrapping="Wrap"/>
+                </StackPanel>
+
+            </Border>
+        </Grid>
+    </Grid>
+</Window>

@@ -1,0 +1,32 @@
+﻿using System.Configuration;
+using System.Data;
+using System.Windows;
+using PointofSale.Views;
+
+namespace PointofSale
+{
+    /// <summary>
+    /// Interaction logic for App.xaml
+    /// </summary>
+    public partial class App : Application
+    {
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            base.OnStartup(e);
+
+            // Show login window as modal dialog
+            LoginWindow loginWindow = new LoginWindow();
+            if (loginWindow.ShowDialog() == true)
+            {
+                // Login was successful, show main application window
+                MainWindow mainWindow = new MainWindow();
+                mainWindow.Show();
+            }
+            else
+            {
+                // Login was cancelled or failed, close application
+                Shutdown();
+            }
+        }
+    }
+}

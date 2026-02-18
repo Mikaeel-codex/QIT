@@ -1,0 +1,122 @@
+﻿<Window x:Class="PointofSale.ReceiptWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Receipt"
+        Width="360"
+        Height="600"
+        WindowStartupLocation="CenterOwner"
+        Background="#111"
+        Foreground="White">
+
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <StackPanel>
+            <TextBlock Text="POINT OF SALE" FontSize="18" FontWeight="Bold" TextAlignment="Center"/>
+            <TextBlock Text="123 street, South Africa" Opacity="0.8" TextAlignment="Center"/>
+            <TextBlock Text="{Binding ReceiptDateText}" Opacity="0.8" TextAlignment="Center" Margin="0,6,0,0"/>
+
+            <Separator Margin="0,12,0,12"/>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{Binding SaleNumberText}" />
+                <TextBlock Grid.Column="1" Text="{Binding CashierText}" />
+            </Grid>
+            <Separator Margin="0,12,0,12"/>
+        </StackPanel>
+
+        <!-- Items -->
+        <Border Grid.Row="1"
+        Background="#151515"
+        CornerRadius="10"
+        Padding="10"
+        Margin="0,10,0,10">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <ItemsControl ItemsSource="{Binding Items}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Margin="0,0,0,10">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Text="{Binding Name}"
+                                   FontWeight="SemiBold"
+                                   FontSize="14"/>
+
+                                <TextBlock Grid.Column="1"
+                                   Text="{Binding LineTotal, StringFormat=R {0:0.00}}"
+                                   FontWeight="SemiBold"
+                                   FontSize="14"/>
+
+                                <TextBlock Grid.Row="1"
+                                   Grid.ColumnSpan="2"
+                                   Text="{Binding DetailText}"
+                                   Opacity="0.75"
+                                   FontSize="12"
+                                   Margin="0,2,0,0"/>
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </Border>
+
+
+        <!-- Totals + Buttons -->
+        <StackPanel Grid.Row="2">
+            <Separator Margin="0,12,0,12"/>
+
+            <Grid Margin="0,0,0,8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="Subtotal" Opacity="0.8"/>
+                <TextBlock Grid.Column="1" Text="{Binding Subtotal, StringFormat=R {0:0.00}}"/>
+            </Grid>
+
+            <Grid Margin="0,0,0,14">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="Total" FontSize="16" FontWeight="Bold"/>
+                <TextBlock Grid.Column="1" Text="{Binding Total, StringFormat=R {0:0.00}}"
+                           FontSize="16" FontWeight="Bold"/>
+            </Grid>
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button Content="Cancel / Back"
+            Width="120"
+            Margin="0,0,10,0"
+            Click="Cancel_Click"/>
+
+                <Button Content="Confirm Sale"
+            Width="120"
+            Click="Confirm_Click"/>
+            </StackPanel>
+
+            <TextBlock Text="(Confirm will save the sale)"
+           Margin="0,10,0,0"
+           Opacity="0.7"
+           TextAlignment="Center"/>
+
+
+            <TextBlock Text="Thank you for shopping 💛" Margin="0,14,0,0" Opacity="0.8" TextAlignment="Center"/>
+        </StackPanel>
+    </Grid>
+</Window>

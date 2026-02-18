@@ -49,25 +49,97 @@ namespace PointofSale.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("PointofSale.Models.Department", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Code")
+                        .HasMaxLength(20)
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("MarginPercent")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("MarkupPercent")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("TaxCode")
+                        .HasMaxLength(20)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("Departments");
+                });
+
             modelBuilder.Entity("PointofSale.Models.Product", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("ALU")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("AvgUnitCost")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Comments")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Department")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Manufacturer")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Name")
                         .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("OrderCost")
                         .HasColumnType("TEXT");
 
                     b.Property<double>("Price")
                         .HasColumnType("REAL");
 
+                    b.Property<int>("ReorderPoint")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("SKU")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Size")
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("StockQty")
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("Supplier")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Tax")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UnitOfMeasure")
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -132,6 +204,40 @@ namespace PointofSale.Migrations
                     b.HasIndex("SaleId");
 
                     b.ToTable("SaleItems");
+                });
+
+            modelBuilder.Entity("PointofSale.Models.Supplier", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Code")
+                        .HasMaxLength(60)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(120)
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Phone")
+                        .HasMaxLength(25)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("Suppliers");
                 });
 
             modelBuilder.Entity("PointofSale.Models.SaleItem", b =>

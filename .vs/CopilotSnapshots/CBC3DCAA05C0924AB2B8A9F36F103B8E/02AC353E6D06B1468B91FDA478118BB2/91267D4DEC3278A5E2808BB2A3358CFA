@@ -1,0 +1,198 @@
+﻿using PointofSale.Data;
+using PointofSale.Models;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Input;
+
+namespace PointofSale.Views
+{
+    public partial class ProductsWindow : Window
+    {
+        private readonly ObservableCollection<Product> _items = new();
+        private ICollectionView? _view;
+
+        private Product? SelectedProduct => ProductsGrid.SelectedItem as Product;
+
+        public ProductsWindow()
+        {
+            InitializeComponent();
+            LoadProducts();
+            SetupFilter();
+            SetMessage("Ready.");
+        }
+
+        private void LoadProducts()
+        {
+            using var db = new AppDbContext();
+            var list = db.Products.OrderBy(p => p.Name).ToList();
+
+            _items.Clear();
+            foreach (var p in list)
+                _items.Add(p);
+
+            ProductsGrid.ItemsSource = _items;
+        }
+
+        private void SetupFilter()
+        {
+            _view = CollectionViewSource.GetDefaultView(_items);
+            _view.Filter = FilterItem;
+        }
+
+        private bool FilterItem(object obj)
+        {
+            if (obj is not Product p) return false;
+
+            // Global search box
+            var term = (SearchBox.Text ?? "").Trim().ToLower();
+            if (!string.IsNullOrWhiteSpace(term))
+            {
+                if ((p.Name ?? "").ToLower().Contains(term)
+                    || (p.SKU ?? "").ToLower().Contains(term)
+                    || (p.Department ?? "").ToLower().Contains(term)
+                    || (p.Description ?? "").ToLower().Contains(term)
+                    || (p.ALU ?? "").ToLower().Contains(term)
+                    || p.Id.ToString().Contains(term))
+                {
+                    // falls through to column filters as well
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
+            // Column filters
+            bool ColumnMatches(string? filter, string? value)
+            {
+                if (string.IsNullOrWhiteSpace(filter)) return true;
+                if (string.IsNullOrWhiteSpace(value)) return false;
+                return value.ToLower().Contains(filter.Trim().ToLower());
+            }
+
+            if (!ColumnMatches(IdFilterBox.Text, p.Id.ToString())) return false;
+            if (!ColumnMatches(NameFilterBox.Text, p.Name)) return false;
+            if (!ColumnMatches(DeptFilterBox.Text, p.Department)) return false;
+            if (!ColumnMatches(DescFilterBox.Text, p.Description)) return false;
+            if (!ColumnMatches(SizeFilterBox.Text, p.Size)) return false;
+            if (!ColumnMatches(PriceFilterBox.Text, p.Price.ToString())) return false;
+            if (!ColumnMatches(StockFilterBox.Text, p.StockQty.ToString())) return false;
+            if (!ColumnMatches(SkuFilterBox.Text, p.SKU)) return false;
+            if (!ColumnMatches(AluFilterBox.Text, p.ALU)) return false;
+            if (!ColumnMatches(OhFilterBox.Text, p.StockQty.ToString())) return false;
+
+            return true;
+        }
+
+        private void SearchBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            _view?.Refresh();
+        }
+
+        private void ColumnFilter_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            _view?.Refresh();
+        }
+
+        private void RefreshBtn_Click(object sender, RoutedEventArgs e)
+        {
+            LoadProducts();
+            SetupFilter();
+            SetMessage("Refreshed.");
+        }
+
+        private void AddBtn_Click(object sender, RoutedEventArgs e)
+        {
+            var win = new ProductEditWindow(null) { Owner = this };
+            win.ShowDialog();
+
+            if (win.Saved)
+            {
+                LoadProducts();
+                SetMessage("Added product.");
+            }
+        }
+
+
+        private void EditBtn_Click(object sender, RoutedEventArgs e)
+        {
+            var selected = ProductsGrid.SelectedItem as Product;
+            if (selected == null)
+            {
+                MessageBox.Show("Select a product first.");
+                return;
+            }
+
+            var win = new ProductEditWindow(selected.Id) { Owner = this };
+            win.ShowDialog();
+
+            if (win.Saved)
+            {
+                LoadProducts();
+                SetMessage("Saved product.");
+            }
+        }
+
+        private void DeleteBtn_Click(object sender, RoutedEventArgs e)
+        {
+            var p = SelectedProduct;
+            if (p == null)
+            {
+                MessageBox.Show("Select an item first.");
+                return;
+            }
+
+            var confirm = MessageBox.Show(
+                $"Delete '{p.Name}'?",
+                "Confirm Delete",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Warning);
+
+            if (confirm != MessageBoxResult.Yes)
+                return;
+
+            using var db = new AppDbContext();
+            var prod = db.Products.FirstOrDefault(x => x.Id == p.Id);
+            if (prod == null)
+            {
+                MessageBox.Show("Item not found. Refresh and try again.");
+                return;
+            }
+
+            db.Products.Remove(prod);
+            db.SaveChanges();
+
+            LoadProducts();
+            SetupFilter();
+            SetMessage($"Deleted: {p.Name}");
+        }
+
+        private void ProductsGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var p = SelectedProduct;
+            if (p == null)
+            {
+                SetMessage("Ready.");
+                return;
+            }
+
+            SetMessage($"Selected: {p.Name}  |  SKU: {p.SKU}  |  Stock: {p.StockQty}");
+        }
+
+        private void ProductsGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            // Double-click row = edit
+            if (SelectedProduct != null)
+                EditBtn_Click(sender, e);
+        }
+
+        private void SetMessage(string msg)
+        {
+            MsgText.Text = msg;
+        }
+    }
+}
