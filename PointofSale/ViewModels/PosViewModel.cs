@@ -2,6 +2,7 @@
 using PointofSale.Helpers;
 using PointofSale.Models;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -14,6 +15,9 @@ namespace PointofSale.ViewModels
     public class PosViewModel : ObservableObject
     {
         public ObservableCollection<CartLine> Cart { get; } = new();
+
+        // Tax code dropdown options — loaded from products in DB
+        public List<string> TaxCodeOptions { get; } = new();
 
         private string _scanText = "";
         public string ScanText
@@ -99,6 +103,31 @@ namespace PointofSale.ViewModels
         {
             Cart.CollectionChanged += Cart_CollectionChanged;
 
+            // Load tax code options from existing products
+            try
+            {
+                using var db = new AppDbContext();
+                var codes = db.Products
+                    .Select(p => p.Tax)
+                    .Where(t => t != null && t != "")
+                    .Distinct()
+                    .OrderBy(t => t)
+                    .ToList();
+
+                // Always include the standard options
+                foreach (var standard in new[] { "No Tax", "Tax", "5%", "7.5%", "10%", "15%", "20%" })
+                    if (!codes.Contains(standard))
+                        codes.Add(standard);
+
+                codes.Sort();
+                TaxCodeOptions.AddRange(codes);
+            }
+            catch
+            {
+                // Fallback if DB not ready
+                TaxCodeOptions.AddRange(new[] { "No Tax", "Tax", "5%", "10%", "15%", "20%" });
+            }
+
             IncreaseQtyCommand = new RelayCommand<CartLine>(line =>
             {
                 if (line == null) return;
@@ -145,7 +174,9 @@ namespace PointofSale.ViewModels
         {
             if (e.PropertyName == nameof(CartLine.Qty) ||
                 e.PropertyName == nameof(CartLine.UnitPrice) ||
-                e.PropertyName == nameof(CartLine.LineTotal))
+                e.PropertyName == nameof(CartLine.LineTotal) ||
+                e.PropertyName == nameof(CartLine.TaxCode) ||
+                e.PropertyName == nameof(CartLine.TaxRate))
                 RefreshTotals();
         }
 
@@ -192,6 +223,8 @@ namespace PointofSale.ViewModels
                     Name = p.Name,
                     SKU = p.SKU ?? "",
                     UnitPrice = p.Price,
+                    CostPrice = p.AvgUnitCost,
+                    StockQty = p.StockQty,
                     Qty = 1,
                     Size = p.Size ?? "",
                     Attribute = p.Department ?? "",

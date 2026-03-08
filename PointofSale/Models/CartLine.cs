@@ -4,18 +4,51 @@ namespace PointofSale.Models
 {
     public class CartLine : INotifyPropertyChanged
     {
+        // ── backing fields ───────────────────────────────────────────────
         private int _qty;
         private decimal _unitPrice;
+        private string _name = "";
+        private string _attribute = "";
+        private string _size = "";
+        private string _taxCode = "";
+        private decimal _taxRate = 0m;
 
+        // ── read-only (no editing) ───────────────────────────────────────
         public int ProductId { get; set; }
-        public string Name { get; set; } = "";
         public string SKU { get; set; } = "";
-        public string Attribute { get; set; } = "";
-        public string Size { get; set; } = "";
-        public string TaxCode { get; set; } = "";
+        public decimal CostPrice { get; set; } = 0m;
+        public int StockQty { get; set; } = 0;    // Stock on hand snapshot
 
-        // Stored as a percentage e.g. 15 means 15%, 0 means no tax
-        public decimal TaxRate { get; set; } = 0m;
+        // ── editable fields ──────────────────────────────────────────────
+        public string Name
+        {
+            get => _name;
+            set { _name = value; OnPropertyChanged(nameof(Name)); }
+        }
+
+        public string Attribute
+        {
+            get => _attribute;
+            set { _attribute = value; OnPropertyChanged(nameof(Attribute)); }
+        }
+
+        public string Size
+        {
+            get => _size;
+            set { _size = value; OnPropertyChanged(nameof(Size)); }
+        }
+
+        public string TaxCode
+        {
+            get => _taxCode;
+            set { _taxCode = value; OnPropertyChanged(nameof(TaxCode)); }
+        }
+
+        public decimal TaxRate
+        {
+            get => _taxRate;
+            set { _taxRate = value; OnPropertyChanged(nameof(TaxRate)); OnPropertyChanged(nameof(LineTotal)); }
+        }
 
         public int Qty
         {
@@ -31,6 +64,7 @@ namespace PointofSale.Models
 
         public decimal LineTotal => System.Math.Round(Qty * UnitPrice, 2);
 
+        // ── INotifyPropertyChanged ───────────────────────────────────────
         public event PropertyChangedEventHandler? PropertyChanged;
         protected void OnPropertyChanged(string name)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
