@@ -52,7 +52,7 @@ namespace PointofSale.Views {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/QuickInventoryTill;V1.0.0.0;component/views/receiptwindow.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/QuickInventoryTill;component/views/receiptwindow.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\..\Views\ReceiptWindow.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);

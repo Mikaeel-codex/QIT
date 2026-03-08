@@ -137,6 +137,27 @@
                         </Button>
                     </Border>
 
+                    <!-- held Receipts -->
+                    <Border Margin="0,0,12,12"
+                            CornerRadius="16"
+                            Background="{StaticResource PanelBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1"
+                            Padding="14">
+                        <Button x:Name="HeldReceiptsBtn"
+                                Style="{StaticResource ModernButton}"
+                                HorizontalContentAlignment="Left"
+                                Padding="10"
+                                Click="HeldReceipts_Click">
+                            <StackPanel>
+                                <TextBlock Text="Held Receipts" FontSize="16" FontWeight="SemiBold"/>
+                                <TextBlock Text="View receipts &amp; totals"
+                                           Foreground="{StaticResource MutedBrush}"
+                                           Margin="0,6,0,0"/>
+                            </StackPanel>
+                        </Button>
+                    </Border>
+
                     <!-- Sales History -->
                     <Border Margin="0,0,12,12"
                             CornerRadius="16"
@@ -157,6 +178,8 @@
                             </StackPanel>
                         </Button>
                     </Border>
+
+                    
 
                     <!-- Inventory -->
                     <Border Margin="0,0,12,12"

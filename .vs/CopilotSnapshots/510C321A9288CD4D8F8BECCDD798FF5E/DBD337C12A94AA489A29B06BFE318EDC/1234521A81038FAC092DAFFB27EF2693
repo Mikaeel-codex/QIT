@@ -1,0 +1,147 @@
+﻿using System.Windows;
+using PointofSale.Data;
+using PointofSale.Models;
+using System.Linq;
+
+namespace PointofSale.Views
+{
+    public partial class SupplierEditWindow : Window
+    {
+        private int? _supplierId;
+
+        public SupplierEditWindow()
+        {
+            InitializeComponent();
+            _supplierId = null;
+        }
+
+        public SupplierEditWindow(int supplierId)
+        {
+            InitializeComponent();
+            _supplierId = supplierId;
+            LoadSupplierData();
+        }
+
+        private void LoadSupplierData()
+        {
+            if (_supplierId == null) return;
+
+            using var db = new AppDbContext();
+            var supplier = db.Suppliers.FirstOrDefault(s => s.Id == _supplierId.Value);
+            if (supplier == null) return;
+
+            // Populate the UI with supplier data
+            CompanyNameBox.Text = supplier.Name ?? string.Empty;
+            SupplierCodeBox.Text = supplier.Code ?? string.Empty;
+            EmailBox.Text = supplier.Email ?? string.Empty;
+            PhoneBox.Text = supplier.Phone ?? string.Empty;
+            InactiveCheck.IsChecked = !supplier.IsActive;
+        }
+
+        private bool ValidateInputs(out string error)
+        {
+            error = string.Empty;
+
+            var name = CompanyNameBox.Text.Trim();
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                error = "Company Name is required.";
+                return false;
+            }
+
+            return true;
+        }
+
+        private void SaveInternal()
+        {
+            using var db = new AppDbContext();
+
+            Supplier supplier;
+            if (_supplierId == null)
+            {
+                supplier = new Supplier();
+                db.Suppliers.Add(supplier);
+            }
+            else
+            {
+                supplier = db.Suppliers.FirstOrDefault(s => s.Id == _supplierId.Value);
+                if (supplier == null) return;
+            }
+
+            supplier.Name = CompanyNameBox.Text.Trim();
+            supplier.Code = SupplierCodeBox.Text.Trim();
+            supplier.Email = EmailBox.Text.Trim();
+            supplier.Phone = PhoneBox.Text.Trim();
+            supplier.IsActive = !InactiveCheck.IsChecked.GetValueOrDefault(false);
+
+            db.SaveChanges();
+
+            // if this was a new supplier, capture the assigned id
+            if (_supplierId == null)
+                _supplierId = supplier.Id;
+        }
+
+        private void ClearFormForNew()
+        {
+            CompanyNameBox.Text = string.Empty;
+            SupplierCodeBox.Text = string.Empty;
+            TitleBox.SelectedIndex = -1;
+            FirstNameBox.Text = string.Empty;
+            LastNameBox.Text = string.Empty;
+            EmailBox.Text = string.Empty;
+            WebsiteBox.Text = string.Empty;
+            StreetBox.Text = string.Empty;
+            Street2Box.Text = string.Empty;
+            CityBox.Text = string.Empty;
+            StateBox.Text = string.Empty;
+            ZipBox.Text = string.Empty;
+            PhoneBox.Text = string.Empty;
+            AccountBox.Text = string.Empty;
+            AltPhoneBox.Text = string.Empty;
+            AltContactBox.Text = string.Empty;
+            InactiveCheck.IsChecked = false;
+            NotesBox.Text = string.Empty;
+            HistoryList.Items.Clear();
+
+            // Reset current edit id so subsequent saves create new record
+            _supplierId = null;
+        }
+
+        private void Save_Click(object sender, RoutedEventArgs e)
+        {
+            if (!ValidateInputs(out var error))
+            {
+                MessageBox.Show(error, "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            SaveInternal();
+            DialogResult = true;
+            Close();
+        }
+
+        private void SaveAndNew_Click(object sender, RoutedEventArgs e)
+        {
+            if (!ValidateInputs(out var error))
+            {
+                MessageBox.Show(error, "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            SaveInternal();
+            MessageBox.Show("Supplier saved.", "Saved", MessageBoxButton.OK, MessageBoxImage.Information);
+            ClearFormForNew();
+        }
+
+        private void Cancel_Click(object sender, RoutedEventArgs e)
+        {
+            DialogResult = false;
+            Close();
+        }
+
+        private void TitleBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            // no-op
+        }
+    }
+}

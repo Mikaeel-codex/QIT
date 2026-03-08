@@ -1,378 +1,369 @@
 ﻿using PointofSale.Data;
 using PointofSale.Helpers;
 using PointofSale.Models;
-using System.Collections.ObjectModel;
-using System.Windows;
-using System.Windows.Input;
-using System.Diagnostics;
 using System;
-using PointofSale.Views;
-
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
+using System.Globalization;
+using System.Linq;
+using System.Windows;
 
 namespace PointofSale.ViewModels
 {
     public class PosViewModel : ObservableObject
     {
-        public ObservableCollection<Product> Products { get; } = new();
-        private readonly ObservableCollection<Product> _allProducts = new();
-
         public ObservableCollection<CartLine> Cart { get; } = new();
 
-        private string _searchText = "";
-        public string SearchText
+        private string _scanText = "";
+        public string ScanText
         {
-            get => _searchText;
+            get => _scanText;
+            set => Set(ref _scanText, value);
+        }
+
+        private string _customerSearchText = "";
+        public string CustomerSearchText
+        {
+            get => _customerSearchText;
+            set => Set(ref _customerSearchText, value);
+        }
+
+        private decimal _cashTendered;
+        public decimal CashTendered
+        {
+            get => _cashTendered;
             set
             {
-                if (Set(ref _searchText, value))
-                    ApplySearch();
+                if (Set(ref _cashTendered, value))
+                {
+                    OnPropertyChanged(nameof(CashChangeDisplay));
+                    OnPropertyChanged(nameof(CashChange));
+                    OnPropertyChanged(nameof(AmountDue));
+                    OnPropertyChanged(nameof(AmountDueIsZero));
+                    OnPropertyChanged(nameof(CashTenderedVisibility));
+                    OnPropertyChanged(nameof(CashChangeVisibility));
+                }
             }
         }
 
-        private decimal _subtotal;
-        public decimal Subtotal
+        private string _paymentMethod = "";
+        public string PaymentMethod
         {
-            get => _subtotal;
-            set => Set(ref _subtotal, value);
+            get => _paymentMethod;
+            set => Set(ref _paymentMethod, value);
         }
 
-        public decimal Total => Subtotal;
+        public int ItemsSold => Cart.Count;
+        public int TotalQtySold => Cart.Sum(x => x.Qty);
+        public decimal Subtotal => Cart.Sum(x => x.LineTotal);
 
-        public ICommand AddToCartCommand { get; }
-        public ICommand ClearCartCommand { get; }
-        public ICommand IncreaseQtyCommand { get; }
-        public ICommand DecreaseQtyCommand { get; }
-        public ICommand PayCommand { get; }
+        // Tax is calculated per line using each line's individual TaxRate
+        // so items marked "No Tax" contribute 0 regardless of other lines
+        public decimal Tax => Math.Round(Cart.Sum(x => x.LineTotal * x.TaxRate / 100m), 2);
+        public decimal Total => Subtotal + Tax;
+
+        public decimal AmountDue => CashTendered > 0
+            ? Math.Max(0, Math.Round(Total - CashTendered, 2))
+            : Total;
+
+        public decimal CashChange => CashTendered > 0
+            ? Math.Max(0, Math.Round(CashTendered - Total, 2))
+            : 0;
+
+        public DateTime SaleDate { get; } = DateTime.Today;
+
+        public bool AmountDueIsZero => AmountDue == 0;
+
+        public Visibility CashTenderedVisibility =>
+            CashTendered > 0 ? Visibility.Visible : Visibility.Collapsed;
+
+        public Visibility CashChangeVisibility =>
+            CashChange > 0 ? Visibility.Visible : Visibility.Collapsed;
+
+        public string CashChangeDisplay
+        {
+            get
+            {
+                if (CashTendered <= 0) return "";
+                var change = Math.Round(CashTendered - Total, 2);
+                return change >= 0 ? $"Cash Change  {change:N2}" : "";
+            }
+        }
+
+        public RelayCommand<CartLine> IncreaseQtyCommand { get; }
+        public RelayCommand<CartLine> DecreaseQtyCommand { get; }
+        public RelayCommand<CartLine> RemoveFromCartCommand { get; }
 
         public PosViewModel()
         {
-            AddToCartCommand = new RelayCommand(p => AddToCart((Product)p!));
-            ClearCartCommand = new RelayCommand(_ => ClearCart());
-            IncreaseQtyCommand = new RelayCommand(p => IncreaseQty((CartLine)p!));
-            DecreaseQtyCommand = new RelayCommand(p => DecreaseQty((CartLine)p!));
-            PayCommand = new RelayCommand(_ => Pay());
+            Cart.CollectionChanged += Cart_CollectionChanged;
 
-            LoadProducts();
+            IncreaseQtyCommand = new RelayCommand<CartLine>(line =>
+            {
+                if (line == null) return;
+                using var db = new AppDbContext();
+                var p = db.Products.FirstOrDefault(x => x.Id == line.ProductId);
+                if (p == null) return;
+                if (line.Qty + 1 > p.StockQty) { MessageBox.Show("Not enough stock."); return; }
+                line.Qty += 1;
+                RefreshTotals();
+            });
+
+            DecreaseQtyCommand = new RelayCommand<CartLine>(line =>
+            {
+                if (line == null) return;
+                line.Qty -= 1;
+                if (line.Qty == 0) Cart.Remove(line);
+                RefreshTotals();
+            });
+
+            RemoveFromCartCommand = new RelayCommand<CartLine>(line =>
+            {
+                if (line == null) return;
+                Cart.Remove(line);
+                RefreshTotals();
+            });
         }
 
-        private void LoadProducts()
+        private void Cart_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
+            if (e.NewItems != null)
+                foreach (var item in e.NewItems)
+                    if (item is CartLine line)
+                        line.PropertyChanged += CartLine_PropertyChanged;
+
+            if (e.OldItems != null)
+                foreach (var item in e.OldItems)
+                    if (item is CartLine line)
+                        line.PropertyChanged -= CartLine_PropertyChanged;
+
+            RefreshTotals();
+        }
+
+        private void CartLine_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(CartLine.Qty) ||
+                e.PropertyName == nameof(CartLine.UnitPrice) ||
+                e.PropertyName == nameof(CartLine.LineTotal))
+                RefreshTotals();
+        }
+
+        public void RefreshTotals()
+        {
+            OnPropertyChanged(nameof(ItemsSold));
+            OnPropertyChanged(nameof(TotalQtySold));
+            OnPropertyChanged(nameof(Subtotal));
+            OnPropertyChanged(nameof(Tax));
+            OnPropertyChanged(nameof(Total));
+            OnPropertyChanged(nameof(AmountDue));
+            OnPropertyChanged(nameof(CashChange));
+            OnPropertyChanged(nameof(CashChangeDisplay));
+            OnPropertyChanged(nameof(AmountDueIsZero));
+            OnPropertyChanged(nameof(CashTenderedVisibility));
+            OnPropertyChanged(nameof(CashChangeVisibility));
+        }
+
+        public void ScanSkuAndAddToCart(string skuOrAlu)
+        {
+            skuOrAlu = (skuOrAlu ?? "").Trim();
+            if (string.IsNullOrWhiteSpace(skuOrAlu)) return;
+
             using var db = new AppDbContext();
-            var list = db.Products.OrderBy(p => p.Name).ToList();
+            var p = db.Products.FirstOrDefault(x =>
+                (x.SKU != null && x.SKU == skuOrAlu) ||
+                (x.ALU != null && x.ALU == skuOrAlu));
 
-            _allProducts.Clear();
-            Products.Clear();
+            if (p == null) { MessageBox.Show("Item not found.", "Not Found"); return; }
+            if (p.StockQty <= 0) { MessageBox.Show("Item is out of stock.", "Out of Stock"); return; }
 
-            foreach (var p in list)
+            var existing = Cart.FirstOrDefault(x => x.ProductId == p.Id);
+            if (existing != null)
             {
-                _allProducts.Add(p);
-                Products.Add(p);
+                if (existing.Qty + 1 > p.StockQty) { MessageBox.Show("Not enough stock to add more.", "Stock Limit"); return; }
+                existing.Qty += 1;
             }
-        }
-
-        private void ApplySearch()
-        {
-            var term = (SearchText ?? "").Trim().ToLower();
-
-            Products.Clear();
-
-            var filtered = string.IsNullOrWhiteSpace(term)
-                ? _allProducts
-                : new ObservableCollection<Product>(_allProducts.Where(p =>
-                    (p.Name ?? "").ToLower().Contains(term) ||
-                    (p.SKU ?? "").ToLower().Contains(term)));
-
-            foreach (var p in filtered)
-                Products.Add(p);
-        }
-
-        private void AddToCart(Product p)
-        {
-            if (p.StockQty <= 0)
+            else
             {
-                MessageBox.Show("Out of stock.");
-                return;
-            }
-
-            var line = Cart.FirstOrDefault(c => c.ProductId == p.Id);
-
-            if (line == null)
-            {
+                var taxRate = ParseTaxRate(p.Tax);
                 Cart.Add(new CartLine
                 {
                     ProductId = p.Id,
                     Name = p.Name,
-                    SKU = p.SKU,
+                    SKU = p.SKU ?? "",
                     UnitPrice = p.Price,
-                    Qty = 1
+                    Qty = 1,
+                    Size = p.Size ?? "",
+                    Attribute = p.Department ?? "",
+                    TaxRate = taxRate,
+                    TaxCode = taxRate > 0 ? $"{taxRate}%" : "No Tax"
                 });
             }
-            else
-            {
-                line.Qty += 1;
-            }
 
-            RecalcTotals();
+            RefreshTotals();
         }
 
-        private void IncreaseQty(CartLine line)
+        /// <summary>
+        /// Parses the product Tax field into a decimal rate (percentage).
+        /// "No Tax", "None", "0", empty  -> 0
+        /// "15" or "15%"                 -> 15 (stored directly)
+        /// "VAT", "Tax", "yes"           -> 15 (SA standard VAT)
+        /// </summary>
+        private static decimal ParseTaxRate(string? taxField)
         {
-            line.Qty += 1;
-            RecalcTotals();
+            var t = (taxField ?? "").Trim().ToLowerInvariant();
+
+            // Explicit zero cases
+            if (string.IsNullOrWhiteSpace(t)) return 0m;
+            if (t == "no tax") return 0m;
+            if (t == "notax") return 0m;
+            if (t == "none") return 0m;
+            if (t == "exempt") return 0m;
+            if (t == "no" || t == "n") return 0m;
+            if (t == "false" || t == "0") return 0m;
+
+            // Numeric rate stored directly e.g. "15" or "15%"
+            var clean = t.Replace("%", "").Trim();
+            if (decimal.TryParse(clean, NumberStyles.Any,
+                    CultureInfo.InvariantCulture, out var rate))
+                return rate;
+
+            // Named taxable keywords -> read configured rate from DB
+            if (t == "vat" || t == "tax" || t == "yes" || t == "y" || t == "true" || t == "1")
+                return 15m; // SA standard VAT
+
+            return 0m;
         }
 
-        private void DecreaseQty(CartLine line)
+        public void RemovePaymentMethod()
         {
-            line.Qty -= 1;
-
-            if (line.Qty <= 0)
-                Cart.Remove(line);
-
-            RecalcTotals();
+            CashTendered = 0;
+            PaymentMethod = "";
+            RefreshTotals();
         }
 
-        private void ClearCart()
+        /// <summary>Restores a held receipt back into the cart.</summary>
+        public void RestoreFromHeld(PointofSale.Models.HeldReceipt held)
         {
             Cart.Clear();
-            RecalcTotals();
-        }
+            CashTendered = 0;
+            PaymentMethod = held.PaymentMethod ?? "";
 
-        private void RecalcTotals()
-        {
-            Subtotal = Cart.Sum(i => i.LineTotal);
-            OnPropertyChanged(nameof(Total));
-        }
-
-        public void ScanSkuAndAddToCart(string sku)
-        {
-            sku = (sku ?? "").Trim();
-            if (string.IsNullOrWhiteSpace(sku)) return;
-
-            // Find in current loaded products first
-            var p = _allProducts.FirstOrDefault(x => x.SKU != null &&
-                                                    x.SKU.Trim().Equals(sku, StringComparison.OrdinalIgnoreCase));
-
-            if (p == null)
+            foreach (var item in held.Items)
             {
-                // fallback: check DB in case products list isn't refreshed
-                using var db = new AppDbContext();
-                p = db.Products.FirstOrDefault(x => x.SKU == sku);
-            }
-
-            if (p == null)
-            {
-                MessageBox.Show($"Product with SKU '{sku}' not found.");
-                return;
-            }
-
-            AddToCart(p);
-        }
-
-
-        private void Pay()
-        {
-            if (!Cart.Any())
-            {
-                MessageBox.Show("Cart is empty.");
-                return;
-            }
-
-            // 1) Build receipt preview FIRST (no saving yet)
-            var cashier = PointofSale.Services.Session.CurrentUser?.Username ?? "Unknown";
-            var receiptVM = new ReceiptViewModel(0, cashier); // 0 = preview, no sale id yet
-
-            foreach (var line in Cart)
-            {
-                receiptVM.Items.Add(new ReceiptItemVM
+                Cart.Add(new CartLine
                 {
-                    Name = line.Name,
-                    DetailText = $"{line.SKU} | R {line.UnitPrice:0.00} x {line.Qty}",
-                    LineTotal = line.LineTotal
+                    ProductId = item.ProductId,
+                    SKU = item.SKU,
+                    Name = item.Name,
+                    Attribute = item.Attribute,
+                    Size = item.Size,
+                    Qty = item.Qty,
+                    UnitPrice = item.UnitPrice,
+                    TaxCode = item.TaxCode,
+                    TaxRate = item.TaxRate
                 });
             }
 
-            receiptVM.Subtotal = Cart.Sum(x => x.LineTotal);
-            receiptVM.Total = receiptVM.Subtotal;
+            RefreshTotals();
+        }
 
-            // 2) Ask user to Confirm or Cancel
-            bool confirmed = false;
-
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                var win = new ReceiptWindow(receiptVM);
-                confirmed = win.ShowDialog() == true;
-            });
-
-            if (!confirmed)
-            {
-                // Customer changed mind -> keep cart, do NOT save
-                return;
-            }
-
-            // 3) NOW save to DB (only after confirm)
-            using var db = new AppDbContext();
-            using var tx = db.Database.BeginTransaction();
+        public void FinalizeSale(string paymentType)
+        {
+            if (Cart.Count == 0) { MessageBox.Show("Nothing to save."); return; }
 
             try
             {
-                // Re-check stock from DB
+                using var db = new AppDbContext();
+
                 foreach (var line in Cart)
                 {
-                    var product = db.Products.FirstOrDefault(p => p.Id == line.ProductId);
-
-                    if (product == null)
-                    {
-                        MessageBox.Show($"Product not found (ID {line.ProductId}). Refresh and try again.");
-                        tx.Rollback();
-                        return;
-                    }
-
-                    if (product.StockQty < line.Qty)
-                    {
-                        MessageBox.Show($"Not enough stock for '{product.Name}'. Available: {product.StockQty}, Requested: {line.Qty}");
-                        tx.Rollback();
-                        return;
-                    }
+                    var p = db.Products.FirstOrDefault(x => x.Id == line.ProductId);
+                    if (p == null) throw new Exception("A product no longer exists.");
+                    if (line.Qty > p.StockQty) throw new Exception($"Not enough stock for {p.Name}.");
                 }
 
-                // Create sale
-                var sale = new Sale
-                {
-                    saleDate = DateTime.Now,
-                    CashierUsername = cashier,
-                    Subtotal = Cart.Sum(x => x.LineTotal),
-                    Total = Cart.Sum(x => x.LineTotal)
-                };
-
-                db.Sales.Add(sale);
-                db.SaveChanges(); // generates sale.Id
-
-                // Create sale items + deduct stock
                 foreach (var line in Cart)
                 {
-                    var product = db.Products.First(p => p.Id == line.ProductId);
-
-                    product.StockQty -= line.Qty;
-
-                    db.SaleItems.Add(new SaleItem
-                    {
-                        SaleId = sale.Id,
-                        ProductId = product.Id,
-                        ProductName = product.Name,
-                        SKU = product.SKU,
-                        UnitPrice = product.Price,
-                        Quantity = line.Qty,
-                        LineTotal = product.Price * line.Qty
-                    });
+                    var p = db.Products.First(x => x.Id == line.ProductId);
+                    p.StockQty -= line.Qty;
                 }
 
                 db.SaveChanges();
-                tx.Commit();
 
-                // Build receipt text (for WhatsApp/Email)
-                var receiptText = ReceiptTextBuilder.Build(
-                    sale.Id,
-                    cashier,
-                    sale.Total,
-                    Cart.ToList()
-                );
-
-                // Ask which ONE action to do
-                Views.PostSaleActionWindow.ReceiptAction action = Views.PostSaleActionWindow.ReceiptAction.None;
-
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    var actionWin = new Views.PostSaleActionWindow { Owner = Application.Current.MainWindow };
-                    if (actionWin.ShowDialog() == true)
-                        action = actionWin.SelectedAction;
-                });
-
-                // Execute ONE action
-                if (action == Views.PostSaleActionWindow.ReceiptAction.Print)
-                {
-                    // Print using your existing ReceiptWindow visual (simple approach)
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        var receiptVm = new ReceiptViewModel(sale.Id, cashier);
-
-                        foreach (var line in Cart)
-                        {
-                            receiptVm.Items.Add(new ReceiptItemVM
-                            {
-                                Name = line.Name,
-                                DetailText = $"{line.SKU} | R {line.UnitPrice:0.00} x {line.Qty}",
-                                LineTotal = line.LineTotal
-                            });
-                        }
-
-                        receiptVm.Subtotal = Cart.Sum(x => x.LineTotal);
-                        receiptVm.Total = receiptVm.Subtotal;
-
-                        var receiptWin = new ReceiptWindow(receiptVm) { Owner = Application.Current.MainWindow };
-                        receiptWin.ShowDialog(); // your Print button can stay here
-                    });
-                }
-
-                else if (action == Views.PostSaleActionWindow.ReceiptAction.WhatsApp)
-                {
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        var input = new Views.InputDialog("Enter customer WhatsApp number (e.g. 2772xxxxxxx)");
-                        if (input.ShowDialog() == true && !string.IsNullOrWhiteSpace(input.Value))
-                        {
-                            var number = input.Value.Trim();
-
-                            number = number.Replace("+", "").Replace(" ", "").Replace("-", "");
-
-                            if (number.StartsWith("0"))
-                                number = "27" + number.Substring(1);
-
-                            if (receiptText.Length > 1500)
-                                receiptText = receiptText.Substring(0, 1500) + "\n(Receipt trimmed)";
-
-                            var url = "https://api.whatsapp.com/send?phone=" + number +
-                                      "&text=" + Uri.EscapeDataString(receiptText);
-
-                            Process.Start(new ProcessStartInfo
-                            {
-                                FileName = url,
-                                UseShellExecute = true
-                            });
-                        }
-                    });
-                }
-
-                else if (action == Views.PostSaleActionWindow.ReceiptAction.Email)
-                {
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        var input = new Views.InputDialog("Enter customer email address");
-                        if (input.ShowDialog() == true && !string.IsNullOrWhiteSpace(input.Value))
-                        {
-                            var email = input.Value.Trim();
-                            var subject = Uri.EscapeDataString($"Receipt - Sale #{sale.Id}");
-                            var body = Uri.EscapeDataString(receiptText);
-
-                            var mailto = $"mailto:{email}?subject={subject}&body={body}";
-                            Process.Start(new ProcessStartInfo(mailto) { UseShellExecute = true });
-                        }
-                    });
-                }
-
-
-
-                // clear cart + refresh product list so stock updates on screen
                 Cart.Clear();
-                RecalcTotals();
-                LoadProducts();
-
-                MessageBox.Show($"Payment Successful.\nSale #{sale.Id} saved.");
+                CashTendered = 0;
+                PaymentMethod = "";
+                MessageBox.Show($"Sale completed ({paymentType}).");
             }
             catch (Exception ex)
             {
-                tx.Rollback();
-                MessageBox.Show(ex.Message, "Checkout failed" );
+                MessageBox.Show(ex.Message, "Error");
             }
+        }
+
+        public void PutOnHold(string cashierName = "")
+        {
+            if (Cart.Count == 0) { MessageBox.Show("Nothing to hold."); return; }
+
+            try
+            {
+                using var db = new AppDbContext();
+
+                // Build a short summary e.g. "Pepsi x1, Lays x2" for the list view
+                var summary = string.Join(", ", Cart.Select(l => $"{l.Name} x{l.Qty}"));
+
+                var held = new PointofSale.Models.HeldReceipt
+                {
+                    HeldAt = DateTime.Now,
+                    Cashier = cashierName,
+                    PaymentMethod = PaymentMethod,
+                    Subtotal = Subtotal,
+                    Tax = Tax,
+                    Total = Total,
+                    ItemCount = ItemsSold,
+                    TotalQty = TotalQtySold,
+                    ItemsSummary = summary
+                };
+
+                foreach (var line in Cart)
+                {
+                    held.Items.Add(new PointofSale.Models.HeldReceiptItem
+                    {
+                        ProductId = line.ProductId,
+                        SKU = line.SKU,
+                        Name = line.Name,
+                        Attribute = line.Attribute,
+                        Size = line.Size,
+                        Qty = line.Qty,
+                        UnitPrice = line.UnitPrice,
+                        LineTotal = line.LineTotal,
+                        TaxCode = line.TaxCode,
+                        TaxRate = line.TaxRate
+                    });
+                }
+
+                db.HeldReceipts.Add(held);
+                db.SaveChanges();
+
+                Cart.Clear();
+                CashTendered = 0;
+                PaymentMethod = "";
+                MessageBox.Show("Receipt put on hold.");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to hold receipt: {ex.Message}", "Error");
+            }
+        }
+
+        public void CancelReceipt()
+        {
+            if (Cart.Count == 0) { MessageBox.Show("Nothing to cancel."); return; }
+            Cart.Clear();
+            CashTendered = 0;
+            PaymentMethod = "";
+            MessageBox.Show("Receipt cancelled.");
         }
     }
 }

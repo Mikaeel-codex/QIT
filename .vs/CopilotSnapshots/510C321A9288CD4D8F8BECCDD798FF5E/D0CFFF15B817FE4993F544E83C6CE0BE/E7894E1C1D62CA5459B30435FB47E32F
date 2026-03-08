@@ -1,0 +1,62 @@
+﻿using System.Windows;
+using PointofSale.Data;
+using PointofSale.Models;
+using System.Linq;
+
+namespace PointofSale.Views
+{
+    public partial class SupplierEditWindow : Window
+    {
+        private int? _supplierId;
+
+        public SupplierEditWindow()
+        {
+            InitializeComponent();
+            _supplierId = null;
+        }
+
+        public SupplierEditWindow(int supplierId)
+        {
+            InitializeComponent();
+            _supplierId = supplierId;
+            LoadSupplierData();
+        }
+
+        private void LoadSupplierData()
+        {
+            if (_supplierId == null) return;
+
+            using var db = new AppDbContext();
+            var supplier = db.Suppliers.FirstOrDefault(s => s.Id == _supplierId.Value);
+            if (supplier == null) return;
+
+            // Populate the UI with supplier data
+            SupplierCodeBox.Text = supplier.Code ?? string.Empty;
+            // Add other fields as needed based on your UI
+        }
+
+        private void Save_Click(object sender, RoutedEventArgs e)
+        {
+            // We'll wire DB saving after you confirm Supplier table + fields.
+            DialogResult = true;
+            Close();
+        }
+
+        private void SaveAndNew_Click(object sender, RoutedEventArgs e)
+        {
+            // Save then clear fields (we’ll implement properly after DB wiring) 
+            MessageBox.Show("Saved (placeholder). Now ready for a new supplier.");
+        }
+
+        private void Cancel_Click(object sender, RoutedEventArgs e)
+        {
+            DialogResult = false;
+            Close();
+        }
+
+        private void TitleBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+
+        }
+    }
+}

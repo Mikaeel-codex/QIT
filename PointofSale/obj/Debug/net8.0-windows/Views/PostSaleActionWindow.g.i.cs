@@ -92,7 +92,7 @@ namespace PointofSale.Views {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/QuickInventoryTill;V1.0.0.0;component/views/postsaleactionwindow.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/QuickInventoryTill;component/views/postsaleactionwindow.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\..\Views\PostSaleActionWindow.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);

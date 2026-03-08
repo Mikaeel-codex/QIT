@@ -1,0 +1,370 @@
+﻿<Window x:Class="PointofSale.Views.PointOfSaleWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Point of Sale"
+        Width="1280" Height="720"
+        WindowStartupLocation="CenterScreen"
+        Background="{StaticResource BgBrush}">
+
+    <Grid Margin="16"
+          PreviewKeyDown="Grid_PreviewKeyDown"
+          Loaded="MainWindow_Loaded">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- TOP NAVBAR -->
+        <Border Grid.Row="0"
+                Background="{StaticResource PanelBrush}"
+                BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="1"
+                CornerRadius="14"
+                Padding="12"
+                Margin="0,0,0,12">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Left: Brand + Admin buttons -->
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="Point of Sale"
+                               FontSize="18"
+                               FontWeight="Bold"
+                               Margin="6,0,14,0"/>
+
+                    <Button x:Name="ProductsBtn"
+                            Style="{StaticResource ModernButton}"
+                            Content="Products"
+                            Margin="0,0,8,0"
+                            Click="ProductsBtn_Click"/>
+                </StackPanel>
+
+                <!-- Right: User info + Logout -->
+                <StackPanel Grid.Column="2"
+                            Orientation="Horizontal"
+                            VerticalAlignment="Center">
+                    <TextBlock x:Name="UserLabel"
+                               Foreground="{StaticResource MutedBrush}"
+                               VerticalAlignment="Center"
+                               Margin="0,0,12,0"/>
+
+                    <Button Style="{StaticResource ModernButton}"
+                            Content="Logout"
+                            Click="LogoutBtn_Click"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- MAIN POS LAYOUT (Sales Receipt style) -->
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <!-- Search row -->
+                <RowDefinition Height="*"/>
+                <!-- Receipt grid -->
+                <RowDefinition Height="Auto"/>
+                <!-- Payments + totals -->
+                <RowDefinition Height="Auto"/>
+                <!-- Footer buttons -->
+            </Grid.RowDefinitions>
+
+            <!-- SEARCH BAR ROW -->
+            <Border Grid.Row="0"
+                    Background="#E9EDF4"
+                    BorderBrush="#C8CFDC"
+                    BorderThickness="1"
+                    CornerRadius="10"
+                    Padding="10"
+                    Margin="0,0,0,10">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="170"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="12"/>
+                        <ColumnDefinition Width="430"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Button Content="I Want to..."
+                            Background="#3FAE4D"
+                            Foreground="White"
+                            BorderBrush="#2E8839"
+                            BorderThickness="1"
+                            Height="28"
+                            Padding="10,0"
+                            Cursor="Hand"/>
+
+                    <!-- Scan / Item entry -->
+                    <TextBox Grid.Column="1"
+                             x:Name="ScanBox"
+                             Height="28"
+                             VerticalContentAlignment="Center"
+                             Padding="10,0"
+                             BorderBrush="#C8CFDC"
+                             BorderThickness="1"
+                             Background="White"
+                             FontSize="13"
+                             Text="{Binding ScanText, UpdateSourceTrigger=PropertyChanged}"
+                             KeyDown="ScanBox_KeyDown"
+                             ToolTip="Scan or enter item information"/>
+
+                    <!-- Customer -->
+                    <TextBox Grid.Column="3"
+                             x:Name="CustomerBox"
+                             Height="28"
+                             VerticalContentAlignment="Center"
+                             Padding="10,0"
+                             BorderBrush="#C8CFDC"
+                             BorderThickness="1"
+                             Background="White"
+                             FontSize="13"
+                             Text="{Binding CustomerSearchText, UpdateSourceTrigger=PropertyChanged}"
+                             KeyDown="CustomerBox_KeyDown"
+                             ToolTip="Enter customer name or phone"/>
+                </Grid>
+            </Border>
+
+            <!-- RECEIPT GRID -->
+            <Border Grid.Row="1"
+                    Background="White"
+                    BorderBrush="#C8CFDC"
+                    BorderThickness="1"
+                    CornerRadius="10">
+                <DataGrid x:Name="ReceiptGrid"
+                          ItemsSource="{Binding Cart}"
+                          AlternationCount="2"
+                          AutoGenerateColumns="False"
+                          CanUserAddRows="False"
+                          CanUserDeleteRows="False"
+                          HeadersVisibility="Column"
+                          GridLinesVisibility="Horizontal"
+                          BorderThickness="0"
+                          SelectionMode="Single"
+                          SelectionUnit="FullRow"
+                          RowDetailsVisibilityMode="VisibleWhenSelected"
+                          FontSize="13">
+
+                    <DataGrid.RowStyle>
+                        <Style TargetType="DataGridRow">
+                            <Setter Property="Background" Value="White"/>
+                            <Style.Triggers>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter Property="Background" Value="#D9F4C6"/>
+                                </Trigger>
+                                <Trigger Property="ItemsControl.AlternationIndex" Value="1">
+                                    <Setter Property="Background" Value="#F7F9FD"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGrid.RowStyle>
+
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Item #"
+                                            Binding="{Binding SKU}"
+                                            Width="90"/>
+
+                        <DataGridTextColumn Header="Item Name"
+                                            Binding="{Binding Name}"
+                                            Width="*"/>
+
+                        <DataGridTextColumn Header="Attribute"
+                                            Binding="{Binding Attribute}"
+                                            Width="120"/>
+
+                        <DataGridTextColumn Header="Size"
+                                            Binding="{Binding Size}"
+                                            Width="90"/>
+
+                        <DataGridTextColumn Header="Qty"
+                                            Binding="{Binding Qty}"
+                                            Width="60"/>
+
+                        <DataGridTextColumn Header="Price"
+                                            Binding="{Binding UnitPrice, StringFormat=N2}"
+                                            Width="90"/>
+
+                        <DataGridTextColumn Header="Ext Price"
+                                            Binding="{Binding LineTotal, StringFormat=N2}"
+                                            Width="100"/>
+
+                        <DataGridTextColumn Header="Tax Code"
+                                            Binding="{Binding TaxCode}"
+                                            Width="90"/>
+                    </DataGrid.Columns>
+
+                    <!-- Row action strip -->
+                    <DataGrid.RowDetailsTemplate>
+                        <DataTemplate>
+                            <Border Background="#D9F4C6"
+                                    Padding="8"
+                                    BorderBrush="#BFE8A8"
+                                    BorderThickness="0,1,0,0">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <Button Content="Edit"
+                                            Height="24" MinWidth="70"
+                                            Margin="0,0,8,0"
+                                            Background="#2F66C8" Foreground="White"
+                                            BorderBrush="#1F4E9A" BorderThickness="1"
+                                            Click="EditLine_Click"/>
+
+                                    <Button Grid.Column="1"
+                                            Content="Return Item"
+                                            Height="24" MinWidth="90"
+                                            Margin="0,0,8,0"
+                                            Background="#2F66C8" Foreground="White"
+                                            BorderBrush="#1F4E9A" BorderThickness="1"
+                                            Click="ReturnLine_Click"/>
+
+                                    <Button Grid.Column="3"
+                                            Content="Qty/Price/Discount"
+                                            Height="24" MinWidth="140"
+                                            Margin="0,0,8,0"
+                                            Background="#2F66C8" Foreground="White"
+                                            BorderBrush="#1F4E9A" BorderThickness="1"
+                                            Click="QtyPriceDiscount_Click"/>
+
+                                    <Button Grid.Column="4"
+                                            Content="Qty+"
+                                            Height="24" MinWidth="60"
+                                            Margin="0,0,8,0"
+                                            Background="#2F66C8" Foreground="White"
+                                            BorderBrush="#1F4E9A" BorderThickness="1"
+                                            Command="{Binding DataContext.IncreaseQtyCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                            CommandParameter="{Binding}"/>
+
+                                    <Button Grid.Column="5"
+                                            Content="Qty-"
+                                            Height="24" MinWidth="60"
+                                            Margin="0,0,8,0"
+                                            Background="#2F66C8" Foreground="White"
+                                            BorderBrush="#1F4E9A" BorderThickness="1"
+                                            Command="{Binding DataContext.DecreaseQtyCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                            CommandParameter="{Binding}"/>
+
+                                    <Button Grid.Column="6"
+                                            Content="Remove"
+                                            Height="24" MinWidth="80"
+                                            Background="#D9534F" Foreground="White"
+                                            BorderBrush="#B54541" BorderThickness="1"
+                                            Command="{Binding DataContext.RemoveFromCartCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                            CommandParameter="{Binding}"/>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </DataGrid.RowDetailsTemplate>
+
+                </DataGrid>
+            </Border>
+
+            <!-- PAYMENTS + TOTALS -->
+            <Border Grid.Row="2"
+                    Background="#EFEFEF"
+                    BorderBrush="#C8CFDC"
+                    BorderThickness="1"
+                    CornerRadius="10"
+                    Padding="10"
+                    Margin="0,10,0,10">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="420"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Button Content="Cash" Width="140" Height="46" Margin="0,0,8,0"
+                                Background="#2F66C8" Foreground="White" BorderBrush="#1F4E9A" BorderThickness="1"
+                                Click="Cash_Click"/>
+                        <Button Content="Credit" Width="140" Height="46" Margin="0,0,8,0"
+                                Background="#2F66C8" Foreground="White" BorderBrush="#1F4E9A" BorderThickness="1"
+                                Click="Credit_Click"/>
+                        <Button Content="Check" Width="140" Height="46" Margin="0,0,8,0"
+                                Background="#2F66C8" Foreground="White" BorderBrush="#1F4E9A" BorderThickness="1"
+                                Click="Check_Click"/>
+                        <Button Content="Gift" Width="140" Height="46" Margin="0,0,8,0"
+                                Background="#2F66C8" Foreground="White" BorderBrush="#1F4E9A" BorderThickness="1"
+                                Click="Gift_Click"/>
+                        <Button Content="Account" Width="140" Height="46"
+                                Background="#2F66C8" Foreground="White" BorderBrush="#1F4E9A" BorderThickness="1"
+                                Click="Account_Click"/>
+                    </StackPanel>
+
+                    <Grid Grid.Column="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="120"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Row="0" Text="No. of Items Sold" HorizontalAlignment="Right"/>
+                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding ItemsSold}" HorizontalAlignment="Right"/>
+
+                        <TextBlock Grid.Row="1" Text="Total Qty Sold" HorizontalAlignment="Right"/>
+                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding TotalQtySold}" HorizontalAlignment="Right"/>
+
+                        <TextBlock Grid.Row="2" Text="SubTotal" HorizontalAlignment="Right"/>
+                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Subtotal, StringFormat=N2}" HorizontalAlignment="Right"/>
+
+                        <TextBlock Grid.Row="3" Text="Tax" HorizontalAlignment="Right"/>
+                        <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding Tax, StringFormat=N2}" HorizontalAlignment="Right"/>
+
+                        <TextBlock Grid.Row="4" Text="Total" FontSize="22" FontWeight="Bold" HorizontalAlignment="Right" Margin="0,8,0,0"/>
+                        <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding Total, StringFormat=N2}" FontSize="22" FontWeight="Bold" HorizontalAlignment="Right" Margin="0,8,0,0"/>
+                    </Grid>
+                </Grid>
+            </Border>
+
+            <!-- FOOTER (Grid does NOT support Padding, so wrap in Border) -->
+            <Border Grid.Row="3" Background="White" Padding="10">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Orientation="Vertical" HorizontalAlignment="Right">
+                        <TextBlock Text="Amount Due" FontSize="18" FontWeight="Bold" Foreground="#C70000" HorizontalAlignment="Right"/>
+                        <TextBlock Text="{Binding AmountDue, StringFormat=N2}" FontSize="18" FontWeight="Bold" Foreground="#C70000" HorizontalAlignment="Right"/>
+                        <TextBlock Text="{Binding CashChangeDisplay}" FontSize="14" FontWeight="SemiBold" HorizontalAlignment="Right"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button Content="Put on Hold" Width="140" Height="44" Margin="0,0,8,0"
+                                Background="#2F66C8" Foreground="White" Click="Hold_Click"/>
+                        <Button Content="Cancel" Width="100" Height="44" Margin="0,0,8,0"
+                                Background="#2F66C8" Foreground="White" Click="Cancel_Click"/>
+
+                        <Button Content="Save &amp; Email" Width="140" Height="44" Margin="0,0,8,0"
+                                Background="#E6E6E6" Click="SaveEmail_Click"/>
+
+                        <Button Content="Save Only" Width="120" Height="44" Margin="0,0,8,0"
+                                Background="#5CB85C" Foreground="White" Click="SaveOnly_Click"/>
+
+                        <Button Content="Save &amp; Print" Width="140" Height="44"
+                                Background="#E6E6E6" Click="SavePrint_Click"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+        </Grid>
+    </Grid>
+</Window>

@@ -126,7 +126,21 @@
                             <Setter Property="Background" Value="{StaticResource PanelBrush}"/>
                             <Setter Property="BorderBrush" Value="#2E2E2E"/>
                             <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                            
                             <Style.Triggers>
+                                
+                                <!-- OUT OF STOCK (strong warning) -->
+                                <DataTrigger Binding="{Binding IsOutOfStock}" Value="True">
+                                    <Setter Property="Background" Value="#FF3B30"/>
+                                    <Setter Property="Foreground" Value="White"/>
+                                </DataTrigger>
+
+                                <!-- LOW STOCK (reorder warning) -->
+                                <DataTrigger Binding="{Binding IsLowStock}" Value="True">
+                                    <Setter Property="Background" Value="#FFC107"/>
+                                    <Setter Property="Foreground" Value="DarkOrange"/>
+                                </DataTrigger>
+
                                 <Trigger Property="IsSelected" Value="True">
                                     <Setter Property="Background" Value="#FFC107"/>
                                     <Setter Property="Foreground" Value="Black"/>
@@ -134,6 +148,7 @@
                                 <Trigger Property="IsMouseOver" Value="True">
                                     <Setter Property="Background" Value="#252525"/>
                                 </Trigger>
+                                
                             </Style.Triggers>
                         </Style>
 

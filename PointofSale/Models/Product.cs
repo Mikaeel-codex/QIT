@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Security.Cryptography.X509Certificates;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PointofSale.Models
 {
@@ -27,5 +28,11 @@ namespace PointofSale.Models
         public string? UnitOfMeasure { get; set; }
         public string? Manufacturer { get; set; }
         public string? Comments { get; set; }
+
+        [NotMapped]
+        public bool IsLowStock => ReorderPoint > 0 && StockQty <= ReorderPoint;
+
+        [NotMapped]
+        public bool IsOutOfStock => StockQty <= 0;
     }
 }

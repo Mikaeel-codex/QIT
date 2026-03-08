@@ -3,6 +3,7 @@ using PointofSale.Models;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Text.RegularExpressions;
 
 namespace PointofSale.Views
@@ -25,8 +26,55 @@ namespace PointofSale.Views
 
         private void LoadLookups()
         {
-            TaxBox.SelectedIndex = 0; // Tax
+            // Load suppliers from database
+            using var db = new AppDbContext();
+            var supplierNames = db.Suppliers
+                                  .Where(s => s.IsActive)
+                                  .OrderBy(s => s.Name)
+                                  .Select(s => s.Name)
+                                  .ToList();
+
+            VendorBox.ItemsSource = supplierNames;
+
+            // Load departments
+            var departments = db.Departments
+                                .Where(d => d.IsActive)
+                                .OrderBy(d => d.Name)
+                                .Select(d => d.Name)
+                                .ToList();
+            DepartmentBox.ItemsSource = departments;
+
             UomBox.SelectedIndex = 0; // Each
+        }
+
+        private void DepartmentBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key != Key.Enter) return;
+
+            var text = (DepartmentBox.Text ?? string.Empty).Trim();
+            if (string.IsNullOrWhiteSpace(text)) return;
+
+            // Ask for confirmation
+            var res = MessageBox.Show($"Add department '{text}' to database?", "Confirm Add", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (res != MessageBoxResult.Yes) return;
+
+            // Add to DB
+            using var db = new AppDbContext();
+            var exists = db.Departments.Any(d => d.Name.ToLower() == text.ToLower());
+            if (exists)
+            {
+                MessageBox.Show("That department already exists.");
+            }
+            else
+            {
+                var d = new Department { Name = text, IsActive = true };
+                db.Departments.Add(d);
+                db.SaveChanges();
+
+                // Reload lookups and select newly added department
+                LoadLookups();
+                DepartmentBox.Text = d.Name;
+            }
         }
 
         private void LoadForEditIfNeeded()
@@ -60,7 +108,7 @@ namespace PointofSale.Views
             DescriptionBox.Text = p.Description ?? "";
             SizeBox.Text = p.Size ?? "";
             AvgUnitCostBox.Text = p.AvgUnitCost.ToString("0.00");
-            TaxBox.Text = string.IsNullOrWhiteSpace(p.Tax) ? "Tax" : p.Tax;
+            LoadTaxField(p.Tax);
 
             VendorBox.Text = p.Supplier ?? "";
             OrderCostBox.Text = p.OrderCost.ToString("0.00");
@@ -182,8 +230,23 @@ namespace PointofSale.Views
 
         private void AddSupplier_Click(object sender, RoutedEventArgs e)
         {
-            VendorBox.IsDropDownOpen = true;
-            VendorBox.Focus();
+            var win = new SupplierEditWindow();
+            var result = win.ShowDialog();
+            if (result == true)
+            {
+                // Reload suppliers after a new one is added and select the latest
+                LoadLookups();
+                using var db = new AppDbContext();
+                var latest = db.Suppliers.OrderByDescending(s => s.Id).FirstOrDefault();
+                if (latest != null)
+                    VendorBox.Text = latest.Name;
+            }
+            else
+            {
+                // If user cancelled, just ensure dropdown opens for quick selection
+                VendorBox.IsDropDownOpen = true;
+                VendorBox.Focus();
+            }
         }
 
         private void Save_Click(object sender, RoutedEventArgs e)
@@ -245,7 +308,7 @@ namespace PointofSale.Views
             p.Department = DepartmentBox.Text.Trim();
             p.Description = DescriptionBox.Text.Trim();
             p.Size = SizeBox.Text.Trim();
-            p.Tax = (TaxBox.Text ?? "Tax").Trim();
+            p.Tax = GetTaxValue();
             p.ALU = AluBox.Text.Trim();
             p.Supplier = VendorBox.Text.Trim();
             p.UnitOfMeasure = (UomBox.Text ?? "Each").Trim();
@@ -279,11 +342,74 @@ namespace PointofSale.Views
             ManufacturerBox.Text = "";
             CommentsBox.Text = "";
 
-            TaxBox.SelectedIndex = 0;
+            LoadTaxField(null);
             UomBox.SelectedIndex = 0;
 
             ApplySkuAluRule();
             NameBox.Focus();
+        }
+
+        // ═══════════════════════════════════════
+        // TAX HELPERS
+        // ═══════════════════════════════════════
+
+        private void TaxBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (TaxCustomBox == null) return;
+            var tag = (TaxBox.SelectedItem as ComboBoxItem)?.Tag?.ToString();
+            TaxCustomBox.Visibility = tag == "custom" ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        /// <summary>
+        /// Loads the product's Tax string into the dropdown + custom box.
+        /// "No Tax", null, "0"        → No Tax (index 0)
+        /// "15", "VAT", "15% VAT"     → 15% VAT (index 1)
+        /// anything else numeric      → Custom % (index 2) with value filled in
+        /// </summary>
+        private void LoadTaxField(string? taxValue)
+        {
+            if (TaxBox == null) return;
+            var t = (taxValue ?? "").Trim().ToLowerInvariant();
+
+            if (string.IsNullOrWhiteSpace(t) || t == "no tax" || t == "notax"
+                || t == "none" || t == "0" || t == "exempt" || t == "no" || t == "false")
+            {
+                TaxBox.SelectedIndex = 0; // No Tax
+                TaxCustomBox.Visibility = System.Windows.Visibility.Collapsed;
+            }
+            else if (t == "15" || t == "vat" || t == "tax" || t == "15% vat" || t == "yes" || t == "true" || t == "1")
+            {
+                TaxBox.SelectedIndex = 1; // 15% VAT
+                TaxCustomBox.Visibility = System.Windows.Visibility.Collapsed;
+            }
+            else
+            {
+                TaxBox.SelectedIndex = 2; // Custom %
+                TaxCustomBox.Text = t.Replace("%", "").Trim();
+                TaxCustomBox.Visibility = System.Windows.Visibility.Visible;
+            }
+        }
+
+        /// <summary>
+        /// Returns the tax value to save to p.Tax.
+        /// "No Tax" → "No Tax"
+        /// 15% VAT  → "15"
+        /// Custom   → the numeric value entered, or "No Tax" if invalid
+        /// </summary>
+        private string GetTaxValue()
+        {
+            var tag = (TaxBox.SelectedItem as ComboBoxItem)?.Tag?.ToString() ?? "No Tax";
+
+            if (tag == "custom")
+            {
+                var raw = TaxCustomBox.Text.Replace("%", "").Trim();
+                if (decimal.TryParse(raw, System.Globalization.NumberStyles.Any,
+                        System.Globalization.CultureInfo.InvariantCulture, out var rate) && rate > 0)
+                    return rate.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                return "No Tax";
+            }
+
+            return tag; // "No Tax" or "15"
         }
     }
 }

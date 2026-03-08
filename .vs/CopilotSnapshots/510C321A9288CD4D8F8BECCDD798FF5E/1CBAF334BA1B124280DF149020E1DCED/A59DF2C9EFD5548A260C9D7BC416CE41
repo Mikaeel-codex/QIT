@@ -1,0 +1,353 @@
+﻿using PointofSale.Data;
+using PointofSale.Models;
+using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using System.Text.RegularExpressions;
+
+namespace PointofSale.Views
+{
+    public partial class ProductEditWindow : Window
+    {
+        private readonly int? _editId;   // null = add, not null = edit
+        public bool Saved { get; private set; } = false;
+
+        public ProductEditWindow(int? editProductId = null)
+        {
+            InitializeComponent();
+
+            _editId = editProductId;
+
+            LoadLookups();
+            LoadForEditIfNeeded();
+            ApplySkuAluRule();
+        }
+
+        private void LoadLookups()
+        {
+            // Load suppliers from database
+            using var db = new AppDbContext();
+            var supplierNames = db.Suppliers
+                                  .Where(s => s.IsActive)
+                                  .OrderBy(s => s.Name)
+                                  .Select(s => s.Name)
+                                  .ToList();
+
+            VendorBox.ItemsSource = supplierNames;
+
+            // Load departments
+            var departments = db.Departments
+                                .Where(d => d.IsActive)
+                                .OrderBy(d => d.Name)
+                                .Select(d => d.Name)
+                                .ToList();
+            DepartmentBox.ItemsSource = departments;
+
+            TaxBox.SelectedIndex = 0; // Tax
+            UomBox.SelectedIndex = 0; // Each
+        }
+
+        private void DepartmentBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key != Key.Enter) return;
+
+            var text = (DepartmentBox.Text ?? string.Empty).Trim();
+            if (string.IsNullOrWhiteSpace(text)) return;
+
+            // Ask for confirmation
+            var res = MessageBox.Show($"Add department '{text}' to database?", "Confirm Add", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (res != MessageBoxResult.Yes) return;
+
+            // Add to DB
+            using var db = new AppDbContext();
+            var exists = db.Departments.Any(d => d.Name.ToLower() == text.ToLower());
+            if (exists)
+            {
+                MessageBox.Show("That department already exists.");
+            }
+            else
+            {
+                var d = new Department { Name = text, IsActive = true };
+                db.Departments.Add(d);
+                db.SaveChanges();
+
+                // Reload lookups and select newly added department
+                LoadLookups();
+                DepartmentBox.Text = d.Name;
+            }
+        }
+
+        private void LoadForEditIfNeeded()
+        {
+            if (_editId == null)
+            {
+                Title = "Add Inventory Item";
+                ItemNoBox.Text = "(auto)";
+                return;
+            }
+
+            Title = "Edit Inventory Item";
+
+            using var db = new AppDbContext();
+            var p = db.Products.FirstOrDefault(x => x.Id == _editId.Value);
+            if (p == null)
+            {
+                MessageBox.Show("Product not found.");
+                Close();
+                return;
+            }
+
+            // Required + existing fields
+            NameBox.Text = p.Name;
+            PriceBox.Text = p.Price.ToString("0.00");
+            StockBox.Text = p.StockQty.ToString();
+            SkuBox.Text = p.SKU ?? "";
+
+            // Optional extra fields (only works if you added them to Product model)
+            DepartmentBox.Text = p.Department ?? "";
+            DescriptionBox.Text = p.Description ?? "";
+            SizeBox.Text = p.Size ?? "";
+            AvgUnitCostBox.Text = p.AvgUnitCost.ToString("0.00");
+            TaxBox.Text = string.IsNullOrWhiteSpace(p.Tax) ? "Tax" : p.Tax;
+
+            VendorBox.Text = p.Supplier ?? "";
+            OrderCostBox.Text = p.OrderCost.ToString("0.00");
+            ReorderPointBox.Text = p.ReorderPoint.ToString();
+            ItemNoBox.Text = p.Id.ToString();
+            AluBox.Text = p.ALU ?? "";
+            UomBox.Text = string.IsNullOrWhiteSpace(p.UnitOfMeasure) ? "Each" : p.UnitOfMeasure;
+            ManufacturerBox.Text = p.Manufacturer ?? "";
+            CommentsBox.Text = p.Comments ?? "";
+
+            ApplySkuAluRule();
+        }
+
+        // RULE: user can enter SKU OR ALU, not both
+        private void SkuBox_TextChanged(object sender, TextChangedEventArgs e) => ApplySkuAluRule();
+        private void AluBox_TextChanged(object sender, TextChangedEventArgs e) => ApplySkuAluRule();
+
+        private void ApplySkuAluRule()
+        {
+            var skuHas = !string.IsNullOrWhiteSpace(SkuBox.Text);
+            var aluHas = !string.IsNullOrWhiteSpace(AluBox.Text);
+
+            // If SKU has value, disable ALU
+            AluBox.IsEnabled = !skuHas;
+
+            // If ALU has value, disable SKU
+            SkuBox.IsEnabled = !aluHas;
+        }
+
+        // SKU numbers only (scanner safe)
+        private void SkuBox_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
+        {
+            e.Handled = !Regex.IsMatch(e.Text, @"^\d+$");
+        }
+
+        private void SkuBox_Pasting(object sender, DataObjectPastingEventArgs e)
+        {
+            if (e.DataObject.GetDataPresent(typeof(string)))
+            {
+                var text = (string)e.DataObject.GetData(typeof(string))!;
+                if (!Regex.IsMatch(text, @"^\d+$"))
+                    e.CancelCommand();
+            }
+            else
+            {
+                e.CancelCommand();
+            }
+        }
+
+        private bool ValidateInputs(out string error)
+        {
+            error = "";
+
+            var name = NameBox.Text.Trim();
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                error = "Item Name is required.";
+                return false;
+            }
+
+            var dept = DepartmentBox.Text.Trim();
+            if (string.IsNullOrWhiteSpace(dept))
+            {
+                error = "Department is required.";
+                return false;
+            }
+
+            if (!decimal.TryParse(PriceBox.Text.Trim(), out var price) || price < 0)
+            {
+                error = "Enter a valid Reg Price.";
+                return false;
+            }
+
+            if (!int.TryParse(StockBox.Text.Trim(), out var stock) || stock < 0)
+            {
+                error = "Enter a valid On-Hand Qty.";
+                return false;
+            }
+
+            // SKU vs ALU rule
+            var sku = SkuBox.Text.Trim();
+            var alu = AluBox.Text.Trim();
+            if (!string.IsNullOrEmpty(sku) && !string.IsNullOrEmpty(alu))
+            {
+                error = "You can enter either SKU or ALU, not both.";
+                return false;
+            }
+
+            // If SKU is filled -> must be numeric
+            if (!string.IsNullOrWhiteSpace(sku) && !Regex.IsMatch(sku, @"^\d+$"))
+            {
+                error = "SKU must contain numbers only.";
+                return false;
+            }
+
+            if (!string.IsNullOrWhiteSpace(AvgUnitCostBox.Text) &&
+                (!decimal.TryParse(AvgUnitCostBox.Text.Trim(), out var _avg) || _avg < 0))
+            {
+                error = "Enter a valid Avg. Unit Cost (or leave it blank).";
+                return false;
+            }
+
+            if (!string.IsNullOrWhiteSpace(OrderCostBox.Text) &&
+                (!decimal.TryParse(OrderCostBox.Text.Trim(), out var _oc) || _oc < 0))
+            {
+                error = "Enter a valid Order Cost (or leave it blank).";
+                return false;
+            }
+
+            if (!string.IsNullOrWhiteSpace(ReorderPointBox.Text) &&
+                (!int.TryParse(ReorderPointBox.Text.Trim(), out var _rp) || _rp < 0))
+            {
+                error = "Enter a valid Reorder Point (or leave it blank).";
+                return false;
+            }
+
+            return true;
+        }
+
+        private void AddSupplier_Click(object sender, RoutedEventArgs e)
+        {
+            var win = new SupplierEditWindow();
+            var result = win.ShowDialog();
+            if (result == true)
+            {
+                // Reload suppliers after a new one is added and select the latest
+                LoadLookups();
+                using var db = new AppDbContext();
+                var latest = db.Suppliers.OrderByDescending(s => s.Id).FirstOrDefault();
+                if (latest != null)
+                    VendorBox.Text = latest.Name;
+            }
+            else
+            {
+                // If user cancelled, just ensure dropdown opens for quick selection
+                VendorBox.IsDropDownOpen = true;
+                VendorBox.Focus();
+            }
+        }
+
+        private void Save_Click(object sender, RoutedEventArgs e)
+        {
+            if (!ValidateInputs(out var error))
+            {
+                MessageBox.Show(error);
+                return;
+            }
+
+            SaveInternal();
+            if (Saved) Close();
+        }
+
+        private void SaveAndNew_Click(object sender, RoutedEventArgs e)
+        {
+            if (!ValidateInputs(out var error))
+            {
+                MessageBox.Show(error);
+                return;
+            }
+
+            SaveInternal();
+
+            if (Saved)
+                ClearFormForNew();
+        }
+
+        private void Cancel_Click(object sender, RoutedEventArgs e)
+        {
+            Saved = false;
+            Close();
+        }
+
+        private void SaveInternal()
+        {
+            using var db = new AppDbContext();
+
+            Product p;
+            if (_editId == null)
+            {
+                p = new Product();
+                db.Products.Add(p);
+            }
+            else
+            {
+                p = db.Products.First(x => x.Id == _editId.Value);
+            }
+
+            // Required + existing fields
+            p.Name = NameBox.Text.Trim();
+            p.Price = decimal.Parse(PriceBox.Text.Trim());
+            p.StockQty = int.Parse(StockBox.Text.Trim());
+
+            // SKU replaces UPC
+            p.SKU = SkuBox.Text.Trim();
+
+            // Optional extra fields
+            p.Department = DepartmentBox.Text.Trim();
+            p.Description = DescriptionBox.Text.Trim();
+            p.Size = SizeBox.Text.Trim();
+            p.Tax = (TaxBox.Text ?? "Tax").Trim();
+            p.ALU = AluBox.Text.Trim();
+            p.Supplier = VendorBox.Text.Trim();
+            p.UnitOfMeasure = (UomBox.Text ?? "Each").Trim();
+            p.Manufacturer = ManufacturerBox.Text.Trim();
+            p.Comments = CommentsBox.Text.Trim();
+
+            p.AvgUnitCost = string.IsNullOrWhiteSpace(AvgUnitCostBox.Text) ? 0 : decimal.Parse(AvgUnitCostBox.Text.Trim());
+            p.OrderCost = string.IsNullOrWhiteSpace(OrderCostBox.Text) ? 0 : decimal.Parse(OrderCostBox.Text.Trim());
+            p.ReorderPoint = string.IsNullOrWhiteSpace(ReorderPointBox.Text) ? 0 : int.Parse(ReorderPointBox.Text.Trim());
+
+            db.SaveChanges();
+            Saved = true;
+        }
+
+        private void ClearFormForNew()
+        {
+            NameBox.Text = "";
+            DepartmentBox.Text = "";
+            DescriptionBox.Text = "";
+            SizeBox.Text = "";
+            PriceBox.Text = "";
+            AvgUnitCostBox.Text = "";
+            StockBox.Text = "";
+            SkuBox.Text = "";
+
+            VendorBox.Text = "";
+            OrderCostBox.Text = "";
+            ReorderPointBox.Text = "";
+            ItemNoBox.Text = "(auto)";
+            AluBox.Text = "";
+            ManufacturerBox.Text = "";
+            CommentsBox.Text = "";
+
+            TaxBox.SelectedIndex = 0;
+            UomBox.SelectedIndex = 0;
+
+            ApplySkuAluRule();
+            NameBox.Focus();
+        }
+    }
+}

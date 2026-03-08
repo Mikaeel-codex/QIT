@@ -293,7 +293,8 @@
                             <TextBlock Grid.Row="0" Grid.Column="0" Text="Department" VerticalAlignment="Center" Foreground="White" FontSize="12"/>
                             <ComboBox x:Name="DepartmentBox"
                                       Grid.Row="0" Grid.Column="1"
-                                      IsEditable="True"/>
+                                      IsEditable="True"
+                                      KeyDown="DepartmentBox_KeyDown"/>
                             <TextBlock Grid.Row="0" Grid.Column="2" Text="*" Foreground="Red" FontSize="13" VerticalAlignment="Center"/>
 
                             <!-- Item Description -->
@@ -329,12 +330,26 @@
 
                             <!-- Tax -->
                             <TextBlock Grid.Row="6" Grid.Column="0" Text="Tax" VerticalAlignment="Center" Margin="0,6,0,0" Foreground="White" FontSize="12"/>
-                            <ComboBox x:Name="TaxBox"
-                                      Grid.Row="6" Grid.Column="1"
-                                      Margin="0,6,0,0">
-                                <ComboBoxItem Content="Tax"/>
-                                <ComboBoxItem Content="No Tax"/>
-                            </ComboBox>
+                            <Grid Grid.Row="6" Grid.Column="1" Margin="0,6,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="8"/>
+                                    <ColumnDefinition Width="85"/>
+                                </Grid.ColumnDefinitions>
+                                <ComboBox x:Name="TaxBox"
+                                          Grid.Column="0"
+                                          SelectionChanged="TaxBox_SelectionChanged">
+                                    <ComboBoxItem Content="No Tax"  Tag="No Tax"/>
+                                    <ComboBoxItem Content="15% VAT" Tag="15"/>
+                                    <ComboBoxItem Content="Custom %" Tag="custom"/>
+                                </ComboBox>
+                                <TextBox x:Name="TaxCustomBox"
+                                         Grid.Column="2"
+                                         VerticalContentAlignment="Center"
+                                         Padding="4,0"
+                                         ToolTip="Enter custom tax rate e.g. 10"
+                                         Visibility="Collapsed"/>
+                            </Grid>
 
                             <!-- SKU (replacing UPC) -->
                             <TextBlock Grid.Row="7" Grid.Column="0" Text="SKU" VerticalAlignment="Center" Margin="0,6,0,0" Foreground="White" FontSize="12"/>

@@ -25,6 +25,8 @@ namespace PointofSale.Data
         public DbSet<PointofSale.Models.SaleItem> SaleItems { get; set; }
         public DbSet<Supplier> Suppliers { get; set; }
         public DbSet<Department> Departments { get; set; }
+        public DbSet<HeldReceipt> HeldReceipts { get; set; }
+        public DbSet<HeldReceiptItem> HeldReceiptItems { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -34,6 +36,19 @@ namespace PointofSale.Data
             modelBuilder.Entity<SaleItem>().Property(si => si.LineTotal).HasConversion<double>();
             modelBuilder.Entity<Supplier>().HasIndex(s => s.Name).IsUnique();
             modelBuilder.Entity<Department>().HasIndex(d => d.Name).IsUnique();
+
+            // HeldReceipt conversions
+            modelBuilder.Entity<HeldReceipt>().Property(h => h.Subtotal).HasConversion<double>();
+            modelBuilder.Entity<HeldReceipt>().Property(h => h.Tax).HasConversion<double>();
+            modelBuilder.Entity<HeldReceipt>().Property(h => h.Total).HasConversion<double>();
+            modelBuilder.Entity<HeldReceiptItem>().Property(i => i.UnitPrice).HasConversion<double>();
+            modelBuilder.Entity<HeldReceiptItem>().Property(i => i.LineTotal).HasConversion<double>();
+            modelBuilder.Entity<HeldReceiptItem>().Property(i => i.TaxRate).HasConversion<double>();
+
+            modelBuilder.Entity<HeldReceiptItem>()
+                .HasOne(i => i.HeldReceipt)
+                .WithMany(h => h.Items)
+                .HasForeignKey(i => i.HeldReceiptId);
         }
     }
 }

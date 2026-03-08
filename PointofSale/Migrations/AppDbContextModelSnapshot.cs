@@ -85,6 +85,102 @@ namespace PointofSale.Migrations
                     b.ToTable("Departments");
                 });
 
+            modelBuilder.Entity("PointofSale.Models.HeldReceipt", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Cashier")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CustomerName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("HeldAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("ItemCount")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("ItemsSummary")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PaymentMethod")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<double>("Subtotal")
+                        .HasColumnType("REAL");
+
+                    b.Property<double>("Tax")
+                        .HasColumnType("REAL");
+
+                    b.Property<double>("Total")
+                        .HasColumnType("REAL");
+
+                    b.Property<int>("TotalQty")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("HeldReceipts");
+                });
+
+            modelBuilder.Entity("PointofSale.Models.HeldReceiptItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Attribute")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("HeldReceiptId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<double>("LineTotal")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Qty")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("SKU")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Size")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("TaxCode")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<double>("TaxRate")
+                        .HasColumnType("REAL");
+
+                    b.Property<double>("UnitPrice")
+                        .HasColumnType("REAL");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("HeldReceiptId");
+
+                    b.ToTable("HeldReceiptItems");
+                });
+
             modelBuilder.Entity("PointofSale.Models.Product", b =>
                 {
                     b.Property<int>("Id")
@@ -240,6 +336,17 @@ namespace PointofSale.Migrations
                     b.ToTable("Suppliers");
                 });
 
+            modelBuilder.Entity("PointofSale.Models.HeldReceiptItem", b =>
+                {
+                    b.HasOne("PointofSale.Models.HeldReceipt", "HeldReceipt")
+                        .WithMany("Items")
+                        .HasForeignKey("HeldReceiptId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("HeldReceipt");
+                });
+
             modelBuilder.Entity("PointofSale.Models.SaleItem", b =>
                 {
                     b.HasOne("PointofSale.Models.Sale", "Sale")
@@ -249,6 +356,11 @@ namespace PointofSale.Migrations
                         .IsRequired();
 
                     b.Navigation("Sale");
+                });
+
+            modelBuilder.Entity("PointofSale.Models.HeldReceipt", b =>
+                {
+                    b.Navigation("Items");
                 });
 
             modelBuilder.Entity("PointofSale.Models.Sale", b =>

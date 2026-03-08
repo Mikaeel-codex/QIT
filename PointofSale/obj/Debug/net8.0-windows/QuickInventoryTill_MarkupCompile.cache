@@ -10,11 +10,11 @@ none
 false
 TRACE;DEBUG;NET;NET8_0;NETCOREAPP;WINDOWS;WINDOWS7_0;NET5_0_OR_GREATER;NET6_0_OR_GREATER;NET7_0_OR_GREATER;NET8_0_OR_GREATER;NETCOREAPP3_0_OR_GREATER;NETCOREAPP3_1_OR_GREATER;WINDOWS7_0_OR_GREATER
 D:\POS\PointofSale\PointofSale\App.xaml
-12-1630039063
+14-2074469230
 
-41-1008213897
+49494408934
 216-692450557
-MainWindow.xaml;Views\DepartmentEditWindow.xaml;Views\DepartmentsWindow.xaml;Views\InputDialog.xaml;Views\LoginWindow.xaml;Views\PointOfSaleWindow.xaml;Views\PostSaleActionWindow.xaml;Views\ProductEditWindow.xaml;Views\ProductsWindow.xaml;Views\ReceiptWindow.xaml;Views\SupplierEditWindow.xaml;Views\SuppliersWindow.xaml;
+MainWindow.xaml;Views\CashPaymentWindow.xaml;Views\DepartmentEditWindow.xaml;Views\DepartmentsWindow.xaml;Views\HeldReceiptDetailPage.xaml;Views\Heldreceiptswindow.xaml;Views\InputDialog.xaml;Views\LoginWindow.xaml;Views\PointOfSaleWindow.xaml;Views\ProductEditWindow.xaml;Views\ProductsWindow.xaml;Views\QtyPriceDiscountWindow.xaml;Views\SupplierEditWindow.xaml;Views\SuppliersWindow.xaml;
 
 False
 
