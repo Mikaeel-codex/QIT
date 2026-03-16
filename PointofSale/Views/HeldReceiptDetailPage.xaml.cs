@@ -44,6 +44,12 @@ namespace PointofSale.Views
             PaymentBtn.Content = string.IsNullOrWhiteSpace(receipt.PaymentMethod)
                                      ? "None" : receipt.PaymentMethod;
 
+            // Pending EFT badge + watermark
+            bool isPendingEft = receipt.Status == "PendingEFT";
+            PendingEftBadge.Visibility = isPendingEft ? Visibility.Visible : Visibility.Collapsed;
+            WatermarkText.Text = isPendingEft ? "Pending EFT" : "Held";
+            WatermarkText.FontSize = isPendingEft ? 60 : 96;
+
             // Items grid
             ItemsGrid.ItemsSource = items;
 
@@ -115,11 +121,6 @@ namespace PointofSale.Views
                 TextAlignment = align,
                 Margin = new Thickness(0, 1, 0, 1)
             };
-        }
-
-        private void PaymentBtn_Click(object sender, RoutedEventArgs e)
-        {
-
         }
     }
 }

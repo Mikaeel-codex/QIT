@@ -19,6 +19,29 @@ namespace PointofSale.Models
         public decimal CostPrice { get; set; } = 0m;
         public int StockQty { get; set; } = 0;    // Stock on hand snapshot
 
+        // ── discount tracking ────────────────────────────────────────────
+        private decimal _originalPrice = 0m;
+        private decimal _discountPct = 0m;
+
+        /// <summary>The price before any discount was applied. 0 means no discount set.</summary>
+        public decimal OriginalPrice
+        {
+            get => _originalPrice;
+            set { _originalPrice = value; OnPropertyChanged(nameof(OriginalPrice)); OnPropertyChanged(nameof(HasDiscount)); OnPropertyChanged(nameof(DiscountVisibility)); }
+        }
+
+        /// <summary>Discount percentage e.g. 15 means 15% off.</summary>
+        public decimal DiscountPct
+        {
+            get => _discountPct;
+            set { _discountPct = value; OnPropertyChanged(nameof(DiscountPct)); OnPropertyChanged(nameof(HasDiscount)); OnPropertyChanged(nameof(DiscountVisibility)); }
+        }
+
+        public bool HasDiscount => DiscountPct > 0 || (OriginalPrice > 0 && OriginalPrice != UnitPrice);
+
+        public System.Windows.Visibility DiscountVisibility =>
+            HasDiscount ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
+
         // ── editable fields ──────────────────────────────────────────────
         public string Name
         {

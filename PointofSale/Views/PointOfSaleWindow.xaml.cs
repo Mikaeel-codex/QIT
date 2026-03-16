@@ -244,119 +244,357 @@ namespace PointofSale.Views
         }
 
         // ═══════════════════════════════════════
-        // PAYMENTS — record method only, stay on page
-        // No popups, no navigation, no saving.
-        // Totals update live on screen.
+        // PAYMENTS
+        // Each method adds a split. Multiple splits = split payment.
+        // Amount defaults to remaining balance so partial splits work naturally.
         // ═══════════════════════════════════════
+
+        // ── Shared helper: ask "how much for this method?" ───────────────
+        // Shows total, already paid, still owing. Pre-fills with owing.
+        // Returns entered amount or null if cancelled.
+        private decimal? AskPaymentAmount(string method, PosViewModel vm)
+        {
+            var owing = vm.AmountDue > 0 ? vm.AmountDue : vm.Total;
+
+            var win = new Window
+            {
+                Title = $"{method} Payment",
+                Width = 380,
+                Height = 310,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                Owner = this,
+                ResizeMode = ResizeMode.NoResize,
+                Background = new System.Windows.Media.SolidColorBrush(
+                    System.Windows.Media.Color.FromRgb(0x11, 0x11, 0x11))
+            };
+
+            var outer = new System.Windows.Controls.StackPanel
+            { Margin = new Thickness(24, 20, 24, 16) };
+
+            // ── Summary rows ──────────────────────────────────────────────
+            void AddRow(string label, string value, bool bold = false, string hexColor = "#FFFFFF")
+            {
+                var row = new System.Windows.Controls.Grid();
+                row.ColumnDefinitions.Add(new System.Windows.Controls.ColumnDefinition());
+                row.ColumnDefinitions.Add(new System.Windows.Controls.ColumnDefinition
+                { Width = new GridLength(110) });
+                var lbl = new System.Windows.Controls.TextBlock
+                {
+                    Text = label,
+                    Foreground = new System.Windows.Media.SolidColorBrush(
+                        (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#BBBBBB")),
+                    FontSize = 13
+                };
+                var val = new System.Windows.Controls.TextBlock
+                {
+                    Text = value,
+                    HorizontalAlignment = HorizontalAlignment.Right,
+                    Foreground = new System.Windows.Media.SolidColorBrush(
+                        (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString(hexColor)),
+                    FontSize = 13,
+                    FontWeight = bold ? FontWeights.Bold : FontWeights.Normal
+                };
+                System.Windows.Controls.Grid.SetColumn(val, 1);
+                row.Children.Add(lbl);
+                row.Children.Add(val);
+                row.Margin = new Thickness(0, 2, 0, 2);
+                outer.Children.Add(row);
+            }
+
+            AddRow("Sale Total", $"{vm.Total:N2}");
+            if (vm.TotalTendered > 0)
+                AddRow("Already Paid", $"{vm.TotalTendered:N2}", hexColor: "#88CC66");
+            AddRow("Still Owing", $"{owing:N2}", bold: true, hexColor: "#FF8C00");
+
+            // ── Separator ─────────────────────────────────────────────────
+            outer.Children.Add(new System.Windows.Controls.Separator
+            {
+                Background = new System.Windows.Media.SolidColorBrush(
+                    System.Windows.Media.Color.FromRgb(0x33, 0x33, 0x33)),
+                Margin = new Thickness(0, 12, 0, 12)
+            });
+
+            // ── Amount entry ──────────────────────────────────────────────
+            outer.Children.Add(new System.Windows.Controls.TextBlock
+            {
+                Text = $"Enter {method} amount:",
+                Foreground = System.Windows.Media.Brushes.LightGray,
+                FontSize = 13,
+                Margin = new Thickness(0, 0, 0, 6)
+            });
+
+            var amtBox = new System.Windows.Controls.TextBox
+            {
+                Text = owing.ToString("N2"),
+                FontSize = 18,
+                FontWeight = FontWeights.Bold,
+                Background = new System.Windows.Media.SolidColorBrush(
+                    System.Windows.Media.Color.FromRgb(0x1A, 0x1A, 0x1A)),
+                Foreground = System.Windows.Media.Brushes.White,
+                BorderBrush = new System.Windows.Media.SolidColorBrush(
+                    System.Windows.Media.Color.FromRgb(0x2F, 0x66, 0xC8)),
+                BorderThickness = new Thickness(1),
+                Padding = new Thickness(8, 6, 8, 6),
+                HorizontalContentAlignment = HorizontalAlignment.Right,
+                Margin = new Thickness(0, 0, 0, 16)
+            };
+            amtBox.SelectAll();
+            outer.Children.Add(amtBox);
+
+            // ── Buttons ───────────────────────────────────────────────────
+            var btnRow = new System.Windows.Controls.StackPanel
+            {
+                Orientation = System.Windows.Controls.Orientation.Horizontal,
+                HorizontalAlignment = HorizontalAlignment.Right
+            };
+            var btnOk = new System.Windows.Controls.Button
+            {
+                Content = "Confirm",
+                Width = 100,
+                Height = 32,
+                Margin = new Thickness(0, 0, 10, 0),
+                Background = new System.Windows.Media.SolidColorBrush(
+                    System.Windows.Media.Color.FromRgb(0x2F, 0x66, 0xC8)),
+                Foreground = System.Windows.Media.Brushes.White,
+                BorderThickness = new Thickness(0)
+            };
+            var btnCancel = new System.Windows.Controls.Button
+            {
+                Content = "Cancel",
+                Width = 80,
+                Height = 32,
+                Background = new System.Windows.Media.SolidColorBrush(
+                    System.Windows.Media.Color.FromRgb(0x33, 0x33, 0x33)),
+                Foreground = System.Windows.Media.Brushes.White,
+                BorderThickness = new Thickness(0)
+            };
+
+            decimal? result = null;
+            btnOk.Click += (s, ev) =>
+            {
+                if (decimal.TryParse(amtBox.Text.Replace(",", ""), out var amt) && amt > 0)
+                {
+                    result = amt;
+                    win.DialogResult = true;
+                }
+                else
+                    System.Windows.MessageBox.Show("Please enter a valid amount.", "Invalid Amount",
+                        MessageBoxButton.OK, MessageBoxImage.Warning);
+            };
+            btnCancel.Click += (s, ev) => win.Close();
+
+            // Confirm on Enter key
+            amtBox.KeyDown += (s, ev) => { if (ev.Key == Key.Enter) btnOk.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent)); };
+
+            btnRow.Children.Add(btnOk);
+            btnRow.Children.Add(btnCancel);
+            outer.Children.Add(btnRow);
+            win.Content = outer;
+            win.Loaded += (s, ev) => amtBox.Focus();
+            win.ShowDialog();
+            return result;
+        }
+
+        // ── Payment handlers ─────────────────────────────────────────────
 
         private void Cash_Click(object sender, RoutedEventArgs e)
         {
             if (DataContext is not PosViewModel vm) return;
             if (vm.Cart.Count == 0) { MessageBox.Show("Add items first."); return; }
 
-            var cashWin = new CashPaymentWindow(vm.Total) { Owner = this };
+            // Cash uses CashPaymentWindow (has quick R5/R10/R20 buttons)
+            var owing = vm.AmountDue > 0 ? vm.AmountDue : vm.Total;
+            var cashWin = new CashPaymentWindow(owing, saleTotal: vm.Total, alreadyPaid: vm.TotalTendered) { Owner = this };
             if (cashWin.ShowDialog() != true) return;
 
             var tendered = cashWin.AmountTendered;
-            if (tendered < vm.Total) { MessageBox.Show("Amount tendered is less than total."); return; }
+            if (tendered <= 0) { MessageBox.Show("Amount tendered must be greater than zero."); return; }
 
-            vm.PaymentMethod = "Cash";
-            vm.CashTendered = tendered;
+            vm.AddSplit("Cash", tendered, label: "Cash");
             vm.RefreshTotals();
-
-            var change = tendered - vm.Total;
-            SetPaymentCard("Cash", $"Taken: {tendered:C2}", $"Change: {change:C2}", BtnCash);
+            UpdatePaymentCard(vm, BtnCash);
         }
 
         private void Credit_Click(object sender, RoutedEventArgs e)
         {
             if (DataContext is not PosViewModel vm) return;
             if (vm.Cart.Count == 0) { MessageBox.Show("Add items first."); return; }
-            vm.PaymentMethod = "Credit";
-            vm.CashTendered = vm.Total;
+
+            var amount = AskPaymentAmount("Credit", vm);
+            if (amount == null) return;
+
+            vm.AddSplit("Credit", amount.Value, label: "Credit");
             vm.RefreshTotals();
-            SetPaymentCard("✔  Credit", $"Sale {vm.Total:C2}", null, BtnCredit);
+            UpdatePaymentCard(vm, BtnCredit);
         }
 
-        private void Check_Click(object sender, RoutedEventArgs e)
+        private void Eft_Click(object sender, RoutedEventArgs e)
         {
             if (DataContext is not PosViewModel vm) return;
             if (vm.Cart.Count == 0) { MessageBox.Show("Add items first."); return; }
-            vm.PaymentMethod = "Check";
-            vm.CashTendered = vm.Total;
-            vm.RefreshTotals();
-            SetPaymentCard("✔  Check", $"Sale {vm.Total:C2}", null, BtnCheck);
+
+            // Step 1 — ask amount
+            var amount = AskPaymentAmount("EFT", vm);
+            if (amount == null) return;
+
+            // Step 2 — instant or pending?
+            var win = new Window
+            {
+                Title = "EFT — Confirm Receipt",
+                Width = 380,
+                Height = 250,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                Owner = this,
+                ResizeMode = ResizeMode.NoResize,
+                Background = new System.Windows.Media.SolidColorBrush(
+                    System.Windows.Media.Color.FromRgb(0x11, 0x11, 0x11))
+            };
+            var outer = new System.Windows.Controls.StackPanel { Margin = new Thickness(24, 20, 24, 16) };
+            outer.Children.Add(new System.Windows.Controls.TextBlock
+            {
+                Text = $"EFT Amount:  {amount.Value:N2}",
+                Foreground = System.Windows.Media.Brushes.White,
+                FontSize = 18,
+                FontWeight = FontWeights.Bold,
+                Margin = new Thickness(0, 0, 0, 18)
+            });
+            outer.Children.Add(new System.Windows.Controls.TextBlock
+            {
+                Text = "Has this EFT been received instantly?",
+                Foreground = System.Windows.Media.Brushes.LightGray,
+                FontSize = 13,
+                Margin = new Thickness(0, 0, 0, 10)
+            });
+            var rbInstant = new System.Windows.Controls.RadioButton { Content = "Yes — Instant (confirmed)", Foreground = System.Windows.Media.Brushes.White, FontSize = 13, IsChecked = true, Margin = new Thickness(0, 0, 0, 6), GroupName = "EftType2" };
+            var rbPending = new System.Windows.Controls.RadioButton { Content = "No — Pending (awaiting confirmation)", Foreground = System.Windows.Media.Brushes.LightGray, FontSize = 13, GroupName = "EftType2" };
+            outer.Children.Add(rbInstant);
+            outer.Children.Add(rbPending);
+            var btnRow = new System.Windows.Controls.StackPanel { Orientation = System.Windows.Controls.Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Right, Margin = new Thickness(0, 16, 0, 0) };
+            var btnOk = new System.Windows.Controls.Button { Content = "Confirm", Width = 100, Height = 32, Margin = new Thickness(0, 0, 10, 0), Background = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0x2F, 0x66, 0xC8)), Foreground = System.Windows.Media.Brushes.White, BorderThickness = new Thickness(0) };
+            var btnCancel = new System.Windows.Controls.Button { Content = "Cancel", Width = 80, Height = 32, Background = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0x33, 0x33, 0x33)), Foreground = System.Windows.Media.Brushes.White, BorderThickness = new Thickness(0) };
+            bool confirmed = false;
+            btnOk.Click += (s, ev) => { confirmed = true; win.Close(); };
+            btnCancel.Click += (s, ev) => win.Close();
+            btnRow.Children.Add(btnOk); btnRow.Children.Add(btnCancel);
+            outer.Children.Add(btnRow);
+            win.Content = outer;
+            win.ShowDialog();
+
+            if (!confirmed) return;
+
+            if (rbInstant.IsChecked == true)
+            {
+                vm.AddSplit("EFT", amount.Value, label: "EFT");
+                vm.RefreshTotals();
+                UpdatePaymentCard(vm, BtnEft);
+            }
+            else
+            {
+                bool held = vm.PutOnHoldWithNote(_currentUser.Username, "Pending EFT", "PendingEFT");
+                if (held)
+                {
+                    ResetPaymentCard();
+                    RefreshHoldButton();
+                    MessageBox.Show($"Sale moved to Held Receipts.\n\nStatus: Pending EFT\nAmount: {amount.Value:N2}\n\nComplete it once EFT is confirmed.",
+                        "Pending EFT", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+            }
         }
 
         private void Gift_Click(object sender, RoutedEventArgs e)
         {
             if (DataContext is not PosViewModel vm) return;
-            if (vm.Cart.Count == 0) { MessageBox.Show("Add items first."); return; }
-            vm.PaymentMethod = "Gift";
-            vm.CashTendered = vm.Total;
-            vm.RefreshTotals();
-            SetPaymentCard("✔  Gift Card", $"Sale {vm.Total:C2}", null, BtnGift);
+
+            var owing = vm.AmountDue > 0 ? vm.AmountDue : vm.Total;
+            var giftWin = new GiftCardWindow(owing, _currentUser.Username) { Owner = this };
+            if (giftWin.ShowDialog() != true) return;
+
+            if (giftWin.IsRedeem && vm.Cart.Count > 0)
+            {
+                vm.AddSplit("Gift Card", giftWin.AmountRedeemed, giftCardId: giftWin.CardId,
+                            label: $"Gift Card #{giftWin.CardNumber}");
+                vm.RefreshTotals();
+                UpdatePaymentCard(vm, BtnGift);
+            }
         }
 
         private void Account_Click(object sender, RoutedEventArgs e)
         {
             if (DataContext is not PosViewModel vm) return;
             if (vm.Cart.Count == 0) { MessageBox.Show("Add items first."); return; }
-            vm.PaymentMethod = "Account";
-            vm.CashTendered = vm.Total;
+
+            var amount = AskPaymentAmount("Account", vm);
+            if (amount == null) return;
+
+            vm.AddSplit("Account", amount.Value, label: "Account");
             vm.RefreshTotals();
-            SetPaymentCard("✔  Account", $"Sale {vm.Total:C2}", null, BtnAccount);
+            UpdatePaymentCard(vm, BtnAccount);
+        }
+
+        // ── Payment card helpers ─────────────────────────────────────────
+
+        // Builds the payment card from all current splits
+        private void UpdatePaymentCard(PosViewModel vm, Button activeBtn)
+        {
+            // Highlight active button
+            if (_activePayBtn != null) _activePayBtn.Background = _defaultPayBrush;
+            _activePayBtn = activeBtn;
+            activeBtn.Background = new System.Windows.Media.SolidColorBrush(
+                System.Windows.Media.Color.FromRgb(0x2E, 0x7D, 0x32));
+
+            PaymentCardBorder.Visibility = Visibility.Visible;
+            PaymentCardBorder.BorderBrush = new System.Windows.Media.SolidColorBrush(
+                System.Windows.Media.Color.FromRgb(0x2E, 0x7D, 0x32));
+            PaymentCardBorder.Background = new System.Windows.Media.SolidColorBrush(
+                System.Windows.Media.Color.FromRgb(0x1B, 0x5E, 0x20));
+
+            if (vm.Splits.Count == 1)
+            {
+                var s = vm.Splits[0];
+                PaymentStatusTxt.Text = $"✔  {s.Method}";
+                PaymentStatusTxt.Foreground = System.Windows.Media.Brushes.White;
+                PaymentStatusTxt.FontStyle = FontStyles.Normal;
+                PaymentAmountTxt.Text = $"{s.Amount:C2}";
+                PaymentAmountTxt.Visibility = Visibility.Visible;
+                PaymentChangeTxt.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                // Split payment — show each line
+                var lines = string.Join("   ", vm.Splits.Select(s => $"{s.Method}: {s.Amount:C2}"));
+                PaymentStatusTxt.Text = $"✔  Split Payment";
+                PaymentStatusTxt.Foreground = System.Windows.Media.Brushes.White;
+                PaymentStatusTxt.FontStyle = FontStyles.Normal;
+                PaymentAmountTxt.Text = lines;
+                PaymentAmountTxt.Visibility = Visibility.Visible;
+                PaymentChangeTxt.Visibility = Visibility.Collapsed;
+            }
+
+            if (vm.AmountDue > 0)
+            {
+                PaymentChangeTxt.Text = $"Still owing: {vm.AmountDue:C2}";
+                PaymentChangeTxt.Foreground = System.Windows.Media.Brushes.OrangeRed;
+                PaymentChangeTxt.Visibility = Visibility.Visible;
+            }
+            else if (vm.CashChange > 0)
+            {
+                PaymentChangeTxt.Text = $"Change: {vm.CashChange:C2}";
+                PaymentChangeTxt.Foreground = System.Windows.Media.Brushes.LightGreen;
+                PaymentChangeTxt.Visibility = Visibility.Visible;
+            }
         }
 
         private void RemovePayment_Click(object sender, RoutedEventArgs e)
         {
             if (DataContext is not PosViewModel vm) return;
-            if (string.IsNullOrEmpty(vm.PaymentMethod)) { MessageBox.Show("No payment method to remove."); return; }
+            if (!vm.HasSplits) { MessageBox.Show("No payment to remove."); return; }
             vm.RemovePaymentMethod();
             ResetPaymentCard();
         }
 
-        // ── Payment card helpers ─────────────────────────────────────────
-
         private Button? _activePayBtn = null;
-        private readonly System.Windows.Media.SolidColorBrush _greenBrush =
-            new(System.Windows.Media.Color.FromRgb(46, 125, 50));
         private readonly System.Windows.Media.SolidColorBrush _defaultPayBrush =
             new(System.Windows.Media.Color.FromRgb(47, 102, 200));
-
-        private void SetPaymentCard(string label, string amount, string? change, Button activeBtn)
-        {
-            // Reset previous active button colour
-            if (_activePayBtn != null)
-                _activePayBtn.Background = _defaultPayBrush;
-
-            // Highlight selected button green
-            activeBtn.Background = _greenBrush;
-            _activePayBtn = activeBtn;
-
-            // Update the status card
-            PaymentStatusTxt.Text = label;
-            PaymentStatusTxt.Foreground = System.Windows.Media.Brushes.White;
-            PaymentStatusTxt.FontStyle = System.Windows.FontStyles.Normal;
-
-            PaymentAmountTxt.Text = amount;
-            PaymentAmountTxt.Visibility = System.Windows.Visibility.Visible;
-
-            if (change != null)
-            {
-                PaymentChangeTxt.Text = change;
-                PaymentChangeTxt.Visibility = System.Windows.Visibility.Visible;
-            }
-            else
-            {
-                PaymentChangeTxt.Visibility = System.Windows.Visibility.Collapsed;
-            }
-
-            PaymentCardBorder.BorderBrush = _greenBrush;
-            PaymentCardBorder.Background =
-                new System.Windows.Media.SolidColorBrush(
-                    System.Windows.Media.Color.FromRgb(20, 40, 20));
-        }
 
         private void ResetPaymentCard()
         {
@@ -366,18 +604,15 @@ namespace PointofSale.Views
                 _activePayBtn = null;
             }
             PaymentStatusTxt.Text = "No payment selected";
-            PaymentStatusTxt.Foreground =
-                new System.Windows.Media.SolidColorBrush(
-                    System.Windows.Media.Color.FromRgb(136, 136, 136));
+            PaymentStatusTxt.Foreground = new System.Windows.Media.SolidColorBrush(
+                System.Windows.Media.Color.FromRgb(136, 136, 136));
             PaymentStatusTxt.FontStyle = System.Windows.FontStyles.Italic;
             PaymentAmountTxt.Visibility = System.Windows.Visibility.Collapsed;
             PaymentChangeTxt.Visibility = System.Windows.Visibility.Collapsed;
-            PaymentCardBorder.BorderBrush =
-                new System.Windows.Media.SolidColorBrush(
-                    System.Windows.Media.Color.FromRgb(58, 58, 58));
-            PaymentCardBorder.Background =
-                new System.Windows.Media.SolidColorBrush(
-                    System.Windows.Media.Color.FromRgb(26, 26, 26));
+            PaymentCardBorder.BorderBrush = new System.Windows.Media.SolidColorBrush(
+                System.Windows.Media.Color.FromRgb(58, 58, 58));
+            PaymentCardBorder.Background = new System.Windows.Media.SolidColorBrush(
+                System.Windows.Media.Color.FromRgb(26, 26, 26));
         }
 
         // ═══════════════════════════════════════
@@ -404,6 +639,7 @@ namespace PointofSale.Views
             {
                 // Cart has items → put on hold
                 vm.PutOnHold(_currentUser.Username);
+                ResetPaymentCard();
                 RefreshHoldButton();
             }
             else
@@ -457,15 +693,14 @@ namespace PointofSale.Views
 
         private bool CanFinalize(PosViewModel vm)
         {
-            if (vm.Cart.Count == 0)
+            if (vm.Cart.Count == 0) { MessageBox.Show("Add items first."); return false; }
+            if (!vm.HasSplits) { MessageBox.Show("Please select a payment method first."); return false; }
+            if (vm.AmountDue > 0)
             {
-                MessageBox.Show("Add items first.");
-                return false;
-            }
-            if (string.IsNullOrEmpty(vm.PaymentMethod))
-            {
-                MessageBox.Show("Please select a payment method first (Cash, Credit, Check, etc).");
-                return false;
+                var r = MessageBox.Show(
+                    $"There is still {vm.AmountDue:C2} owing.\n\nDo you want to save anyway?",
+                    "Amount Still Owing", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                if (r != MessageBoxResult.Yes) return false;
             }
             return true;
         }

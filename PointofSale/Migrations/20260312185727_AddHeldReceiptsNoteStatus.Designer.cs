@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PointofSale.Data;
 
@@ -10,9 +11,11 @@ using PointofSale.Data;
 namespace PointofSale.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260312185727_AddHeldReceiptsNoteStatus")]
+    partial class AddHeldReceiptsNoteStatus
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.22");
@@ -83,41 +86,6 @@ namespace PointofSale.Migrations
                         .IsUnique();
 
                     b.ToTable("Departments");
-                });
-
-            modelBuilder.Entity("PointofSale.Models.GiftCard", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<double>("Balance")
-                        .HasColumnType("REAL");
-
-                    b.Property<string>("CardNumber")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("IssuedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("IssuedBy")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<double>("IssuedValue")
-                        .HasColumnType("REAL");
-
-                    b.Property<DateTime?>("LastUsedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("GiftCards");
                 });
 
             modelBuilder.Entity("PointofSale.Models.HeldReceipt", b =>

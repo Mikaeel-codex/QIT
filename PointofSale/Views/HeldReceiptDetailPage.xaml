@@ -120,8 +120,9 @@
                 </DataGrid.Columns>
             </DataGrid>
 
-            <!-- "Held" diagonal watermark -->
-            <TextBlock Text="Held"
+            <!-- watermark — "Held" normally, "Pending EFT" for pending EFT receipts -->
+            <TextBlock x:Name="WatermarkText"
+                       Text="Held"
                        FontSize="96" FontWeight="Bold"
                        Foreground="#BBBBBB" Opacity="0.22"
                        HorizontalAlignment="Center"
@@ -147,21 +148,51 @@
                         Height="32" MinWidth="110" Padding="16,0"
                         BorderBrush="#AAAAAA" BorderThickness="1"
                         FontSize="13" IsEnabled="False"
-                        Cursor="Arrow" Click="PaymentBtn_Click">
+                        Cursor="Arrow"
+                        TextElement.Foreground="#111111">
                     <Button.Style>
                         <Style TargetType="Button">
-                            <Setter Property="Background" Value="#E0E0E0"/>
-                            <Setter Property="Foreground" Value="#222222"/>
+                            <Setter Property="Background"  Value="#E0E0E0"/>
+                            <Setter Property="Foreground"  Value="#111111"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Background="{TemplateBinding Background}"
+                                                BorderBrush="{TemplateBinding BorderBrush}"
+                                                BorderThickness="{TemplateBinding BorderThickness}"
+                                                CornerRadius="3">
+                                            <ContentPresenter HorizontalAlignment="Center"
+                                                              VerticalAlignment="Center"
+                                                              TextElement.Foreground="#111111"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
                             <Style.Triggers>
-                                <!-- Override WPF disabled foreground so text stays black -->
                                 <Trigger Property="IsEnabled" Value="False">
-                                    <Setter Property="Foreground" Value="#222222"/>
-                                    <Setter Property="Background" Value="#E0E0E0"/>
+                                    <Setter Property="Background"  Value="#E0E0E0"/>
+                                    <Setter Property="Foreground"  Value="#111111"/>
                                 </Trigger>
                             </Style.Triggers>
                         </Style>
                     </Button.Style>
                 </Button>
+
+                <!-- Pending EFT badge — only visible when status is PendingEFT -->
+                <Border x:Name="PendingEftBadge"
+                        Visibility="Collapsed"
+                        Background="#FF8C00"
+                        CornerRadius="4"
+                        Padding="10,4"
+                        Margin="10,0,0,0"
+                        VerticalAlignment="Center">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="⏳  Pending EFT"
+                                   Foreground="White"
+                                   FontWeight="Bold"
+                                   FontSize="13"/>
+                    </StackPanel>
+                </Border>
             </StackPanel>
         </Border>
 

@@ -71,12 +71,13 @@ namespace PointofSale.Views
 
             var q = SearchBox.Text.Trim().ToLower();
             var filtered = string.IsNullOrEmpty(q)
-                ? _allReceipts
+                ? _allReceipts.ToList()   // always a new list so WPF refreshes
                 : _allReceipts.Where(h =>
                     h.Cashier.ToLower().Contains(q) ||
                     h.CustomerName.ToLower().Contains(q) ||
                     h.ItemsSummary.ToLower().Contains(q)).ToList();
 
+            HeldGrid.ItemsSource = null;   // force WPF to release old reference
             HeldGrid.ItemsSource = filtered;
             StatusTxt.Text = $"{filtered.Count} record(s)  |  {_allReceipts.Count} total held";
         }
@@ -252,13 +253,20 @@ namespace PointofSale.Views
             try
             {
                 using var db = new AppDbContext();
-                var items = db.HeldReceiptItems
-                    .Where(i => i.HeldReceiptId == hr.Id).ToList();
-                db.HeldReceiptItems.RemoveRange(items);
-                db.HeldReceipts.Remove(db.HeldReceipts.First(h => h.Id == hr.Id));
-                db.SaveChanges();
 
+                var entity = db.HeldReceipts.Find(hr.Id);
+                if (entity != null)
+                {
+                    var items = db.HeldReceiptItems
+                        .Where(i => i.HeldReceiptId == hr.Id).ToList();
+                    db.HeldReceiptItems.RemoveRange(items);
+                    db.HeldReceipts.Remove(entity);
+                    db.SaveChanges();
+                }
+
+                // Remove from in-memory list and refresh grid immediately
                 _allReceipts.Remove(hr);
+                HeldGrid.SelectedItem = null;
                 ApplySearch();
 
                 if (_detailOpen)

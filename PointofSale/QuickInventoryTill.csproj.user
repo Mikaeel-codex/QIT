@@ -11,6 +11,9 @@
     <Compile Update="Views\DepartmentsWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Views\GiftcardWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Views\HeldReceiptDetailPage.xaml.cs">
       <SubType>Code</SubType>
     </Compile>

@@ -1,0 +1,118 @@
+﻿<Window x:Class="PointofSale.Views.GiftCardWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Gift Card"
+        Width="420" Height="300"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        Background="#F4F4F4">
+
+    <Window.Resources>
+        <Style x:Key="LabelStyle" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#333333"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Right"/>
+            <Setter Property="Margin" Value="0,0,10,0"/>
+        </Style>
+        <Style x:Key="InputStyle" TargetType="TextBox">
+            <Setter Property="Height" Value="28"/>
+            <Setter Property="Padding" Value="6,2"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="BorderBrush" Value="#AAAAAA"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Background" Value="White"/>
+        </Style>
+        <Style x:Key="BlueBtn" TargetType="Button">
+            <Setter Property="Background" Value="#4A90D9"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="18,5"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="20,16,20,16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <!-- radio row -->
+            <RowDefinition Height="16"/>
+            <RowDefinition Height="Auto"/>
+            <!-- amount -->
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="Auto"/>
+            <!-- card number -->
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="Auto"/>
+            <!-- balance info -->
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <!-- buttons -->
+        </Grid.RowDefinitions>
+
+        <!-- Radio buttons -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal">
+            <RadioButton x:Name="RbRedeem"
+                         Content="Redeem card"
+                         FontSize="13" Foreground="#333333"
+                         IsChecked="True"
+                         GroupName="GiftMode"
+                         Margin="0,0,20,0"
+                         Checked="Mode_Changed"/>
+            <RadioButton x:Name="RbPurchase"
+                         Content="Purchase / recharge card"
+                         FontSize="13" Foreground="#333333"
+                         GroupName="GiftMode"
+                         Checked="Mode_Changed"/>
+        </StackPanel>
+
+        <!-- Amount row -->
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="140"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Text="Amount" Style="{StaticResource LabelStyle}"/>
+            <TextBox   Grid.Column="1" x:Name="AmountBox"
+                       Style="{StaticResource InputStyle}"
+                       PreviewTextInput="Decimal_PreviewTextInput"/>
+        </Grid>
+
+        <!-- Card Number row -->
+        <Grid Grid.Row="4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="140"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Text="Gift Card Number" Style="{StaticResource LabelStyle}"/>
+            <TextBox   Grid.Column="1" x:Name="CardNumberBox"
+                       Style="{StaticResource InputStyle}"
+                       Text=""
+                       FontStyle="Normal"
+                       ToolTip="Swipe or enter gift card number"
+                       TextChanged="CardNumber_TextChanged"/>
+        </Grid>
+
+        <!-- Balance info (shown after card lookup on redeem) -->
+        <Border Grid.Row="6"
+                x:Name="BalancePanel"
+                Visibility="Collapsed"
+                Background="#E8F4E8"
+                BorderBrush="#88CC88" BorderThickness="1"
+                CornerRadius="4" Padding="10,6">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock x:Name="BalanceTxt"
+                           Foreground="#2E6E2E" FontSize="12" FontWeight="SemiBold"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Buttons -->
+        <StackPanel Grid.Row="8" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="Save"   Style="{StaticResource BlueBtn}" Margin="0,0,10,0" Click="Save_Click"/>
+            <Button Content="Cancel" Style="{StaticResource BlueBtn}"
+                    Background="#888888" Click="Cancel_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>

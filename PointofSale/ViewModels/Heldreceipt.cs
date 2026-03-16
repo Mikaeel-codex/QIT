@@ -22,6 +22,12 @@ namespace PointofSale.Models
         /// e.g. "Pepsi x1, Lays x2"
         public string ItemsSummary { get; set; } = "";
 
+        /// Optional note e.g. "Pending EFT"
+        public string Note { get; set; } = "";
+
+        /// e.g. "Held", "PendingEFT"
+        public string Status { get; set; } = "Held";
+
         public List<HeldReceiptItem> Items { get; set; } = new();
     }
 

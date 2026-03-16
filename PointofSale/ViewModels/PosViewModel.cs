@@ -33,30 +33,44 @@ namespace PointofSale.ViewModels
             set => Set(ref _customerSearchText, value);
         }
 
-        private decimal _cashTendered;
-        public decimal CashTendered
+        // ── Payment splits ───────────────────────────────────────────────
+        public ObservableCollection<PaymentSplit> Splits { get; } = new();
+
+        // Total amount tendered across all splits
+        public decimal TotalTendered => Splits.Sum(s => s.Amount);
+
+        // How much is still unpaid
+        public decimal AmountDue => Math.Max(0, Math.Round(Total - TotalTendered, 2));
+
+        // Change only applies when cash is involved and overpaid
+        public decimal CashChange
         {
-            get => _cashTendered;
-            set
+            get
             {
-                if (Set(ref _cashTendered, value))
-                {
-                    OnPropertyChanged(nameof(CashChangeDisplay));
-                    OnPropertyChanged(nameof(CashChange));
-                    OnPropertyChanged(nameof(AmountDue));
-                    OnPropertyChanged(nameof(AmountDueIsZero));
-                    OnPropertyChanged(nameof(CashTenderedVisibility));
-                    OnPropertyChanged(nameof(CashChangeVisibility));
-                }
+                if (TotalTendered <= Total) return 0;
+                // Only give change on cash overpayment
+                var cashTotal = Splits.Where(s => s.Method == "Cash").Sum(s => s.Amount);
+                var nonCash = Splits.Where(s => s.Method != "Cash").Sum(s => s.Amount);
+                var overpaid = TotalTendered - Total;
+                return cashTotal > 0 ? Math.Round(overpaid, 2) : 0;
             }
         }
 
-        private string _paymentMethod = "";
-        public string PaymentMethod
-        {
-            get => _paymentMethod;
-            set => Set(ref _paymentMethod, value);
-        }
+        public bool AmountDueIsZero => AmountDue == 0;
+        public bool HasSplits => Splits.Count > 0;
+        public string PaymentMethod => Splits.Count == 1 ? Splits[0].Method
+                                        : Splits.Count > 1 ? "Split" : "";
+
+        // Legacy compat — used by totals panel visibility
+        public decimal CashTendered => TotalTendered;
+        public Visibility CashTenderedVisibility =>
+            TotalTendered > 0 ? Visibility.Visible : Visibility.Collapsed;
+        public Visibility CashChangeVisibility =>
+            CashChange > 0 ? Visibility.Visible : Visibility.Collapsed;
+
+        // Pending gift card — card ID waiting to be deducted on finalize
+        public int PendingGiftCardId { get; set; } = 0;
+        public decimal PendingGiftCardAmount { get; set; } = 0m;
 
         public int ItemsSold => Cart.Count;
         public int TotalQtySold => Cart.Sum(x => x.Qty);
@@ -67,33 +81,9 @@ namespace PointofSale.ViewModels
         public decimal Tax => Math.Round(Cart.Sum(x => x.LineTotal * x.TaxRate / 100m), 2);
         public decimal Total => Subtotal + Tax;
 
-        public decimal AmountDue => CashTendered > 0
-            ? Math.Max(0, Math.Round(Total - CashTendered, 2))
-            : Total;
-
-        public decimal CashChange => CashTendered > 0
-            ? Math.Max(0, Math.Round(CashTendered - Total, 2))
-            : 0;
-
         public DateTime SaleDate { get; } = DateTime.Today;
 
-        public bool AmountDueIsZero => AmountDue == 0;
-
-        public Visibility CashTenderedVisibility =>
-            CashTendered > 0 ? Visibility.Visible : Visibility.Collapsed;
-
-        public Visibility CashChangeVisibility =>
-            CashChange > 0 ? Visibility.Visible : Visibility.Collapsed;
-
-        public string CashChangeDisplay
-        {
-            get
-            {
-                if (CashTendered <= 0) return "";
-                var change = Math.Round(CashTendered - Total, 2);
-                return change >= 0 ? $"Cash Change  {change:N2}" : "";
-            }
-        }
+        public string CashChangeDisplay => CashChange > 0 ? $"Cash Change  {CashChange:N2}" : "";
 
         public RelayCommand<CartLine> IncreaseQtyCommand { get; }
         public RelayCommand<CartLine> DecreaseQtyCommand { get; }
@@ -187,12 +177,51 @@ namespace PointofSale.ViewModels
             OnPropertyChanged(nameof(Subtotal));
             OnPropertyChanged(nameof(Tax));
             OnPropertyChanged(nameof(Total));
+            RefreshPayment();
+        }
+
+        public void RefreshPayment()
+        {
+            OnPropertyChanged(nameof(TotalTendered));
             OnPropertyChanged(nameof(AmountDue));
             OnPropertyChanged(nameof(CashChange));
             OnPropertyChanged(nameof(CashChangeDisplay));
             OnPropertyChanged(nameof(AmountDueIsZero));
+            OnPropertyChanged(nameof(CashTendered));
             OnPropertyChanged(nameof(CashTenderedVisibility));
             OnPropertyChanged(nameof(CashChangeVisibility));
+            OnPropertyChanged(nameof(PaymentMethod));
+            OnPropertyChanged(nameof(HasSplits));
+        }
+
+        public void AddSplit(string method, decimal amount, int giftCardId = 0, string label = "")
+        {
+            // If same method already exists (non-gift), update amount instead of adding
+            var existing = Splits.FirstOrDefault(s => s.Method == method && s.GiftCardId == 0 && giftCardId == 0);
+            if (existing != null)
+            {
+                existing.Amount = amount;
+                existing.Label = string.IsNullOrEmpty(label) ? method : label;
+            }
+            else
+            {
+                Splits.Add(new PaymentSplit
+                {
+                    Method = method,
+                    Amount = amount,
+                    GiftCardId = giftCardId,
+                    Label = string.IsNullOrEmpty(label) ? method : label
+                });
+            }
+            RefreshPayment();
+        }
+
+        public void ClearSplits()
+        {
+            Splits.Clear();
+            PendingGiftCardId = 0;
+            PendingGiftCardAmount = 0m;
+            RefreshPayment();
         }
 
         public void ScanSkuAndAddToCart(string skuOrAlu)
@@ -270,17 +299,14 @@ namespace PointofSale.ViewModels
 
         public void RemovePaymentMethod()
         {
-            CashTendered = 0;
-            PaymentMethod = "";
-            RefreshTotals();
+            ClearSplits();
         }
 
         /// <summary>Restores a held receipt back into the cart.</summary>
         public void RestoreFromHeld(PointofSale.Models.HeldReceipt held)
         {
             Cart.Clear();
-            CashTendered = 0;
-            PaymentMethod = held.PaymentMethod ?? "";
+            ClearSplits();
 
             foreach (var item in held.Items)
             {
@@ -324,10 +350,26 @@ namespace PointofSale.ViewModels
 
                 db.SaveChanges();
 
+                // Deduct all gift card splits now that sale is confirmed
+                foreach (var split in Splits.Where(s => s.GiftCardId > 0))
+                {
+                    var giftCard = db.GiftCards.Find(split.GiftCardId);
+                    if (giftCard != null)
+                    {
+                        giftCard.Balance -= split.Amount;
+                        giftCard.LastUsedAt = DateTime.Now;
+                        giftCard.Status = giftCard.Balance <= 0 ? "Depleted" : "Active";
+                    }
+                }
+                db.SaveChanges();
+
+                var splitSummary = Splits.Count == 1
+                    ? Splits[0].Method
+                    : string.Join(" + ", Splits.Select(s => $"{s.Method} {s.Amount:N2}"));
+
                 Cart.Clear();
-                CashTendered = 0;
-                PaymentMethod = "";
-                MessageBox.Show($"Sale completed ({paymentType}).");
+                ClearSplits();
+                MessageBox.Show($"Sale completed.\nPayment: {splitSummary}");
             }
             catch (Exception ex)
             {
@@ -350,13 +392,15 @@ namespace PointofSale.ViewModels
                 {
                     HeldAt = DateTime.Now,
                     Cashier = cashierName,
-                    PaymentMethod = PaymentMethod,
+                    PaymentMethod = "",   // manual hold has no confirmed payment
                     Subtotal = Subtotal,
                     Tax = Tax,
                     Total = Total,
                     ItemCount = ItemsSold,
                     TotalQty = TotalQtySold,
-                    ItemsSummary = summary
+                    ItemsSummary = summary,
+                    Status = "Held",
+                    Note = ""
                 };
 
                 foreach (var line in Cart)
@@ -380,8 +424,7 @@ namespace PointofSale.ViewModels
                 db.SaveChanges();
 
                 Cart.Clear();
-                CashTendered = 0;
-                PaymentMethod = "";
+                ClearSplits();
                 MessageBox.Show("Receipt put on hold.");
             }
             catch (Exception ex)
@@ -390,12 +433,61 @@ namespace PointofSale.ViewModels
             }
         }
 
+        /// <summary>Put cart on hold with a custom note and status (used for pending EFT).</summary>
+        public bool PutOnHoldWithNote(string cashierName, string note, string status)
+        {
+            if (Cart.Count == 0) return false;
+            try
+            {
+                using var db = new AppDbContext();
+                var summary = string.Join(", ", Cart.Select(l => $"{l.Name} x{l.Qty}"));
+                var held = new PointofSale.Models.HeldReceipt
+                {
+                    HeldAt = DateTime.Now,
+                    Cashier = cashierName,
+                    PaymentMethod = "EFT",
+                    Subtotal = Subtotal,
+                    Tax = Tax,
+                    Total = Total,
+                    ItemCount = ItemsSold,
+                    TotalQty = TotalQtySold,
+                    ItemsSummary = summary,
+                    Note = note,
+                    Status = status
+                };
+                foreach (var line in Cart)
+                    held.Items.Add(new PointofSale.Models.HeldReceiptItem
+                    {
+                        ProductId = line.ProductId,
+                        SKU = line.SKU,
+                        Name = line.Name,
+                        Attribute = line.Attribute,
+                        Size = line.Size,
+                        Qty = line.Qty,
+                        UnitPrice = line.UnitPrice,
+                        LineTotal = line.LineTotal,
+                        TaxCode = line.TaxCode,
+                        TaxRate = line.TaxRate
+                    });
+                db.HeldReceipts.Add(held);
+                db.SaveChanges();
+                Cart.Clear();
+                ClearSplits();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                var inner = ex.InnerException?.Message ?? ex.Message;
+                MessageBox.Show($"Failed to hold receipt: {inner}", "Error");
+                return false;
+            }
+        }
+
         public void CancelReceipt()
         {
             if (Cart.Count == 0) { MessageBox.Show("Nothing to cancel."); return; }
             Cart.Clear();
-            CashTendered = 0;
-            PaymentMethod = "";
+            ClearSplits();
             MessageBox.Show("Receipt cancelled.");
         }
     }

@@ -68,7 +68,18 @@ namespace PointofSale.Views
             { MessageBox.Show("Invalid price.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning); return; }
             decimal.TryParse(DiscountPctBox.Text, NumberStyles.Any, CultureInfo.CurrentCulture, out var discPct);
             _line.Qty = qty;
-            _line.UnitPrice = discPct > 0 ? Math.Round(price * (100m - discPct) / 100m, 2) : price;
+            if (discPct > 0)
+            {
+                _line.OriginalPrice = price;
+                _line.DiscountPct = discPct;
+                _line.UnitPrice = Math.Round(price * (100m - discPct) / 100m, 2);
+            }
+            else
+            {
+                _line.OriginalPrice = 0;
+                _line.DiscountPct = 0;
+                _line.UnitPrice = price;
+            }
             DialogResult = true;
         }
 

@@ -151,3 +151,5 @@ D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\QuickInventoryTill.genru
 D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\ref\QuickInventoryTill.dll
 D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\Views\HeldReceiptDetailPage.baml
 D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\Views\HeldReceiptDetailPage.g.cs
+D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\Views\GiftcardWindow.baml
+D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\Views\GiftcardWindow.g.cs

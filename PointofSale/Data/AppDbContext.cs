@@ -27,6 +27,7 @@ namespace PointofSale.Data
         public DbSet<Department> Departments { get; set; }
         public DbSet<HeldReceipt> HeldReceipts { get; set; }
         public DbSet<HeldReceiptItem> HeldReceiptItems { get; set; }
+        public DbSet<PointofSale.Models.GiftCard> GiftCards { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -49,6 +50,10 @@ namespace PointofSale.Data
                 .HasOne(i => i.HeldReceipt)
                 .WithMany(h => h.Items)
                 .HasForeignKey(i => i.HeldReceiptId);
+
+            // GiftCard decimal conversions
+            modelBuilder.Entity<PointofSale.Models.GiftCard>().Property(g => g.Balance).HasConversion<double>();
+            modelBuilder.Entity<PointofSale.Models.GiftCard>().Property(g => g.IssuedValue).HasConversion<double>();
         }
     }
 }
