@@ -327,9 +327,9 @@ namespace PointofSale.ViewModels
             RefreshTotals();
         }
 
-        public void FinalizeSale(string paymentType)
+        public ReceiptData? FinalizeSale(string paymentType, string cashierName = "")
         {
-            if (Cart.Count == 0) { MessageBox.Show("Nothing to save."); return; }
+            if (Cart.Count == 0) { MessageBox.Show("Nothing to save."); return null; }
 
             try
             {
@@ -367,13 +367,46 @@ namespace PointofSale.ViewModels
                     ? Splits[0].Method
                     : string.Join(" + ", Splits.Select(s => $"{s.Method} {s.Amount:N2}"));
 
+                // Build receipt data before clearing
+                var receiptData = new ReceiptData
+                {
+                    ReceiptNumber = DateTime.Now.ToString("yyyyMMdd-HHmmss"),
+                    SaleDate = DateTime.Now,
+                    Cashier = cashierName,
+                    CustomerName = CustomerSearchText,
+                    Subtotal = Subtotal,
+                    Tax = Tax,
+                    Total = Total,
+                    AmountDue = AmountDue,
+                    CashChange = CashChange,
+                    Lines = Cart.Select(l => new ReceiptLineItem
+                    {
+                        SKU = l.SKU ?? "",
+                        Name = l.Name ?? "",
+                        Attribute = l.Attribute ?? "",
+                        Size = l.Size ?? "",
+                        Qty = l.Qty,
+                        UnitPrice = l.UnitPrice,
+                        LineTotal = l.LineTotal,
+                        TaxCode = l.TaxCode ?? "",
+                        DiscountPct = l.DiscountPct,
+                    }).ToList(),
+                    Payments = Splits.Select(s => new ReceiptPaymentLine
+                    {
+                        Label = s.Label,
+                        Amount = s.Amount,
+                    }).ToList(),
+                };
+
                 Cart.Clear();
                 ClearSplits();
                 MessageBox.Show($"Sale completed.\nPayment: {splitSummary}");
+                return receiptData;
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "Error");
+                return null;
             }
         }
 

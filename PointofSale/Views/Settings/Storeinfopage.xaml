@@ -1,0 +1,174 @@
+﻿<Page
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:av="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="av" x:Class="PointofSale.Views.Settings.StoreInfoPage"
+      Background="#111111" av:DesignWidth="657.142">
+
+    <Page.Resources>
+        <Style x:Key="FieldLabel" TargetType="{x:Type TextBlock}">
+            <Setter Property="Foreground" Value="#BBBBBB"/>
+            <Setter Property="FontSize"   Value="11"/>
+            <Setter Property="Margin"     Value="0,0,0,4"/>
+        </Style>
+        <Style x:Key="InputBox" TargetType="{x:Type TextBox}">
+            <Setter Property="Background"               Value="#1A1A1A"/>
+            <Setter Property="Foreground"               Value="White"/>
+            <Setter Property="BorderBrush"              Value="#333333"/>
+            <Setter Property="BorderThickness"          Value="1"/>
+            <Setter Property="Height"                   Value="32"/>
+            <Setter Property="Padding"                  Value="8,0"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="FontSize"                 Value="13"/>
+            <Setter Property="CaretBrush"               Value="White"/>
+            <Setter Property="Margin"                   Value="0,0,0,14"/>
+        </Style>
+        <Style x:Key="PasswordBox" TargetType="{x:Type PasswordBox}">
+            <Setter Property="Background"               Value="#1A1A1A"/>
+            <Setter Property="Foreground"               Value="White"/>
+            <Setter Property="BorderBrush"              Value="#333333"/>
+            <Setter Property="BorderThickness"          Value="1"/>
+            <Setter Property="Height"                   Value="32"/>
+            <Setter Property="Padding"                  Value="8,0"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="FontSize"                 Value="13"/>
+            <Setter Property="Margin"                   Value="0,0,0,14"/>
+        </Style>
+        <Style x:Key="SectionHeader" TargetType="{x:Type TextBlock}">
+            <Setter Property="Foreground"  Value="White"/>
+            <Setter Property="FontSize"    Value="13"/>
+            <Setter Property="FontWeight"  Value="SemiBold"/>
+            <Setter Property="Margin"      Value="0,0,0,12"/>
+        </Style>
+        <Style x:Key="HintText" TargetType="{x:Type TextBlock}">
+            <Setter Property="Foreground"   Value="#555555"/>
+            <Setter Property="FontSize"     Value="11"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+            <Setter Property="Margin"       Value="0,-10,0,14"/>
+        </Style>
+        <Style x:Key="SaveBtn" TargetType="{x:Type Button}">
+            <Setter Property="Background"      Value="#2F66C8"/>
+            <Setter Property="Foreground"      Value="White"/>
+            <Setter Property="BorderBrush"     Value="#1F4E9A"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="FontSize"        Value="13"/>
+            <Setter Property="FontWeight"      Value="SemiBold"/>
+            <Setter Property="Height"          Value="34"/>
+            <Setter Property="Padding"         Value="24,0"/>
+            <Setter Property="Cursor"          Value="Hand"/>
+        </Style>
+    </Page.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="24,20,24,20">
+
+                <!-- ── Store Info ── -->
+                <TextBlock Text="Store Information" Style="{StaticResource SectionHeader}"/>
+
+                <TextBlock Text="Store Name" Style="{StaticResource FieldLabel}"/>
+                <TextBox x:Name="TxtStoreName" Style="{StaticResource InputBox}"/>
+
+                <TextBlock Text="Address" Style="{StaticResource FieldLabel}"/>
+                <TextBox x:Name="TxtStoreAddress" Style="{StaticResource InputBox}"/>
+
+                <Grid Margin="0,0,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="16"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="Phone" Style="{StaticResource FieldLabel}"/>
+                        <TextBox x:Name="TxtStorePhone" Style="{StaticResource InputBox}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="2">
+                        <TextBlock Text="VAT / Tax Number" Style="{StaticResource FieldLabel}"/>
+                        <TextBox x:Name="TxtTaxNumber" Style="{StaticResource InputBox}"/>
+                    </StackPanel>
+                </Grid>
+
+                <TextBlock Text="Store Email (shown on receipt)" Style="{StaticResource FieldLabel}"/>
+                <TextBox x:Name="TxtStoreEmail" Style="{StaticResource InputBox}"/>
+
+                <!-- Divider -->
+                <Separator Background="#222222" Margin="0,4,0,20"/>
+
+                <!-- ── Email / Gmail ── -->
+                <TextBlock Text="Email Configuration (Gmail)" Style="{StaticResource SectionHeader}"/>
+
+                <!-- Info box -->
+                <Border Background="#0D1A2E" BorderBrush="#2F66C8" BorderThickness="1"
+                        CornerRadius="6" Padding="12" Margin="0,0,0,16">
+                    <StackPanel>
+                        <TextBlock Text="ℹ️  How to get a Gmail App Password:"
+                                   Foreground="White" FontWeight="SemiBold" FontSize="12"
+                                   Margin="0,0,0,6"/>
+                        <TextBlock Foreground="#BBBBBB" FontSize="11" TextWrapping="Wrap"
+                                   Text="1. Go to myaccount.google.com → Security&#xA;2. Enable 2-Step Verification&#xA;3. Search for 'App Passwords'&#xA;4. Create one named 'POS' → copy the 16-character password&#xA;5. Paste it in the field below — it is stored only on this machine."/>
+                    </StackPanel>
+                </Border>
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="16"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="Gmail Address" Style="{StaticResource FieldLabel}"/>
+                        <TextBox x:Name="TxtEmailAddress" Style="{StaticResource InputBox}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="2">
+                        <TextBlock Text="Sender Name (shown to customer)" Style="{StaticResource FieldLabel}"/>
+                        <TextBox x:Name="TxtSenderName" Style="{StaticResource InputBox}"/>
+                    </StackPanel>
+                </Grid>
+
+                <TextBlock Text="App Password (16 characters)" Style="{StaticResource FieldLabel}"/>
+                <PasswordBox x:Name="TxtAppPassword" Style="{StaticResource PasswordBox}"/>
+                <TextBlock Style="{StaticResource HintText}"
+                           Text="Stored locally on this machine only. Never uploaded or shared."/>
+
+                <!-- Test email -->
+                <TextBlock Text="Send a Test Email" Style="{StaticResource FieldLabel}"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="8"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBox x:Name="TxtTestEmail" Grid.Column="0" Style="{StaticResource InputBox}" Margin="0"/>
+                    <Button Grid.Column="1" Content="Send Test"
+                            Style="{StaticResource SaveBtn}"
+                            Width="110" Margin="8,7,0,7"
+                            Click="SendTest_Click" Grid.ColumnSpan="2"/>
+                </Grid>
+                <TextBlock x:Name="TestResultTxt" FontSize="12" Margin="0,-10,0,14"
+                           Visibility="Collapsed" TextWrapping="Wrap"/>
+
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Save footer -->
+        <Border Grid.Row="1" Background="#0D0D0D" Padding="24,12"
+                BorderBrush="#1E1E1E" BorderThickness="0,1,0,0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock x:Name="StatusTxt" VerticalAlignment="Center"
+                           FontSize="12" Foreground="#88CC66"
+                           Visibility="Collapsed" TextWrapping="Wrap"/>
+                <Button Grid.Column="1" Content="Save Settings"
+                        Style="{StaticResource SaveBtn}"
+                        Click="Save_Click"/>
+            </Grid>
+        </Border>
+    </Grid>
+</Page>

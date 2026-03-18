@@ -223,7 +223,7 @@ namespace PointofSale
         private void Settings_Click(object sender, RoutedEventArgs e)
         {
             if (!RequireLogin()) return;
-            MessageBox.Show("Settings screen coming next.");
+            new StoreSettingsWindow { Owner = this }.ShowDialog();
         }
 
         private void Supplier_Click(object sender, RoutedEventArgs e)

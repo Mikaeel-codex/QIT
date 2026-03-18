@@ -379,6 +379,25 @@ namespace PointofSale.Migrations
                     b.ToTable("Suppliers");
                 });
 
+            modelBuilder.Entity("StoreSetting", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Key")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("StoreSettings");
+                });
+
             modelBuilder.Entity("PointofSale.Models.HeldReceiptItem", b =>
                 {
                     b.HasOne("PointofSale.Models.HeldReceipt", "HeldReceipt")

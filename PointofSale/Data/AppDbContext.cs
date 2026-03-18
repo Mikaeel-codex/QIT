@@ -28,6 +28,7 @@ namespace PointofSale.Data
         public DbSet<HeldReceipt> HeldReceipts { get; set; }
         public DbSet<HeldReceiptItem> HeldReceiptItems { get; set; }
         public DbSet<PointofSale.Models.GiftCard> GiftCards { get; set; }
+        public DbSet<PointofSale.Models.StoreSetting> StoreSettings { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -1,4 +1,5 @@
 D:\POS\PointofSale\PointofSale\bin\Debug\net8.0-windows\QuickInventoryTill.exe
+D:\POS\PointofSale\PointofSale\bin\Debug\net8.0-windows\Scripts\generate_receipt.py
 D:\POS\PointofSale\PointofSale\bin\Debug\net8.0-windows\QuickInventoryTill.deps.json
 D:\POS\PointofSale\PointofSale\bin\Debug\net8.0-windows\QuickInventoryTill.runtimeconfig.json
 D:\POS\PointofSale\PointofSale\bin\Debug\net8.0-windows\QuickInventoryTill.dll
@@ -112,6 +113,8 @@ D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\MainWindow.baml
 D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\Views\CashPaymentWindow.baml
 D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\Views\DepartmentEditWindow.baml
 D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\Views\DepartmentsWindow.baml
+D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\Views\GiftcardWindow.baml
+D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\Views\HeldReceiptDetailPage.baml
 D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\Views\Heldreceiptswindow.baml
 D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\Views\InputDialog.baml
 D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\Views\LoginWindow.baml
@@ -119,6 +122,7 @@ D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\Views\PointOfSaleWindow.
 D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\Views\ProductEditWindow.baml
 D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\Views\ProductsWindow.baml
 D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\Views\QtyPriceDiscountWindow.baml
+D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\Views\SendReceiptWindow.baml
 D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\Views\SupplierEditWindow.baml
 D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\Views\SuppliersWindow.baml
 D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\App.baml
@@ -126,6 +130,8 @@ D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\MainWindow.g.cs
 D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\Views\CashPaymentWindow.g.cs
 D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\Views\DepartmentEditWindow.g.cs
 D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\Views\DepartmentsWindow.g.cs
+D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\Views\GiftcardWindow.g.cs
+D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\Views\HeldReceiptDetailPage.g.cs
 D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\Views\Heldreceiptswindow.g.cs
 D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\Views\InputDialog.g.cs
 D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\Views\LoginWindow.g.cs
@@ -133,9 +139,11 @@ D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\Views\PointOfSaleWindow.
 D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\Views\ProductEditWindow.g.cs
 D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\Views\ProductsWindow.g.cs
 D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\Views\QtyPriceDiscountWindow.g.cs
+D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\Views\SendReceiptWindow.g.cs
 D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\Views\SupplierEditWindow.g.cs
 D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\Views\SuppliersWindow.g.cs
 D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\App.g.cs
+D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\QuickInventoryTill_Content.g.cs
 D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\QuickInventoryTill_MarkupCompile.cache
 D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\QuickInventoryTill.g.resources
 D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\QuickInventoryTill.GeneratedMSBuildEditorConfig.editorconfig
@@ -149,7 +157,9 @@ D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\refint\QuickInventoryTil
 D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\QuickInventoryTill.pdb
 D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\QuickInventoryTill.genruntimeconfig.cache
 D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\ref\QuickInventoryTill.dll
-D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\Views\HeldReceiptDetailPage.baml
-D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\Views\HeldReceiptDetailPage.g.cs
-D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\Views\GiftcardWindow.baml
-D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\Views\GiftcardWindow.g.cs
+D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\Views\Settings\Receiptsettingspage.baml
+D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\Views\Settings\Storeinfopage.baml
+D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\Views\Settings\StoreSettingsWindow.baml
+D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\Views\Settings\Receiptsettingspage.g.cs
+D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\Views\Settings\Storeinfopage.g.cs
+D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\Views\Settings\StoreSettingsWindow.g.cs

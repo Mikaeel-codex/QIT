@@ -442,7 +442,7 @@ namespace PointofSale.Views
             {
                 Title = "EFT — Confirm Receipt",
                 Width = 380,
-                Height = 250,
+                Height = 220,
                 WindowStartupLocation = WindowStartupLocation.CenterOwner,
                 Owner = this,
                 ResizeMode = ResizeMode.NoResize,
@@ -671,7 +671,7 @@ namespace PointofSale.Views
         {
             if (DataContext is not PosViewModel vm) return;
             if (!CanFinalize(vm)) return;
-            vm.FinalizeSale(vm.PaymentMethod);
+            vm.FinalizeSale(vm.PaymentMethod, _currentUser.Username);
             ResetPaymentCard();
         }
 
@@ -679,15 +679,25 @@ namespace PointofSale.Views
         {
             if (DataContext is not PosViewModel vm) return;
             if (!CanFinalize(vm)) return;
-            vm.FinalizeSale(vm.PaymentMethod);
+
+            var receipt = vm.FinalizeSale(vm.PaymentMethod, _currentUser.Username);
             ResetPaymentCard();
+
+            using var db = new AppDbContext();
+            string Get(string key) => db.StoreSettings
+                .FirstOrDefault(s => s.Key == key)?.Value ?? "";
+
+            receipt.StoreName = Get("StoreName");
+            receipt.StoreAddress = Get("StoreAddress");
+            receipt.StorePhone = Get("StorePhone");
+            receipt.StoreEmail = Get("EmailAddress");
         }
 
         private void SavePrint_Click(object sender, RoutedEventArgs e)
         {
             if (DataContext is not PosViewModel vm) return;
             if (!CanFinalize(vm)) return;
-            vm.FinalizeSale(vm.PaymentMethod);
+            vm.FinalizeSale(vm.PaymentMethod, _currentUser.Username);
             ResetPaymentCard();
         }
 
