@@ -2,6 +2,7 @@
 using PointofSale.Models;
 using PointofSale.Services;
 using PointofSale.ViewModels;
+using QuickInventoryTill.Models;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -23,8 +24,10 @@ namespace PointofSale.Views
             var vm = new PosViewModel();
             DataContext = vm;
 
+            // Wire low stock callback so Qty+ button on cart rows also triggers toast
             vm.OnLowStock = warn => ShowLowStockToast(warn);
 
+            // Update Hold button label whenever cart changes
             vm.Cart.CollectionChanged += (_, __) => RefreshHoldButton();
             RefreshHoldButton();
         }
@@ -696,13 +699,7 @@ namespace PointofSale.Views
                 receipt.StorePhone = StoreSettingsService.Get("StorePhone");
                 receipt.StoreEmail = StoreSettingsService.Get("StoreEmail");
 
-                // Use configured receipt prefix + auto-increment number
-                var prefix = StoreSettingsService.Get("ReceiptPrefix", "REC");
-                var nextNo = int.TryParse(StoreSettingsService.Get("NextReceiptNumber", "1"), out var n) ? n : 1;
-                receipt.ReceiptNumber = $"{prefix}-{nextNo:D4}";
-
-                // Increment for next sale
-                StoreSettingsService.Set("NextReceiptNumber", (nextNo + 1).ToString());
+                // ReceiptNumber already set by FinalizeSale — no need to regenerate
 
                 new SendReceiptWindow(receipt) { Owner = this }.ShowDialog();
             }
@@ -1035,7 +1032,7 @@ namespace PointofSale.Views
             // Auto-dismiss after 8 seconds
             _toastTimer?.Stop();
             _toastTimer = new System.Windows.Threading.DispatcherTimer
-            { Interval = System.TimeSpan.FromSeconds(15) };
+            { Interval = System.TimeSpan.FromSeconds(8) };
             _toastTimer.Tick += (s, e) =>
             {
                 LowStockToast.Visibility = Visibility.Collapsed;
@@ -1095,6 +1092,11 @@ namespace PointofSale.Views
                 System.Globalization.CultureInfo.InvariantCulture, out var rate))
                 return rate;
             return 0m;
+        }
+
+        private void ReceiptGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
         }
     }
 }

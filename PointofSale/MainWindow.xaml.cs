@@ -199,7 +199,7 @@ namespace PointofSale
         private void Reports_Click(object sender, RoutedEventArgs e)
         {
             if (!RequireLogin()) return;
-            MessageBox.Show("Reports screen coming next.");
+            new ReportsWindow { Owner = this }.ShowDialog();
         }
 
         private void EndOfDay_Click(object sender, RoutedEventArgs e)
@@ -211,7 +211,7 @@ namespace PointofSale
         private void SalesHistory_Click(object sender, RoutedEventArgs e)
         {
             if (!RequireLogin()) return;
-            MessageBox.Show("Sales History screen coming next.");
+            new SalesHistoryWindow { Owner = this }.ShowDialog();
         }
 
         private void ReceiveStock_Click(object sender, RoutedEventArgs e)

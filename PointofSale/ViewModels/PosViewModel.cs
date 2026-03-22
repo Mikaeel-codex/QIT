@@ -1,6 +1,8 @@
 ﻿using PointofSale.Data;
 using PointofSale.Helpers;
 using PointofSale.Models;
+using PointofSale.Services;
+using QuickInventoryTill.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -278,7 +280,7 @@ namespace PointofSale.ViewModels
                     Name = p.Name,
                     SKU = p.SKU ?? "",
                     UnitPrice = p.Price,
-                    CostPrice = p.AvgUnitCost,
+                    CostPrice = p.CostPrice,
                     StockQty = p.StockQty,
                     Qty = 1,
                     Size = p.Size ?? "",
@@ -411,11 +413,42 @@ namespace PointofSale.ViewModels
                     ? Splits[0].Method
                     : string.Join(" + ", Splits.Select(s => $"{s.Method} {s.Amount:N2}"));
 
+                // ── Persist sale to DB ────────────────────────────────────
+                // Generate receipt number from settings (same prefix/counter used by SaveEmail_Click)
+                var prefix = StoreSettingsService.Get("ReceiptPrefix", "REC");
+                var nextNo = int.TryParse(StoreSettingsService.Get("NextReceiptNumber", "1"), out var n) ? n : 1;
+                var receiptNo = $"{prefix}-{nextNo:D4}";
+                StoreSettingsService.Set("NextReceiptNumber", (nextNo + 1).ToString());
+
+                var sale = new Sale
+                {
+                    SaleDate = DateTime.Now,
+                    ReceiptNumber = receiptNo,
+                    Cashier = cashierName,
+                    CustomerName = CustomerSearchText ?? "",
+                    Subtotal = Subtotal,
+                    Tax = Tax,
+                    Total = Total,
+                    PaymentMethod = splitSummary,
+                    Status = "Completed",
+                    Items = Cart.Select(l => new SaleItem
+                    {
+                        ProductId = l.ProductId,
+                        SKU = l.SKU ?? "",
+                        ProductName = l.Name ?? "",
+                        Quantity = l.Qty,
+                        UnitPrice = l.UnitPrice,
+                        LineTotal = l.LineTotal,
+                    }).ToList(),
+                };
+                db.Sales.Add(sale);
+                db.SaveChanges();
+
                 // Build receipt data before clearing
                 var receiptData = new ReceiptData
                 {
-                    ReceiptNumber = DateTime.Now.ToString("yyyyMMdd-HHmmss"),
-                    SaleDate = DateTime.Now,
+                    ReceiptNumber = sale.Id.ToString(),
+                    SaleDate = sale.SaleDate,
                     Cashier = cashierName,
                     CustomerName = CustomerSearchText,
                     Subtotal = Subtotal,

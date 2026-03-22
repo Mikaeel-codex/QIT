@@ -26,7 +26,6 @@ namespace PointofSale.Views
 
         private void LoadLookups()
         {
-            // Load suppliers from database
             using var db = new AppDbContext();
             var supplierNames = db.Suppliers
                                   .Where(s => s.IsActive)
@@ -36,7 +35,6 @@ namespace PointofSale.Views
 
             VendorBox.ItemsSource = supplierNames;
 
-            // Load departments
             var departments = db.Departments
                                 .Where(d => d.IsActive)
                                 .OrderBy(d => d.Name)
@@ -44,7 +42,7 @@ namespace PointofSale.Views
                                 .ToList();
             DepartmentBox.ItemsSource = departments;
 
-            UomBox.SelectedIndex = 0; // Each
+            UomBox.SelectedIndex = 0;
         }
 
         private void DepartmentBox_KeyDown(object sender, KeyEventArgs e)
@@ -54,11 +52,9 @@ namespace PointofSale.Views
             var text = (DepartmentBox.Text ?? string.Empty).Trim();
             if (string.IsNullOrWhiteSpace(text)) return;
 
-            // Ask for confirmation
             var res = MessageBox.Show($"Add department '{text}' to database?", "Confirm Add", MessageBoxButton.YesNo, MessageBoxImage.Question);
             if (res != MessageBoxResult.Yes) return;
 
-            // Add to DB
             using var db = new AppDbContext();
             var exists = db.Departments.Any(d => d.Name.ToLower() == text.ToLower());
             if (exists)
@@ -71,7 +67,6 @@ namespace PointofSale.Views
                 db.Departments.Add(d);
                 db.SaveChanges();
 
-                // Reload lookups and select newly added department
                 LoadLookups();
                 DepartmentBox.Text = d.Name;
             }
@@ -97,21 +92,18 @@ namespace PointofSale.Views
                 return;
             }
 
-            // Required + existing fields
             NameBox.Text = p.Name;
             PriceBox.Text = p.Price.ToString("0.00");
             StockBox.Text = p.StockQty.ToString();
             SkuBox.Text = p.SKU ?? "";
 
-            // Optional extra fields (only works if you added them to Product model)
             DepartmentBox.Text = p.Department ?? "";
             DescriptionBox.Text = p.Description ?? "";
             SizeBox.Text = p.Size ?? "";
-            AvgUnitCostBox.Text = p.AvgUnitCost.ToString("0.00");
+            CostPriceBox.Text = p.CostPrice.ToString("0.00");
             LoadTaxField(p.Tax);
 
             VendorBox.Text = p.Supplier ?? "";
-            OrderCostBox.Text = p.OrderCost.ToString("0.00");
             ReorderPointBox.Text = p.ReorderPoint.ToString();
             ItemNoBox.Text = p.Id.ToString();
             AluBox.Text = p.ALU ?? "";
@@ -131,14 +123,10 @@ namespace PointofSale.Views
             var skuHas = !string.IsNullOrWhiteSpace(SkuBox.Text);
             var aluHas = !string.IsNullOrWhiteSpace(AluBox.Text);
 
-            // If SKU has value, disable ALU
             AluBox.IsEnabled = !skuHas;
-
-            // If ALU has value, disable SKU
             SkuBox.IsEnabled = !aluHas;
         }
 
-        // SKU numbers only (scanner safe)
         private void SkuBox_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
         {
             e.Handled = !Regex.IsMatch(e.Text, @"^\d+$");
@@ -188,7 +176,6 @@ namespace PointofSale.Views
                 return false;
             }
 
-            // SKU vs ALU rule
             var sku = SkuBox.Text.Trim();
             var alu = AluBox.Text.Trim();
             if (!string.IsNullOrEmpty(sku) && !string.IsNullOrEmpty(alu))
@@ -197,24 +184,16 @@ namespace PointofSale.Views
                 return false;
             }
 
-            // If SKU is filled -> must be numeric
             if (!string.IsNullOrWhiteSpace(sku) && !Regex.IsMatch(sku, @"^\d+$"))
             {
                 error = "SKU must contain numbers only.";
                 return false;
             }
 
-            if (!string.IsNullOrWhiteSpace(AvgUnitCostBox.Text) &&
-                (!decimal.TryParse(AvgUnitCostBox.Text.Trim(), out var _avg) || _avg < 0))
+            if (!string.IsNullOrWhiteSpace(CostPriceBox.Text) &&
+                (!decimal.TryParse(CostPriceBox.Text.Trim(), out var _cp) || _cp < 0))
             {
-                error = "Enter a valid Avg. Unit Cost (or leave it blank).";
-                return false;
-            }
-
-            if (!string.IsNullOrWhiteSpace(OrderCostBox.Text) &&
-                (!decimal.TryParse(OrderCostBox.Text.Trim(), out var _oc) || _oc < 0))
-            {
-                error = "Enter a valid Order Cost (or leave it blank).";
+                error = "Enter a valid Cost Price (or leave it blank).";
                 return false;
             }
 
@@ -234,7 +213,6 @@ namespace PointofSale.Views
             var result = win.ShowDialog();
             if (result == true)
             {
-                // Reload suppliers after a new one is added and select the latest
                 LoadLookups();
                 using var db = new AppDbContext();
                 var latest = db.Suppliers.OrderByDescending(s => s.Id).FirstOrDefault();
@@ -243,7 +221,6 @@ namespace PointofSale.Views
             }
             else
             {
-                // If user cancelled, just ensure dropdown opens for quick selection
                 VendorBox.IsDropDownOpen = true;
                 VendorBox.Focus();
             }
@@ -296,15 +273,11 @@ namespace PointofSale.Views
                 p = db.Products.First(x => x.Id == _editId.Value);
             }
 
-            // Required + existing fields
             p.Name = NameBox.Text.Trim();
             p.Price = decimal.Parse(PriceBox.Text.Trim());
             p.StockQty = int.Parse(StockBox.Text.Trim());
-
-            // SKU replaces UPC
             p.SKU = SkuBox.Text.Trim();
 
-            // Optional extra fields
             p.Department = DepartmentBox.Text.Trim();
             p.Description = DescriptionBox.Text.Trim();
             p.Size = SizeBox.Text.Trim();
@@ -315,8 +288,7 @@ namespace PointofSale.Views
             p.Manufacturer = ManufacturerBox.Text.Trim();
             p.Comments = CommentsBox.Text.Trim();
 
-            p.AvgUnitCost = string.IsNullOrWhiteSpace(AvgUnitCostBox.Text) ? 0 : decimal.Parse(AvgUnitCostBox.Text.Trim());
-            p.OrderCost = string.IsNullOrWhiteSpace(OrderCostBox.Text) ? 0 : decimal.Parse(OrderCostBox.Text.Trim());
+            p.CostPrice = string.IsNullOrWhiteSpace(CostPriceBox.Text) ? 0 : decimal.Parse(CostPriceBox.Text.Trim());
             p.ReorderPoint = string.IsNullOrWhiteSpace(ReorderPointBox.Text) ? 0 : int.Parse(ReorderPointBox.Text.Trim());
 
             db.SaveChanges();
@@ -330,12 +302,11 @@ namespace PointofSale.Views
             DescriptionBox.Text = "";
             SizeBox.Text = "";
             PriceBox.Text = "";
-            AvgUnitCostBox.Text = "";
+            CostPriceBox.Text = "";
             StockBox.Text = "";
             SkuBox.Text = "";
 
             VendorBox.Text = "";
-            OrderCostBox.Text = "";
             ReorderPointBox.Text = "";
             ItemNoBox.Text = "(auto)";
             AluBox.Text = "";
@@ -360,12 +331,6 @@ namespace PointofSale.Views
             TaxCustomBox.Visibility = tag == "custom" ? Visibility.Visible : Visibility.Collapsed;
         }
 
-        /// <summary>
-        /// Loads the product's Tax string into the dropdown + custom box.
-        /// "No Tax", null, "0"        → No Tax (index 0)
-        /// "15", "VAT", "15% VAT"     → 15% VAT (index 1)
-        /// anything else numeric      → Custom % (index 2) with value filled in
-        /// </summary>
         private void LoadTaxField(string? taxValue)
         {
             if (TaxBox == null) return;
@@ -374,28 +339,22 @@ namespace PointofSale.Views
             if (string.IsNullOrWhiteSpace(t) || t == "no tax" || t == "notax"
                 || t == "none" || t == "0" || t == "exempt" || t == "no" || t == "false")
             {
-                TaxBox.SelectedIndex = 0; // No Tax
+                TaxBox.SelectedIndex = 0;
                 TaxCustomBox.Visibility = System.Windows.Visibility.Collapsed;
             }
             else if (t == "15" || t == "vat" || t == "tax" || t == "15% vat" || t == "yes" || t == "true" || t == "1")
             {
-                TaxBox.SelectedIndex = 1; // 15% VAT
+                TaxBox.SelectedIndex = 1;
                 TaxCustomBox.Visibility = System.Windows.Visibility.Collapsed;
             }
             else
             {
-                TaxBox.SelectedIndex = 2; // Custom %
+                TaxBox.SelectedIndex = 2;
                 TaxCustomBox.Text = t.Replace("%", "").Trim();
                 TaxCustomBox.Visibility = System.Windows.Visibility.Visible;
             }
         }
 
-        /// <summary>
-        /// Returns the tax value to save to p.Tax.
-        /// "No Tax" → "No Tax"
-        /// 15% VAT  → "15"
-        /// Custom   → the numeric value entered, or "No Tax" if invalid
-        /// </summary>
         private string GetTaxValue()
         {
             var tag = (TaxBox.SelectedItem as ComboBoxItem)?.Tag?.ToString() ?? "No Tax";
@@ -409,7 +368,7 @@ namespace PointofSale.Views
                 return "No Tax";
             }
 
-            return tag; // "No Tax" or "15"
+            return tag;
         }
     }
 }

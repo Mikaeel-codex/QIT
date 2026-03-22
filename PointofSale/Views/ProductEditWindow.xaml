@@ -10,7 +10,6 @@
 
     <Window.Resources>
 
-        <!-- Compact TextBox style (QuickBooks-like) -->
         <Style TargetType="TextBox">
             <Setter Property="Foreground" Value="White" />
             <Setter Property="Background" Value="#111" />
@@ -21,7 +20,6 @@
             <Setter Property="VerticalContentAlignment" Value="Center" />
         </Style>
 
-        <!-- DARK COMBOBOX STYLE (FIXED: CLICKABLE + WORKS WITH IsEditable) -->
         <Style TargetType="ComboBox">
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="Background" Value="#111"/>
@@ -30,8 +28,6 @@
             <Setter Property="FontSize" Value="12"/>
             <Setter Property="MinHeight" Value="24"/>
             <Setter Property="Padding" Value="4,2"/>
-
-            <!-- Dropdown popup styling -->
             <Setter Property="ItemContainerStyle">
                 <Setter.Value>
                     <Style TargetType="ComboBoxItem">
@@ -49,25 +45,20 @@
                     </Style>
                 </Setter.Value>
             </Setter>
-
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="ComboBox">
                         <Grid SnapsToDevicePixels="True">
-
                             <Border x:Name="Bd"
                                 Background="{TemplateBinding Background}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
                                 CornerRadius="3"/>
-
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="30"/>
                                 </Grid.ColumnDefinitions>
-
-                                <!-- Shows selected item when NOT editable -->
                                 <ContentPresenter x:Name="ContentSite"
                                               Grid.Column="0"
                                               Margin="6,0,0,0"
@@ -77,8 +68,6 @@
                                               Content="{TemplateBinding SelectionBoxItem}"
                                               ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
                                               ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"/>
-
-                                <!-- Required for IsEditable=True -->
                                 <TextBox x:Name="PART_EditableTextBox"
                                      Grid.Column="0"
                                      Margin="6,0,0,0"
@@ -88,8 +77,6 @@
                                      VerticalContentAlignment="Center"
                                      Visibility="Hidden"
                                      Focusable="True"/>
-
-                                <!-- Clickable dropdown button -->
                                 <ToggleButton x:Name="ToggleButton"
                                           Grid.Column="1"
                                           Background="Transparent"
@@ -102,8 +89,6 @@
                                       Data="M 0 0 L 4 4 L 8 0 Z"/>
                                 </ToggleButton>
                             </Grid>
-
-                            <!-- Dropdown popup -->
                             <Popup x:Name="PART_Popup"
                                Placement="Bottom"
                                IsOpen="{TemplateBinding IsDropDownOpen}"
@@ -117,17 +102,12 @@
                                     </ScrollViewer>
                                 </Border>
                             </Popup>
-
                         </Grid>
-
                         <ControlTemplate.Triggers>
-                            <!-- Editable mode -->
                             <Trigger Property="IsEditable" Value="True">
                                 <Setter TargetName="ContentSite" Property="Visibility" Value="Hidden"/>
                                 <Setter TargetName="PART_EditableTextBox" Property="Visibility" Value="Visible"/>
                             </Trigger>
-
-                            <!-- Disabled -->
                             <Trigger Property="IsEnabled" Value="False">
                                 <Setter Property="Opacity" Value="0.6"/>
                             </Trigger>
@@ -137,14 +117,12 @@
             </Setter>
         </Style>
 
-        <!-- Compact buttons -->
         <Style TargetType="Button">
             <Setter Property="Height" Value="26"/>
             <Setter Property="MinWidth" Value="90"/>
             <Setter Property="Padding" Value="10,2"/>
         </Style>
 
-        <!-- Multi-line textboxes -->
         <Style x:Key="MultilineTextBox" TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
             <Setter Property="Height" Value="90" />
             <Setter Property="TextWrapping" Value="Wrap" />
@@ -154,7 +132,6 @@
         </Style>
 
     </Window.Resources>
-
 
     <Grid Margin="8">
         <Grid.RowDefinitions>
@@ -192,7 +169,6 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
 
-                    <!-- Picture box -->
                     <Border Width="90" Height="62"
                             Background="#F4F4F4"
                             BorderBrush="#D0D0D0"
@@ -212,7 +188,6 @@
                         </StackPanel>
                     </Border>
 
-                    <!-- Item Name -->
                     <StackPanel Grid.Column="1" Margin="10,0,0,0">
                         <TextBlock Text="Item Name"
                                    Foreground="White"
@@ -224,7 +199,6 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="14"/>
                             </Grid.ColumnDefinitions>
-
                             <TextBox x:Name="NameBox" />
                             <TextBlock Grid.Column="1"
                                        Text="*"
@@ -259,7 +233,6 @@
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
 
-                        <!-- Header -->
                         <Border Background="#111" BorderBrush="#2E2E2E" BorderThickness="0,0,0,1">
                             <DockPanel Margin="8,0">
                                 <TextBlock Text="Basic Info"
@@ -271,7 +244,6 @@
                             </DockPanel>
                         </Border>
 
-                        <!-- Content -->
                         <Grid Grid.Row="1" Margin="8">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
@@ -316,9 +288,9 @@
                                      Grid.Row="3" Grid.Column="1"
                                      Margin="0,6,0,0"/>
 
-                            <!-- Avg. Unit Cost -->
-                            <TextBlock Grid.Row="4" Grid.Column="0" Text="Avg. Unit Cost" VerticalAlignment="Center" Margin="0,6,0,0" Foreground="White" FontSize="12"/>
-                            <TextBox x:Name="AvgUnitCostBox"
+                            <!-- Cost Price -->
+                            <TextBlock Grid.Row="4" Grid.Column="0" Text="Cost Price" VerticalAlignment="Center" Margin="0,6,0,0" Foreground="White" FontSize="12"/>
+                            <TextBox x:Name="CostPriceBox"
                                      Grid.Row="4" Grid.Column="1"
                                      Margin="0,6,0,0"/>
 
@@ -351,7 +323,7 @@
                                          Visibility="Collapsed"/>
                             </Grid>
 
-                            <!-- SKU (replacing UPC) -->
+                            <!-- SKU -->
                             <TextBlock Grid.Row="7" Grid.Column="0" Text="SKU" VerticalAlignment="Center" Margin="0,6,0,0" Foreground="White" FontSize="12"/>
                             <TextBox x:Name="SkuBox"
                                      Grid.Row="7" Grid.Column="1"
@@ -396,7 +368,6 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="105"/>
@@ -418,48 +389,39 @@
                                     HorizontalAlignment="Right"
                                     Margin="6,0,0,0"
                                     Click="AddSupplier_Click">
-
                                 <TextBlock Text="Add. Rep"
                                            FontSize="10"
                                            Foreground="White"
                                            VerticalAlignment="Center"/>
                             </Button>
 
-
-                            <!-- Order Cost -->
-                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Order Cost" VerticalAlignment="Center" Margin="0,6,0,0" Foreground="White" FontSize="12"/>
-                            <TextBox x:Name="OrderCostBox"
+                            <!-- Reorder Point -->
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Reorder Point" VerticalAlignment="Center" Margin="0,6,0,0" Foreground="White" FontSize="12"/>
+                            <TextBox x:Name="ReorderPointBox"
                                      Grid.Row="1" Grid.Column="1"
                                      Grid.ColumnSpan="2"
                                      Margin="0,6,0,0"/>
 
-                            <!-- Reorder Point -->
-                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Reorder Point" VerticalAlignment="Center" Margin="0,6,0,0" Foreground="White" FontSize="12"/>
-                            <TextBox x:Name="ReorderPointBox"
-                                     Grid.Row="2" Grid.Column="1"
-                                     Grid.ColumnSpan="2"
-                                     Margin="0,6,0,0"/>
-
                             <!-- Item No -->
-                            <TextBlock Grid.Row="3" Grid.Column="0" Text="Item No." VerticalAlignment="Center" Margin="0,6,0,0" Foreground="White" FontSize="12"/>
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Item No." VerticalAlignment="Center" Margin="0,6,0,0" Foreground="White" FontSize="12"/>
                             <TextBox x:Name="ItemNoBox"
-                                     Grid.Row="3" Grid.Column="1"
+                                     Grid.Row="2" Grid.Column="1"
                                      Grid.ColumnSpan="2"
                                      Margin="0,6,0,0"
                                      IsReadOnly="True"/>
 
                             <!-- ALU -->
-                            <TextBlock Grid.Row="4" Grid.Column="0" Text="ALU" VerticalAlignment="Center" Margin="0,6,0,0" Foreground="White" FontSize="12"/>
+                            <TextBlock Grid.Row="3" Grid.Column="0" Text="ALU" VerticalAlignment="Center" Margin="0,6,0,0" Foreground="White" FontSize="12"/>
                             <TextBox x:Name="AluBox"
-                                     Grid.Row="4" Grid.Column="1"
+                                     Grid.Row="3" Grid.Column="1"
                                      Grid.ColumnSpan="2"
                                      Margin="0,6,0,0"
                                      TextChanged="AluBox_TextChanged"/>
 
                             <!-- Unit of Measure -->
-                            <TextBlock Grid.Row="5" Grid.Column="0" Text="Unit of Measure" VerticalAlignment="Center" Margin="0,6,0,0" Foreground="White" FontSize="12"/>
+                            <TextBlock Grid.Row="4" Grid.Column="0" Text="Unit of Measure" VerticalAlignment="Center" Margin="0,6,0,0" Foreground="White" FontSize="12"/>
                             <ComboBox x:Name="UomBox"
-                                      Grid.Row="5" Grid.Column="1"
+                                      Grid.Row="4" Grid.Column="1"
                                       Grid.ColumnSpan="2"
                                       Margin="0,6,0,0">
                                 <ComboBoxItem Content="Each"/>
@@ -468,23 +430,22 @@
                             </ComboBox>
 
                             <!-- Manufacturer -->
-                            <TextBlock Grid.Row="6" Grid.Column="0" Text="Manufacturer" VerticalAlignment="Center" Margin="0,6,0,0" Foreground="White" FontSize="12"/>
+                            <TextBlock Grid.Row="5" Grid.Column="0" Text="Manufacturer" VerticalAlignment="Center" Margin="0,6,0,0" Foreground="White" FontSize="12"/>
                             <TextBox x:Name="ManufacturerBox"
-                                     Grid.Row="6" Grid.Column="1"
+                                     Grid.Row="5" Grid.Column="1"
                                      Grid.ColumnSpan="2"
                                      Margin="0,6,0,0"/>
                         </Grid>
                     </Grid>
                 </Border>
 
-                <!-- COMMENTS (unchanged) -->
+                <!-- COMMENTS -->
                 <Border Grid.Column="2"
                         Background="#111"
                         CornerRadius="3"
                         BorderBrush="#2E2E2E"
                         BorderThickness="1"
                         Padding="8" Margin="23,0,0,226">
-
                     <Grid Margin="1,0,1,0">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="26"/>

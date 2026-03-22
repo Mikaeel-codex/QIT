@@ -33,9 +33,12 @@ namespace PointofSale.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Product>().Property(p => p.Price).HasConversion<double>();
+            modelBuilder.Entity<Sale>().Property(s => s.Subtotal).HasConversion<double>();
+            modelBuilder.Entity<Sale>().Property(s => s.Tax).HasConversion<double>();
             modelBuilder.Entity<Sale>().Property(s => s.Total).HasConversion<double>();
             modelBuilder.Entity<SaleItem>().Property(si => si.UnitPrice).HasConversion<double>();
             modelBuilder.Entity<SaleItem>().Property(si => si.LineTotal).HasConversion<double>();
+            modelBuilder.Entity<SaleItem>().Property(si => si.DiscountPct).HasConversion<double>();
             modelBuilder.Entity<Supplier>().HasIndex(s => s.Name).IsUnique();
             modelBuilder.Entity<Department>().HasIndex(d => d.Name).IsUnique();
 

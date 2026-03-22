@@ -1,0 +1,411 @@
+﻿<Window x:Class="PointofSale.Views.ReportsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Reports"
+        Width="1100" Height="700"
+        WindowStartupLocation="CenterOwner"
+        Background="#111111"
+        Foreground="White">
+
+    <Window.Resources>
+
+        <Style x:Key="SideBtn" TargetType="Button">
+            <Setter Property="Background"      Value="Transparent"/>
+            <Setter Property="Foreground"      Value="#BBBBBB"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Height"          Value="40"/>
+            <Setter Property="FontSize"        Value="13"/>
+            <Setter Property="Cursor"          Value="Hand"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="Padding"         Value="16,0"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#1A1A1A"/>
+                    <Setter Property="Foreground" Value="White"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="ActiveSideBtn" TargetType="Button" BasedOn="{StaticResource SideBtn}">
+            <Setter Property="Background" Value="#1F3A6A"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+
+        <Style x:Key="PresetBtn" TargetType="Button">
+            <Setter Property="Background"      Value="#1A1A1A"/>
+            <Setter Property="Foreground"      Value="#BBBBBB"/>
+            <Setter Property="BorderBrush"     Value="#2B2B2B"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Height"          Value="26"/>
+            <Setter Property="Padding"         Value="12,0"/>
+            <Setter Property="FontSize"        Value="11"/>
+            <Setter Property="Cursor"          Value="Hand"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#252525"/>
+                    <Setter Property="Foreground" Value="White"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="ActionBtn" TargetType="Button">
+            <Setter Property="Background"      Value="#2F66C8"/>
+            <Setter Property="Foreground"      Value="White"/>
+            <Setter Property="BorderBrush"     Value="#1F4E9A"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Height"          Value="30"/>
+            <Setter Property="Padding"         Value="16,0"/>
+            <Setter Property="FontSize"        Value="12"/>
+            <Setter Property="Cursor"          Value="Hand"/>
+        </Style>
+
+        <Style TargetType="DataGridColumnHeader">
+            <Setter Property="Background"      Value="#1A1A1A"/>
+            <Setter Property="Foreground"      Value="#BBBBBB"/>
+            <Setter Property="FontWeight"      Value="SemiBold"/>
+            <Setter Property="FontSize"        Value="11"/>
+            <Setter Property="Padding"         Value="8,6"/>
+            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+            <Setter Property="BorderBrush"     Value="#2B2B2B"/>
+        </Style>
+
+        <Style TargetType="DataGridRow">
+            <Setter Property="Background" Value="#181818"/>
+            <Style.Triggers>
+                <Trigger Property="ItemsControl.AlternationIndex" Value="1">
+                    <Setter Property="Background" Value="#111111"/>
+                </Trigger>
+                <DataTrigger Binding="{Binding IsOutOfStock}" Value="True">
+                    <Setter Property="Background" Value="#3A1A1A"/>
+                    <Setter Property="Foreground" Value="#FF5555"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding IsLowStock}" Value="True">
+                    <Setter Property="Background" Value="#2A2000"/>
+                    <Setter Property="Foreground" Value="#FFC107"/>
+                </DataTrigger>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="#1A3A6A"/>
+                    <Setter Property="Foreground" Value="White"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+    </Window.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="190"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- ── SIDEBAR ── -->
+        <Border Background="#0D0D0D"
+                BorderBrush="#1E1E1E"
+                BorderThickness="0,0,1,0">
+            <StackPanel Margin="0,12,0,0">
+
+                <TextBlock Text="REPORTS"
+                           FontSize="11"
+                           FontWeight="Bold"
+                           Foreground="#555555"
+                           Margin="16,0,0,12"/>
+
+                <Button x:Name="BtnSalesSummary"
+                        Content="📊  Sales Summary"
+                        Style="{StaticResource ActiveSideBtn}"
+                        Click="NavBtn_Click" Tag="SalesSummary"/>
+
+                <Button x:Name="BtnProductSales"
+                        Content="🏷  Product Sales"
+                        Style="{StaticResource SideBtn}"
+                        Click="NavBtn_Click" Tag="ProductSales"/>
+
+                <Button x:Name="BtnInventory"
+                        Content="📦  Inventory Levels"
+                        Style="{StaticResource SideBtn}"
+                        Click="NavBtn_Click" Tag="Inventory"/>
+
+                <Button x:Name="BtnProfitMargin"
+                        Content="💰  Profit &amp; Margin"
+                        Style="{StaticResource SideBtn}"
+                        Click="NavBtn_Click" Tag="ProfitMargin"/>
+
+            </StackPanel>
+        </Border>
+
+        <!-- ── MAIN CONTENT ── -->
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Header -->
+            <Border Grid.Row="0"
+                    Background="#0D0D0D"
+                    BorderBrush="#1E1E1E"
+                    BorderThickness="0,0,0,1"
+                    Padding="16,12">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel>
+                        <TextBlock x:Name="ReportTitleTxt"
+                                   Text="Sales Summary"
+                                   FontSize="16" FontWeight="Bold" Foreground="White"/>
+                        <TextBlock x:Name="ReportSubtitleTxt"
+                                   Text="Daily, weekly and monthly sales totals"
+                                   Foreground="#555555" FontSize="11" Margin="0,2,0,0"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                        <Button Content="📄  Export PDF"
+                                Style="{StaticResource ActionBtn}"
+                                Margin="0,0,8,0"
+                                Click="ExportPdf_Click"/>
+                        <Button Content="Close"
+                                Style="{StaticResource ActionBtn}"
+                                Background="#333333" BorderBrush="#444444"
+                                Click="Close_Click"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Filter bar -->
+            <Border Grid.Row="1"
+                    Background="#0A0A0A"
+                    BorderBrush="#1E1E1E"
+                    BorderThickness="0,0,0,1"
+                    Padding="16,8">
+                <StackPanel Orientation="Horizontal">
+
+                    <!-- Preset buttons -->
+                    <TextBlock Text="Quick:" Foreground="#555555" FontSize="11"
+                               VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <Button Content="Today"         Style="{StaticResource PresetBtn}" Margin="0,0,4,0" Click="Preset_Click" Tag="Today"/>
+                    <Button Content="This Week"     Style="{StaticResource PresetBtn}" Margin="0,0,4,0" Click="Preset_Click" Tag="ThisWeek"/>
+                    <Button Content="This Month"    Style="{StaticResource PresetBtn}" Margin="0,0,4,0" Click="Preset_Click" Tag="ThisMonth"/>
+                    <Button Content="Last Month"    Style="{StaticResource PresetBtn}" Margin="0,0,12,0" Click="Preset_Click" Tag="LastMonth"/>
+
+                    <!-- Custom date range -->
+                    <TextBlock Text="From:" Foreground="#555555" FontSize="11"
+                               VerticalAlignment="Center" Margin="0,0,6,0"/>
+                    <DatePicker x:Name="DateFrom"
+                                Background="#1A1A1A" Foreground="White"
+                                Height="26" Width="120" Margin="0,0,8,0"
+                                SelectedDateChanged="DateFilter_Changed"/>
+
+                    <TextBlock Text="To:" Foreground="#555555" FontSize="11"
+                               VerticalAlignment="Center" Margin="0,0,6,0"/>
+                    <DatePicker x:Name="DateTo"
+                                Background="#1A1A1A" Foreground="White"
+                                Height="26" Width="120" Margin="0,0,12,0"
+                                SelectedDateChanged="DateFilter_Changed"/>
+
+                    <Button Content="Run Report"
+                            Style="{StaticResource ActionBtn}"
+                            Height="26" Padding="12,0"
+                            Click="RunReport_Click"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Report content (panels shown/hidden by report type) -->
+            <Grid Grid.Row="2" Margin="16">
+
+                <!-- SALES SUMMARY -->
+                <StackPanel x:Name="PanelSalesSummary" Visibility="Visible">
+
+                    <!-- KPI cards -->
+                    <Grid Margin="0,0,0,16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Border Grid.Column="0" Background="#0D0D0D" BorderBrush="#2B2B2B" BorderThickness="1" CornerRadius="6" Padding="14" Margin="0,0,8,0">
+                            <StackPanel>
+                                <TextBlock Text="Total Revenue" Foreground="#888" FontSize="11"/>
+                                <TextBlock x:Name="KpiRevenue" Text="R 0.00" Foreground="White" FontSize="22" FontWeight="Bold" Margin="0,4,0,0"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Grid.Column="1" Background="#0D0D0D" BorderBrush="#2B2B2B" BorderThickness="1" CornerRadius="6" Padding="14" Margin="0,0,8,0">
+                            <StackPanel>
+                                <TextBlock Text="No. of Sales" Foreground="#888" FontSize="11"/>
+                                <TextBlock x:Name="KpiSalesCount" Text="0" Foreground="White" FontSize="22" FontWeight="Bold" Margin="0,4,0,0"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Grid.Column="2" Background="#0D0D0D" BorderBrush="#2B2B2B" BorderThickness="1" CornerRadius="6" Padding="14" Margin="0,0,8,0">
+                            <StackPanel>
+                                <TextBlock Text="Avg. Sale Value" Foreground="#888" FontSize="11"/>
+                                <TextBlock x:Name="KpiAvgSale" Text="R 0.00" Foreground="White" FontSize="22" FontWeight="Bold" Margin="0,4,0,0"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Grid.Column="3" Background="#0D0D0D" BorderBrush="#2B2B2B" BorderThickness="1" CornerRadius="6" Padding="14">
+                            <StackPanel>
+                                <TextBlock Text="Total Tax Collected" Foreground="#888" FontSize="11"/>
+                                <TextBlock x:Name="KpiTax" Text="R 0.00" Foreground="White" FontSize="22" FontWeight="Bold" Margin="0,4,0,0"/>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+
+                    <!-- Sales by day grid -->
+                    <DataGrid x:Name="GridSalesSummary"
+                              AutoGenerateColumns="False"
+                              CanUserAddRows="False"
+                              IsReadOnly="True"
+                              AlternationCount="2"
+                              GridLinesVisibility="Horizontal"
+                              BorderThickness="1"
+                              BorderBrush="#2B2B2B"
+                              Background="Transparent"
+                              FontSize="12"
+                              Foreground="White"
+                              MaxHeight="380">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Date"          Binding="{Binding Date}"         Width="120"/>
+                            <DataGridTextColumn Header="No. of Sales"  Binding="{Binding SalesCount}"   Width="110"/>
+                            <DataGridTextColumn Header="Items Sold"    Binding="{Binding ItemsSold}"    Width="110"/>
+                            <DataGridTextColumn Header="Subtotal"      Binding="{Binding Subtotal, StringFormat=R {0:N2}}"  Width="120"/>
+                            <DataGridTextColumn Header="Tax"           Binding="{Binding Tax, StringFormat=R {0:N2}}"       Width="100"/>
+                            <DataGridTextColumn Header="Total Revenue" Binding="{Binding Total, StringFormat=R {0:N2}}"     Width="*"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </StackPanel>
+
+                <!-- PRODUCT SALES -->
+                <StackPanel x:Name="PanelProductSales" Visibility="Collapsed">
+                    <DataGrid x:Name="GridProductSales"
+                              AutoGenerateColumns="False"
+                              CanUserAddRows="False"
+                              IsReadOnly="True"
+                              AlternationCount="2"
+                              GridLinesVisibility="Horizontal"
+                              BorderThickness="1"
+                              BorderBrush="#2B2B2B"
+                              Background="Transparent"
+                              FontSize="12"
+                              Foreground="White">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Item #"        Binding="{Binding ProductId}"   Width="70"/>
+                            <DataGridTextColumn Header="Product Name"  Binding="{Binding ProductName}" Width="*"/>
+                            <DataGridTextColumn Header="SKU"           Binding="{Binding SKU}"         Width="120"/>
+                            <DataGridTextColumn Header="Qty Sold"      Binding="{Binding QtySold}"     Width="90"/>
+                            <DataGridTextColumn Header="Revenue"       Binding="{Binding Revenue, StringFormat=R {0:N2}}"    Width="120"/>
+                            <DataGridTextColumn Header="Avg Price"     Binding="{Binding AvgPrice, StringFormat=R {0:N2}}"   Width="110"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </StackPanel>
+
+                <!-- INVENTORY LEVELS -->
+                <StackPanel x:Name="PanelInventory" Visibility="Collapsed">
+                    <DataGrid x:Name="GridInventory"
+                              AutoGenerateColumns="False"
+                              CanUserAddRows="False"
+                              IsReadOnly="True"
+                              AlternationCount="2"
+                              GridLinesVisibility="Horizontal"
+                              BorderThickness="1"
+                              BorderBrush="#2B2B2B"
+                              Background="Transparent"
+                              FontSize="12"
+                              Foreground="White">
+
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Item #"       Binding="{Binding Id}"           Width="70"/>
+                            <DataGridTextColumn Header="Product Name" Binding="{Binding Name}"         Width="*"/>
+                            <DataGridTextColumn Header="Department"   Binding="{Binding Department}"   Width="140"/>
+                            <DataGridTextColumn Header="SKU"          Binding="{Binding SKU}"          Width="120"/>
+                            <DataGridTextColumn Header="On Hand"      Binding="{Binding StockQty}"     Width="90"/>
+                            <DataGridTextColumn Header="Reorder Pt."  Binding="{Binding ReorderPoint}" Width="100"/>
+                            <DataGridTextColumn Header="Cost Price"   Binding="{Binding CostPrice, StringFormat=R {0:N2}}" Width="110"/>
+                            <DataGridTextColumn Header="Reg Price"    Binding="{Binding Price, StringFormat=R {0:N2}}"     Width="110"/>
+                            <DataGridTextColumn Header="Status"       Binding="{Binding StockStatus}" Width="100"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </StackPanel>
+
+                <!-- PROFIT & MARGIN -->
+                <StackPanel x:Name="PanelProfitMargin" Visibility="Collapsed">
+
+                    <!-- KPI cards -->
+                    <Grid Margin="0,0,0,16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Border Grid.Column="0" Background="#0D0D0D" BorderBrush="#2B2B2B" BorderThickness="1" CornerRadius="6" Padding="14" Margin="0,0,8,0">
+                            <StackPanel>
+                                <TextBlock Text="Total Revenue" Foreground="#888" FontSize="11"/>
+                                <TextBlock x:Name="KpiProfitRevenue" Text="R 0.00" Foreground="White" FontSize="22" FontWeight="Bold" Margin="0,4,0,0"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Grid.Column="1" Background="#0D0D0D" BorderBrush="#2B2B2B" BorderThickness="1" CornerRadius="6" Padding="14" Margin="0,0,8,0">
+                            <StackPanel>
+                                <TextBlock Text="Est. Gross Profit" Foreground="#888" FontSize="11"/>
+                                <TextBlock x:Name="KpiGrossProfit" Text="R 0.00" Foreground="#4CAF50" FontSize="22" FontWeight="Bold" Margin="0,4,0,0"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Grid.Column="2" Background="#0D0D0D" BorderBrush="#2B2B2B" BorderThickness="1" CornerRadius="6" Padding="14">
+                            <StackPanel>
+                                <TextBlock Text="Avg. Margin %" Foreground="#888" FontSize="11"/>
+                                <TextBlock x:Name="KpiAvgMargin" Text="0.00%" Foreground="#4CAF50" FontSize="22" FontWeight="Bold" Margin="0,4,0,0"/>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+
+                    <DataGrid x:Name="GridProfitMargin"
+                              AutoGenerateColumns="False"
+                              CanUserAddRows="False"
+                              IsReadOnly="True"
+                              AlternationCount="2"
+                              GridLinesVisibility="Horizontal"
+                              BorderThickness="1"
+                              BorderBrush="#2B2B2B"
+                              Background="Transparent"
+                              FontSize="12"
+                              Foreground="White"
+                              MaxHeight="340">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Product Name"  Binding="{Binding ProductName}"                              Width="*"/>
+                            <DataGridTextColumn Header="Qty Sold"      Binding="{Binding QtySold}"                                  Width="90"/>
+                            <DataGridTextColumn Header="Sell Price"    Binding="{Binding SellPrice, StringFormat=R {0:N2}}"         Width="110"/>
+                            <DataGridTextColumn Header="Cost Price"    Binding="{Binding CostPrice, StringFormat=R {0:N2}}"         Width="110"/>
+                            <DataGridTextColumn Header="Revenue"       Binding="{Binding Revenue, StringFormat=R {0:N2}}"           Width="110"/>
+                            <DataGridTextColumn Header="Est. Profit"   Binding="{Binding GrossProfit, StringFormat=R {0:N2}}"       Width="110"/>
+                            <DataGridTextColumn Header="Margin %"      Binding="{Binding MarginPct, StringFormat={}{0:N1}%}"        Width="100"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </StackPanel>
+
+            </Grid>
+
+            <!-- Status bar -->
+            <Border Grid.Row="3"
+                    Background="#0D0D0D"
+                    BorderBrush="#1E1E1E"
+                    BorderThickness="0,1,0,0"
+                    Padding="16,8">
+                <TextBlock x:Name="StatusTxt"
+                           Foreground="#555555"
+                           FontSize="11"
+                           Text="Select a report and date range, then click Run Report."/>
+            </Border>
+
+        </Grid>
+    </Grid>
+</Window>

@@ -411,7 +411,7 @@
                   Foreground="White"
                   HorizontalGridLinesBrush="#222222"
                   RowHeight="32"
-                  EnableRowVirtualization="True">
+                  EnableRowVirtualization="True" SelectionChanged="ReceiptGrid_SelectionChanged">
 
             <!-- Row height auto-expands when discount line is shown via StackPanel -->
 
@@ -451,7 +451,7 @@
 
                 <!-- Item # — READ ONLY, no editing -->
                 <DataGridTextColumn Header="Item #"
-                                    Binding="{Binding SKU}"
+                                    Binding="{Binding ProductId}"
                                     Width="110"
                                     IsReadOnly="True">
                     <DataGridTextColumn.ElementStyle>

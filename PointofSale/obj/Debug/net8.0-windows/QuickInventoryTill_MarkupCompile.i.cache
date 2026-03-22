@@ -10,11 +10,11 @@ none
 false
 TRACE;DEBUG;NET;NET8_0;NETCOREAPP;WINDOWS;WINDOWS7_0;NET5_0_OR_GREATER;NET6_0_OR_GREATER;NET7_0_OR_GREATER;NET8_0_OR_GREATER;NETCOREAPP3_0_OR_GREATER;NETCOREAPP3_1_OR_GREATER;WINDOWS7_0_OR_GREATER
 D:\POS\PointofSale\PointofSale\App.xaml
-191465877419
+21-1546954602
 1-182648086
-70-2111239230
+76380263138
 216-692450557
-MainWindow.xaml;Views\CashPaymentWindow.xaml;Views\DepartmentEditWindow.xaml;Views\DepartmentsWindow.xaml;Views\GiftcardWindow.xaml;Views\HeldReceiptDetailPage.xaml;Views\Heldreceiptswindow.xaml;Views\InputDialog.xaml;Views\LoginWindow.xaml;Views\PointOfSaleWindow.xaml;Views\ProductEditWindow.xaml;Views\ProductsWindow.xaml;Views\QtyPriceDiscountWindow.xaml;Views\SendReceiptWindow.xaml;Views\Settings\Receiptsettingspage.xaml;Views\Settings\Storeinfopage.xaml;Views\Settings\StoreSettingsWindow.xaml;Views\SupplierEditWindow.xaml;Views\SuppliersWindow.xaml;
+MainWindow.xaml;Views\CashPaymentWindow.xaml;Views\DepartmentEditWindow.xaml;Views\DepartmentsWindow.xaml;Views\GiftcardWindow.xaml;Views\HeldReceiptDetailPage.xaml;Views\Heldreceiptswindow.xaml;Views\InputDialog.xaml;Views\LoginWindow.xaml;Views\PointOfSaleWindow.xaml;Views\ProductEditWindow.xaml;Views\ProductsWindow.xaml;Views\QtyPriceDiscountWindow.xaml;Views\ReportsWindow.xaml;Views\SalesHistoryWindow.xaml;Views\SendReceiptWindow.xaml;Views\Settings\Receiptsettingspage.xaml;Views\Settings\Storeinfopage.xaml;Views\Settings\StoreSettingsWindow.xaml;Views\SupplierEditWindow.xaml;Views\SuppliersWindow.xaml;
 
 False
 

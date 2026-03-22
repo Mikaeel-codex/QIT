@@ -1,0 +1,325 @@
+﻿<Window x:Class="PointofSale.Views.SalesHistoryWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Sales History"
+        Width="1100" Height="680"
+        WindowStartupLocation="CenterOwner"
+        Background="#111111"
+        Foreground="White">
+
+    <Window.Resources>
+
+        <Style x:Key="HeaderTxt" TargetType="TextBlock">
+            <Setter Property="Foreground"  Value="#BBBBBB"/>
+            <Setter Property="FontSize"    Value="11"/>
+            <Setter Property="FontWeight"  Value="SemiBold"/>
+        </Style>
+
+        <Style x:Key="FilterBox" TargetType="TextBox">
+            <Setter Property="Background"               Value="#1A1A1A"/>
+            <Setter Property="Foreground"               Value="White"/>
+            <Setter Property="BorderBrush"              Value="#2B2B2B"/>
+            <Setter Property="BorderThickness"          Value="1"/>
+            <Setter Property="Height"                   Value="30"/>
+            <Setter Property="Padding"                  Value="8,0"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="FontSize"                 Value="12"/>
+            <Setter Property="CaretBrush"               Value="White"/>
+        </Style>
+
+        <Style x:Key="FilterCombo" TargetType="ComboBox">
+            <Setter Property="Background"               Value="#1A1A1A"/>
+            <Setter Property="Foreground"               Value="White"/>
+            <Setter Property="BorderBrush"              Value="#2B2B2B"/>
+            <Setter Property="BorderThickness"          Value="1"/>
+            <Setter Property="Height"                   Value="30"/>
+            <Setter Property="Padding"                  Value="8,0"/>
+            <Setter Property="FontSize"                 Value="12"/>
+        </Style>
+
+        <Style x:Key="ActionBtn" TargetType="Button">
+            <Setter Property="Background"      Value="#2F66C8"/>
+            <Setter Property="Foreground"      Value="White"/>
+            <Setter Property="BorderBrush"     Value="#1F4E9A"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Height"          Value="30"/>
+            <Setter Property="Padding"         Value="16,0"/>
+            <Setter Property="FontSize"        Value="12"/>
+            <Setter Property="Cursor"          Value="Hand"/>
+        </Style>
+
+        <Style TargetType="DataGridColumnHeader">
+            <Setter Property="Background"      Value="#1A1A1A"/>
+            <Setter Property="Foreground"      Value="#BBBBBB"/>
+            <Setter Property="FontWeight"      Value="SemiBold"/>
+            <Setter Property="FontSize"        Value="11"/>
+            <Setter Property="Padding"         Value="8,6"/>
+            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+            <Setter Property="BorderBrush"     Value="#2B2B2B"/>
+        </Style>
+
+        <Style TargetType="DataGridRow">
+            <Setter Property="Background" Value="#181818"/>
+            <Style.Triggers>
+                <Trigger Property="ItemsControl.AlternationIndex" Value="1">
+                    <Setter Property="Background" Value="#111111"/>
+                </Trigger>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="#1A3A6A"/>
+                    <Setter Property="Foreground" Value="White"/>
+                </Trigger>
+                <!-- Voided sales shown in red -->
+                <DataTrigger Binding="{Binding Status}" Value="Voided">
+                    <Setter Property="Background" Value="#3A1A1A"/>
+                    <Setter Property="Foreground" Value="#FF5555"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="340"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- ── HEADER ── -->
+        <Border Grid.Row="0" Grid.ColumnSpan="2"
+                Background="#0D0D0D" Padding="16,12"
+                BorderBrush="#1E1E1E" BorderThickness="0,0,0,1">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="0,0,20,0">
+                    <TextBlock Text="Sales History" FontSize="16" FontWeight="Bold" Foreground="White"/>
+                    <TextBlock x:Name="SummaryTxt" Foreground="#555555" FontSize="11" Margin="0,2,0,0"/>
+                </StackPanel>
+
+                <!-- Search -->
+                <TextBox Grid.Column="1" x:Name="SearchBox"
+                         Style="{StaticResource FilterBox}"
+                         Margin="0,0,8,0"
+                         Tag="Search receipt #, customer, cashier..."
+                         TextChanged="Filter_Changed"/>
+
+                <!-- Date from -->
+                <DatePicker Grid.Column="2" x:Name="DateFrom"
+                            Background="#1A1A1A" Foreground="White"
+                            Height="30" Margin="0,0,8,0"
+                            SelectedDateChanged="Filter_Changed"/>
+
+                <!-- Date to -->
+                <DatePicker Grid.Column="3" x:Name="DateTo"
+                            Background="#1A1A1A" Foreground="White"
+                            Height="30" Margin="0,0,8,0"
+                            SelectedDateChanged="Filter_Changed"/>
+
+                <!-- Payment filter -->
+                <ComboBox Grid.Column="4" x:Name="PaymentFilter"
+                          Style="{StaticResource FilterCombo}"
+                          Width="120" Margin="0,0,8,0"
+                          SelectionChanged="Filter_Changed"/>
+
+                <!-- Clear filters -->
+                <Button Grid.Column="5" Content="Clear"
+                        Style="{StaticResource ActionBtn}"
+                        Background="#333333" BorderBrush="#444444"
+                        Margin="0,0,8,0"
+                        Click="ClearFilters_Click"/>
+
+                <!-- Close -->
+                <Button Grid.Column="6" Content="Close"
+                        Style="{StaticResource ActionBtn}"
+                        Background="#333333" BorderBrush="#444444"
+                        Click="Close_Click"/>
+            </Grid>
+        </Border>
+
+        <!-- ── SALES LIST ── -->
+        <DataGrid Grid.Row="1" Grid.Column="0"
+                  x:Name="SalesGrid"
+                  AutoGenerateColumns="False"
+                  CanUserAddRows="False"
+                  CanUserDeleteRows="False"
+                  IsReadOnly="True"
+                  AlternationCount="2"
+                  SelectionMode="Single"
+                  SelectionUnit="FullRow"
+                  GridLinesVisibility="Horizontal"
+                  BorderThickness="0"
+                  Background="Transparent"
+                  FontSize="12"
+                  Foreground="White"
+                  SelectionChanged="SalesGrid_SelectionChanged"
+                  Margin="0,0,1,0">
+
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Receipt #"
+                                    Binding="{Binding ReceiptNumber}"
+                                    Width="90"/>
+                <DataGridTextColumn Header="Date"
+                                    Binding="{Binding SaleDate, StringFormat={}{0:dd/MM/yyyy}}"
+                                    Width="90"/>
+                <DataGridTextColumn Header="Time"
+                                    Binding="{Binding SaleDate, StringFormat={}{0:HH:mm}}"
+                                    Width="60"/>
+                <DataGridTextColumn Header="Customer"
+                                    Binding="{Binding CustomerName}"
+                                    Width="*"/>
+                <DataGridTextColumn Header="Cashier"
+                                    Binding="{Binding Cashier}"
+                                    Width="90"/>
+                <DataGridTextColumn Header="Payment"
+                                    Binding="{Binding PaymentMethod}"
+                                    Width="100"/>
+                <DataGridTextColumn Header="Total"
+                                    Binding="{Binding Total, StringFormat=N2}"
+                                    Width="90"/>
+                <DataGridTextColumn Header="Status"
+                                    Binding="{Binding Status}"
+                                    Width="80"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <!-- ── DETAIL PANEL ── -->
+        <Border Grid.Row="1" Grid.Column="1"
+                Background="#0D0D0D"
+                BorderBrush="#1E1E1E" BorderThickness="1,0,0,0">
+
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- Detail header -->
+                <Border Grid.Row="0" Padding="16,12"
+                        BorderBrush="#1E1E1E" BorderThickness="0,0,0,1">
+                    <StackPanel>
+                        <TextBlock x:Name="DetailReceiptTxt"
+                                   Text="Select a sale to view details"
+                                   Foreground="White" FontWeight="SemiBold" FontSize="13"/>
+                        <TextBlock x:Name="DetailDateTxt"
+                                   Foreground="#555555" FontSize="11" Margin="0,2,0,0"/>
+                        <TextBlock x:Name="DetailStatusTxt"
+                                   FontSize="11" FontWeight="SemiBold" Margin="0,2,0,0"
+                                   Foreground="#FF5555" Visibility="Collapsed"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Summary rows -->
+                <Grid Grid.Row="1" Margin="16,12,16,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0" Text="Customer"   Style="{StaticResource HeaderTxt}"/>
+                    <TextBlock Grid.Row="0" Grid.Column="1" x:Name="DetailCustomerTxt"
+                               Foreground="White" FontSize="12" TextAlignment="Right"/>
+
+                    <TextBlock Grid.Row="1" Text="Cashier"    Style="{StaticResource HeaderTxt}" Margin="0,6,0,0"/>
+                    <TextBlock Grid.Row="1" Grid.Column="1" x:Name="DetailCashierTxt"
+                               Foreground="White" FontSize="12" TextAlignment="Right" Margin="0,6,0,0"/>
+
+                    <TextBlock Grid.Row="2" Text="Payment"    Style="{StaticResource HeaderTxt}" Margin="0,6,0,0"/>
+                    <TextBlock Grid.Row="2" Grid.Column="1" x:Name="DetailPaymentTxt"
+                               Foreground="White" FontSize="12" TextAlignment="Right" Margin="0,6,0,0"/>
+
+                    <Separator Grid.Row="3" Grid.ColumnSpan="2" Background="#1E1E1E" Margin="0,10,0,10"/>
+
+                    <TextBlock Grid.Row="4" Text="Subtotal"   Style="{StaticResource HeaderTxt}"/>
+                    <TextBlock Grid.Row="4" Grid.Column="1" x:Name="DetailSubtotalTxt"
+                               Foreground="White" FontSize="12" TextAlignment="Right"/>
+
+                    <TextBlock Grid.Row="5" Text="Tax"        Style="{StaticResource HeaderTxt}" Margin="0,4,0,0"/>
+                    <TextBlock Grid.Row="5" Grid.Column="1" x:Name="DetailTaxTxt"
+                               Foreground="White" FontSize="12" TextAlignment="Right" Margin="0,4,0,0"/>
+                </Grid>
+
+                <!-- Line items -->
+                <DataGrid Grid.Row="2"
+                          x:Name="ItemsGrid"
+                          AutoGenerateColumns="False"
+                          CanUserAddRows="False"
+                          IsReadOnly="True"
+                          AlternationCount="2"
+                          GridLinesVisibility="Horizontal"
+                          BorderThickness="0"
+                          Background="Transparent"
+                          FontSize="11"
+                          Foreground="White"
+                          HeadersVisibility="Column"
+                          Margin="0,12,0,0">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Item"
+                                            Binding="{Binding ProductName}"
+                                            Width="*"/>
+                        <DataGridTextColumn Header="Qty"
+                                            Binding="{Binding Quantity}"
+                                            Width="40"/>
+                        <DataGridTextColumn Header="Price"
+                                            Binding="{Binding UnitPrice, StringFormat=N2}"
+                                            Width="60"/>
+                        <DataGridTextColumn Header="Total"
+                                            Binding="{Binding LineTotal, StringFormat=N2}"
+                                            Width="65"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+
+                <!-- Total footer -->
+                <Border Grid.Row="3" Padding="16,10"
+                        Background="#111111"
+                        BorderBrush="#1E1E1E" BorderThickness="0,1,0,0">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="TOTAL" FontWeight="Bold" FontSize="14" Foreground="White"/>
+                        <TextBlock Grid.Column="1" x:Name="DetailTotalTxt"
+                                   FontWeight="Bold" FontSize="14" Foreground="White"/>
+
+                        <!-- Action buttons -->
+                        <StackPanel Grid.ColumnSpan="2" Orientation="Horizontal"
+                                    HorizontalAlignment="Right" Margin="0,26,0,0">
+                            <Button Content="🖨  Reprint Receipt"
+                                    Style="{StaticResource ActionBtn}"
+                                    Margin="0,0,8,0"
+                                    Click="Reprint_Click"/>
+                            <Button Content="🗑  Void Sale"
+                                    Style="{StaticResource ActionBtn}"
+                                    Background="#8B1A1A" BorderBrush="#6B1212"
+                                    Click="VoidSale_Click"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+            </Grid>
+        </Border>
+
+    </Grid>
+</Window>

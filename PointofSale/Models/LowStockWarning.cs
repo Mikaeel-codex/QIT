@@ -1,4 +1,4 @@
-﻿namespace PointofSale.Models
+﻿namespace QuickInventoryTill.Models
 {
     /// <summary>
     /// Returned by ScanSkuAndAddToCart when the product stock

@@ -18,5 +18,6 @@ namespace PointofSale.Models
         public int Quantity { get; set; }
 
         public decimal LineTotal { get; set; }
+        public decimal DiscountPct { get; set; }
     }
 }

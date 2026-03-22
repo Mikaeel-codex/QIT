@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PointofSale.Data;
 
@@ -10,9 +11,11 @@ using PointofSale.Data;
 namespace PointofSale.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260322164402_AddSalesHistory")]
+    partial class AddSalesHistory
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.22");
@@ -233,10 +236,10 @@ namespace PointofSale.Migrations
                     b.Property<string>("ALU")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Comments")
+                    b.Property<decimal>("AvgUnitCost")
                         .HasColumnType("TEXT");
 
-                    b.Property<decimal>("CostPrice")
+                    b.Property<string>("Comments")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Department")
@@ -250,6 +253,9 @@ namespace PointofSale.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("OrderCost")
                         .HasColumnType("TEXT");
 
                     b.Property<double>("Price")

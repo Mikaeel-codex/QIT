@@ -14,11 +14,10 @@ namespace PointofSale.Models
         public string? Department { get; set; }
         public string? Description { get; set; }
         public string? Size { get; set; }
-        public decimal AvgUnitCost { get; set; }
+        public decimal CostPrice { get; set; }
         public string? Tax { get; set; }
         public string? ALU { get; set; }
         public string? Supplier { get; set; }
-        public decimal OrderCost { get; set; }
         public int ReorderPoint { get; set; }
         public string? UnitOfMeasure { get; set; }
         public string? Manufacturer { get; set; }

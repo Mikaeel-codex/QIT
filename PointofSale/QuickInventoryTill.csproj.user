@@ -26,6 +26,12 @@
     <Compile Update="Views\QtyPriceDiscountWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Views\ReportsWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\SalesHistoryWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Views\SendReceiptWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>

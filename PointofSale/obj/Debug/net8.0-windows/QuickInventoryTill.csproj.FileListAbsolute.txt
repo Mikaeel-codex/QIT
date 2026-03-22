@@ -163,3 +163,7 @@ D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\Views\Settings\StoreSett
 D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\Views\Settings\Receiptsettingspage.g.cs
 D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\Views\Settings\Storeinfopage.g.cs
 D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\Views\Settings\StoreSettingsWindow.g.cs
+D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\Views\SalesHistoryWindow.baml
+D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\Views\SalesHistoryWindow.g.cs
+D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\Views\ReportsWindow.baml
+D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\Views\ReportsWindow.g.cs
