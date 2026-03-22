@@ -85,6 +85,12 @@ namespace PointofSale.ViewModels
 
         public string CashChangeDisplay => CashChange > 0 ? $"Cash Change  {CashChange:N2}" : "";
 
+        /// <summary>
+        /// Set this from the UI layer to receive low stock warnings
+        /// from IncreaseQtyCommand (Qty+ button on cart row).
+        /// </summary>
+        public Action<LowStockWarning>? OnLowStock { get; set; }
+
         public RelayCommand<CartLine> IncreaseQtyCommand { get; }
         public RelayCommand<CartLine> DecreaseQtyCommand { get; }
         public RelayCommand<CartLine> RemoveFromCartCommand { get; }
@@ -127,6 +133,21 @@ namespace PointofSale.ViewModels
                 if (line.Qty + 1 > p.StockQty) { MessageBox.Show("Not enough stock."); return; }
                 line.Qty += 1;
                 RefreshTotals();
+
+                // Check reorder point after qty increase
+                if (p.ReorderPoint > 0)
+                {
+                    var remaining = p.StockQty - line.Qty;
+                    if (remaining <= p.ReorderPoint)
+                        OnLowStock?.Invoke(new LowStockWarning
+                        {
+                            ProductName = p.Name,
+                            CurrentStock = p.StockQty,
+                            CartQty = line.Qty,
+                            ReorderPoint = p.ReorderPoint,
+                            Remaining = remaining
+                        });
+                }
             });
 
             DecreaseQtyCommand = new RelayCommand<CartLine>(line =>
@@ -224,23 +245,28 @@ namespace PointofSale.ViewModels
             RefreshPayment();
         }
 
-        public void ScanSkuAndAddToCart(string skuOrAlu)
+        /// <summary>
+        /// Adds a product to the cart by SKU or ALU.
+        /// Returns a LowStockWarning if the product is at or below its reorder point
+        /// after being added, otherwise returns null.
+        /// </summary>
+        public LowStockWarning? ScanSkuAndAddToCart(string skuOrAlu)
         {
             skuOrAlu = (skuOrAlu ?? "").Trim();
-            if (string.IsNullOrWhiteSpace(skuOrAlu)) return;
+            if (string.IsNullOrWhiteSpace(skuOrAlu)) return null;
 
             using var db = new AppDbContext();
             var p = db.Products.FirstOrDefault(x =>
                 (x.SKU != null && x.SKU == skuOrAlu) ||
                 (x.ALU != null && x.ALU == skuOrAlu));
 
-            if (p == null) { MessageBox.Show("Item not found.", "Not Found"); return; }
-            if (p.StockQty <= 0) { MessageBox.Show("Item is out of stock.", "Out of Stock"); return; }
+            if (p == null) { MessageBox.Show("Item not found.", "Not Found"); return null; }
+            if (p.StockQty <= 0) { MessageBox.Show("Item is out of stock.", "Out of Stock"); return null; }
 
             var existing = Cart.FirstOrDefault(x => x.ProductId == p.Id);
             if (existing != null)
             {
-                if (existing.Qty + 1 > p.StockQty) { MessageBox.Show("Not enough stock to add more.", "Stock Limit"); return; }
+                if (existing.Qty + 1 > p.StockQty) { MessageBox.Show("Not enough stock to add more.", "Stock Limit"); return null; }
                 existing.Qty += 1;
             }
             else
@@ -263,6 +289,24 @@ namespace PointofSale.ViewModels
             }
 
             RefreshTotals();
+
+            // Check reorder point — cart qty is what will be deducted on finalize
+            if (p.ReorderPoint > 0)
+            {
+                var cartQty = Cart.First(x => x.ProductId == p.Id).Qty;
+                var remaining = p.StockQty - cartQty;
+                if (remaining <= p.ReorderPoint)
+                    return new LowStockWarning
+                    {
+                        ProductName = p.Name,
+                        CurrentStock = p.StockQty,
+                        CartQty = cartQty,
+                        ReorderPoint = p.ReorderPoint,
+                        Remaining = remaining
+                    };
+            }
+
+            return null;
         }
 
         /// <summary>

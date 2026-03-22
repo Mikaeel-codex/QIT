@@ -7,21 +7,16 @@ namespace PointofSale.Models
     public class Product
     {
         public int Id { get; set; }
-
-
         public string Name { get; set; } = "";
         public string SKU { get; set; } = "";
         public decimal Price { get; set; }
         public int StockQty { get; set; }
-
         public string? Department { get; set; }
         public string? Description { get; set; }
         public string? Size { get; set; }
         public decimal AvgUnitCost { get; set; }
         public string? Tax { get; set; }
-
         public string? ALU { get; set; }
-
         public string? Supplier { get; set; }
         public decimal OrderCost { get; set; }
         public int ReorderPoint { get; set; }
@@ -31,7 +26,6 @@ namespace PointofSale.Models
 
         [NotMapped]
         public bool IsLowStock => ReorderPoint > 0 && StockQty <= ReorderPoint;
-
         [NotMapped]
         public bool IsOutOfStock => StockQty <= 0;
     }

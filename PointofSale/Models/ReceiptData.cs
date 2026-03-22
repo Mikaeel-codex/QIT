@@ -24,6 +24,12 @@ namespace PointofSale.Models
         public string CustomerPhone { get; set; } = "";
         public string CustomerEmail { get; set; } = "";
 
+        // ── Branding ──────────────────────────────────────────────────────
+        public string LogoPath { get; set; } = "";  
+        public string StampPath { get; set; } = "";  
+        public string StampText { get; set; } = "";  
+        public string ReceiptFooter { get; set; } = "";
+
         // ── Line items ────────────────────────────────────────────────────
         public List<ReceiptLineItem> Lines { get; set; } = new();
 

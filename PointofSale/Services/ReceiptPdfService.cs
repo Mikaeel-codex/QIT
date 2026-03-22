@@ -1,4 +1,5 @@
 ﻿using PointofSale.Models;
+using PointofSale.Services;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -24,6 +25,17 @@ namespace PointofSale.Services
                 throw new FileNotFoundException("generate_receipt.py not found. Place it in the app folder or a Scripts subfolder.");
 
             // ── Write JSON data to temp file ──────────────────────────────
+            // Inject logo/stamp/footer from settings if not already set
+            if (string.IsNullOrEmpty(data.LogoPath))
+                data.LogoPath = StoreSettingsService.Get("LogoPath");
+            if (string.IsNullOrEmpty(data.StampPath))
+                data.StampPath = StoreSettingsService.Get("StampPath");
+            if (string.IsNullOrEmpty(data.StampText))
+                data.StampText = StoreSettingsService.Get("StampText");
+            if (string.IsNullOrEmpty(data.ReceiptFooter))
+                data.ReceiptFooter = StoreSettingsService.Get("ReceiptFooter",
+                                         "Thank you for your business!");
+
             var tempJson = Path.Combine(Path.GetTempPath(), $"receipt_{Guid.NewGuid():N}.json");
             var outPdf = Path.Combine(Path.GetTempPath(), $"receipt_{data.ReceiptNumber}_{DateTime.Now:yyyyMMddHHmmss}.pdf");
 

@@ -847,7 +847,7 @@
                     <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
                         <Button x:Name="HoldBtn" Content="Put on Hold" Margin="0,0,4,0" Style="{StaticResource FooterButton}" Click="HoldBtn_Click"/>
                         <Button Content="Cancel"           Margin="0,0,4,0" Style="{StaticResource FooterButton}" Click="Cancel_Click"/>
-                        <Button Content="Save &amp; Email" Margin="0,0,4,0" Style="{StaticResource SaveButton}"   Click="SaveEmail_Click"/>
+                        <Button Content="Send Receipt"  Margin="0,0,4,0" Style="{StaticResource SaveButton}"   Click="SaveEmail_Click"/>
                         <Button Content="Save Only"        Margin="0,0,4,0" Style="{StaticResource SaveButton}"   Click="SaveOnly_Click"/>
                         <Button Content="Save &amp; Print"                  Style="{StaticResource SaveButton}"   Click="SavePrint_Click"/>
                     </StackPanel>
@@ -855,5 +855,49 @@
 
             </StackPanel>
         </Border>
+
+        <!-- ═══ LOW STOCK TOAST — floats top-right over everything ═══ -->
+        <Border x:Name="LowStockToast"
+                Grid.RowSpan="3"
+                Visibility="Collapsed"
+                VerticalAlignment="Top"
+                HorizontalAlignment="Right"
+                Margin="0,60,16,0"
+                Background="#1A1A00"
+                BorderBrush="#FFA500"
+                BorderThickness="1"
+                CornerRadius="6"
+                Padding="14,10"
+                MaxWidth="340"
+                Panel.ZIndex="999">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="⚠  Low Stock Warning"
+                               Foreground="#FFA500"
+                               FontWeight="Bold"
+                               FontSize="12"
+                               Margin="0,0,0,4"/>
+                    <TextBlock x:Name="LowStockMsg"
+                               Foreground="#FFDD88"
+                               FontSize="12"
+                               TextWrapping="Wrap"/>
+                </StackPanel>
+                <Button Grid.Column="1"
+                        Content="✕"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        Foreground="#888888"
+                        FontSize="13"
+                        Cursor="Hand"
+                        VerticalAlignment="Top"
+                        Margin="10,0,0,0"
+                        Click="DismissLowStock_Click"/>
+            </Grid>
+        </Border>
+
     </Grid>
 </Window>

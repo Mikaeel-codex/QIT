@@ -23,7 +23,8 @@ namespace PointofSale.Views
             var vm = new PosViewModel();
             DataContext = vm;
 
-            // Update Hold button label whenever cart changes
+            vm.OnLowStock = warn => ShowLowStockToast(warn);
+
             vm.Cart.CollectionChanged += (_, __) => RefreshHoldButton();
             RefreshHoldButton();
         }
@@ -97,7 +98,10 @@ namespace PointofSale.Views
                 var sku = ScanBoxTop.Text.Trim();
                 ClearScanBox();
                 if (DataContext is PosViewModel vm)
-                    vm.ScanSkuAndAddToCart(sku);
+                {
+                    var warn = vm.ScanSkuAndAddToCart(sku);
+                    if (warn != null) ShowLowStockToast(warn);
+                }
                 e.Handled = true;
             }
             else if (e.Key == Key.Down && ProductPopup.IsOpen)
@@ -169,7 +173,8 @@ namespace PointofSale.Views
             if (DataContext is PosViewModel vm)
             {
                 var identifier = !string.IsNullOrWhiteSpace(p.SKU) ? p.SKU : p.ALU;
-                vm.ScanSkuAndAddToCart(identifier ?? "");
+                var warn = vm.ScanSkuAndAddToCart(identifier ?? "");
+                if (warn != null) ShowLowStockToast(warn);
             }
             ScanBoxTop.Focus();
         }
@@ -683,14 +688,24 @@ namespace PointofSale.Views
             var receipt = vm.FinalizeSale(vm.PaymentMethod, _currentUser.Username);
             ResetPaymentCard();
 
-            using var db = new AppDbContext();
-            string Get(string key) => db.StoreSettings
-                .FirstOrDefault(s => s.Key == key)?.Value ?? "";
+            if (receipt != null)
+            {
+                // Load store info from settings DB — no hardcoded values
+                receipt.StoreName = StoreSettingsService.Get("StoreName", "My Store");
+                receipt.StoreAddress = StoreSettingsService.Get("StoreAddress");
+                receipt.StorePhone = StoreSettingsService.Get("StorePhone");
+                receipt.StoreEmail = StoreSettingsService.Get("StoreEmail");
 
-            receipt.StoreName = Get("StoreName");
-            receipt.StoreAddress = Get("StoreAddress");
-            receipt.StorePhone = Get("StorePhone");
-            receipt.StoreEmail = Get("EmailAddress");
+                // Use configured receipt prefix + auto-increment number
+                var prefix = StoreSettingsService.Get("ReceiptPrefix", "REC");
+                var nextNo = int.TryParse(StoreSettingsService.Get("NextReceiptNumber", "1"), out var n) ? n : 1;
+                receipt.ReceiptNumber = $"{prefix}-{nextNo:D4}";
+
+                // Increment for next sale
+                StoreSettingsService.Set("NextReceiptNumber", (nextNo + 1).ToString());
+
+                new SendReceiptWindow(receipt) { Owner = this }.ShowDialog();
+            }
         }
 
         private void SavePrint_Click(object sender, RoutedEventArgs e)
@@ -1002,6 +1017,37 @@ namespace PointofSale.Views
             win.Content = grid;
             win.ShowDialog();
             return result;
+        }
+
+        // ── Low Stock Toast ───────────────────────────────────────────────
+        private System.Windows.Threading.DispatcherTimer? _toastTimer;
+
+        private void ShowLowStockToast(LowStockWarning warn)
+        {
+            LowStockMsg.Text =
+                $"{warn.ProductName}\n" +
+                $"Stock on hand: {warn.CurrentStock}   In cart: {warn.CartQty}\n" +
+                $"Remaining after sale: {warn.Remaining}   (Reorder point: {warn.ReorderPoint})\n" +
+                $"Please reorder this item soon.";
+
+            LowStockToast.Visibility = Visibility.Visible;
+
+            // Auto-dismiss after 8 seconds
+            _toastTimer?.Stop();
+            _toastTimer = new System.Windows.Threading.DispatcherTimer
+            { Interval = System.TimeSpan.FromSeconds(15) };
+            _toastTimer.Tick += (s, e) =>
+            {
+                LowStockToast.Visibility = Visibility.Collapsed;
+                _toastTimer.Stop();
+            };
+            _toastTimer.Start();
+        }
+
+        private void DismissLowStock_Click(object sender, RoutedEventArgs e)
+        {
+            LowStockToast.Visibility = Visibility.Collapsed;
+            _toastTimer?.Stop();
         }
 
         private void ShowCellError(string message)

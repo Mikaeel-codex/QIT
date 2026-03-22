@@ -3,16 +3,52 @@
   "WorkspaceRootPath": "D:\\POS\\PointofSale\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{E6EDAB9C-3163-A93E-422A-393C472BB329}|PointofSale\\QuickInventoryTill.csproj|d:\\pos\\pointofsale\\pointofsale\\views\\pointofsalewindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E6EDAB9C-3163-A93E-422A-393C472BB329}|PointofSale\\QuickInventoryTill.csproj|solutionrelative:pointofsale\\views\\pointofsalewindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E6EDAB9C-3163-A93E-422A-393C472BB329}|PointofSale\\QuickInventoryTill.csproj|d:\\pos\\pointofsale\\pointofsale\\models\\product.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E6EDAB9C-3163-A93E-422A-393C472BB329}|PointofSale\\QuickInventoryTill.csproj|solutionrelative:pointofsale\\models\\product.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E6EDAB9C-3163-A93E-422A-393C472BB329}|PointofSale\\QuickInventoryTill.csproj|d:\\pos\\pointofsale\\pointofsale\\viewmodels\\lowstockwarning.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E6EDAB9C-3163-A93E-422A-393C472BB329}|PointofSale\\QuickInventoryTill.csproj|solutionrelative:pointofsale\\viewmodels\\lowstockwarning.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E6EDAB9C-3163-A93E-422A-393C472BB329}|PointofSale\\QuickInventoryTill.csproj|d:\\pos\\pointofsale\\pointofsale\\views\\pointofsalewindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{E6EDAB9C-3163-A93E-422A-393C472BB329}|PointofSale\\QuickInventoryTill.csproj|solutionrelative:pointofsale\\views\\pointofsalewindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E6EDAB9C-3163-A93E-422A-393C472BB329}|PointofSale\\QuickInventoryTill.csproj|d:\\pos\\pointofsale\\pointofsale\\viewmodels\\posviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E6EDAB9C-3163-A93E-422A-393C472BB329}|PointofSale\\QuickInventoryTill.csproj|solutionrelative:pointofsale\\viewmodels\\posviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E6EDAB9C-3163-A93E-422A-393C472BB329}|PointofSale\\QuickInventoryTill.csproj|d:\\pos\\pointofsale\\pointofsale\\scripts\\generate_receipt.py||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{E6EDAB9C-3163-A93E-422A-393C472BB329}|PointofSale\\QuickInventoryTill.csproj|solutionrelative:pointofsale\\scripts\\generate_receipt.py||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{E6EDAB9C-3163-A93E-422A-393C472BB329}|PointofSale\\QuickInventoryTill.csproj|d:\\pos\\pointofsale\\pointofsale\\views\\settings\\storeinfopage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
       "RelativeMoniker": "D:0:0:{E6EDAB9C-3163-A93E-422A-393C472BB329}|PointofSale\\QuickInventoryTill.csproj|solutionrelative:pointofsale\\views\\settings\\storeinfopage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{E6EDAB9C-3163-A93E-422A-393C472BB329}|PointofSale\\QuickInventoryTill.csproj|d:\\pos\\pointofsale\\pointofsale\\views\\settings\\storesettingswindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{E6EDAB9C-3163-A93E-422A-393C472BB329}|PointofSale\\QuickInventoryTill.csproj|solutionrelative:pointofsale\\views\\settings\\storesettingswindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+      "AbsoluteMoniker": "D:0:0:{E6EDAB9C-3163-A93E-422A-393C472BB329}|PointofSale\\QuickInventoryTill.csproj|d:\\pos\\pointofsale\\pointofsale\\services\\receiptpdfservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E6EDAB9C-3163-A93E-422A-393C472BB329}|PointofSale\\QuickInventoryTill.csproj|solutionrelative:pointofsale\\services\\receiptpdfservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{E6EDAB9C-3163-A93E-422A-393C472BB329}|PointofSale\\QuickInventoryTill.csproj|d:\\pos\\pointofsale\\pointofsale\\views\\settings\\storeinfopage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{E6EDAB9C-3163-A93E-422A-393C472BB329}|PointofSale\\QuickInventoryTill.csproj|solutionrelative:pointofsale\\views\\settings\\storeinfopage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E6EDAB9C-3163-A93E-422A-393C472BB329}|PointofSale\\QuickInventoryTill.csproj|d:\\pos\\pointofsale\\pointofsale\\models\\receiptdata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E6EDAB9C-3163-A93E-422A-393C472BB329}|PointofSale\\QuickInventoryTill.csproj|solutionrelative:pointofsale\\models\\receiptdata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E6EDAB9C-3163-A93E-422A-393C472BB329}|PointofSale\\QuickInventoryTill.csproj|d:\\pos\\pointofsale\\pointofsale\\views\\sendreceiptwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{E6EDAB9C-3163-A93E-422A-393C472BB329}|PointofSale\\QuickInventoryTill.csproj|solutionrelative:pointofsale\\views\\sendreceiptwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E6EDAB9C-3163-A93E-422A-393C472BB329}|PointofSale\\QuickInventoryTill.csproj|d:\\pos\\pointofsale\\pointofsale\\views\\settings\\storesettingswindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{E6EDAB9C-3163-A93E-422A-393C472BB329}|PointofSale\\QuickInventoryTill.csproj|solutionrelative:pointofsale\\views\\settings\\storesettingswindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{E6EDAB9C-3163-A93E-422A-393C472BB329}|PointofSale\\QuickInventoryTill.csproj|d:\\pos\\pointofsale\\pointofsale\\views\\settings\\comingsoonpage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -49,10 +85,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{E6EDAB9C-3163-A93E-422A-393C472BB329}|PointofSale\\QuickInventoryTill.csproj|d:\\pos\\pointofsale\\pointofsale\\views\\sendreceiptwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{E6EDAB9C-3163-A93E-422A-393C472BB329}|PointofSale\\QuickInventoryTill.csproj|solutionrelative:pointofsale\\views\\sendreceiptwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{E6EDAB9C-3163-A93E-422A-393C472BB329}|PointofSale\\QuickInventoryTill.csproj|d:\\pos\\pointofsale\\pointofsale\\views\\pointofsalewindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{E6EDAB9C-3163-A93E-422A-393C472BB329}|PointofSale\\QuickInventoryTill.csproj|solutionrelative:pointofsale\\views\\pointofsalewindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     }
   ],
   "DocumentGroupContainers": [
@@ -62,172 +94,8 @@
       "DocumentGroups": [
         {
           "DockedHeight": 18,
-          "SelectedChildIndex": 4,
+          "SelectedChildIndex": 8,
           "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "ComingSoonPage.cs",
-              "DocumentMoniker": "D:\\POS\\PointofSale\\PointofSale\\Views\\Settings\\ComingSoonPage.cs",
-              "RelativeDocumentMoniker": "PointofSale\\Views\\Settings\\ComingSoonPage.cs",
-              "ToolTip": "D:\\POS\\PointofSale\\PointofSale\\Views\\Settings\\ComingSoonPage.cs",
-              "RelativeToolTip": "PointofSale\\Views\\Settings\\ComingSoonPage.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACkAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-18T21:11:48.546Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "Receiptsettingspage.xaml.cs",
-              "DocumentMoniker": "D:\\POS\\PointofSale\\PointofSale\\Views\\Settings\\Receiptsettingspage.xaml.cs",
-              "RelativeDocumentMoniker": "PointofSale\\Views\\Settings\\Receiptsettingspage.xaml.cs",
-              "ToolTip": "D:\\POS\\PointofSale\\PointofSale\\Views\\Settings\\Receiptsettingspage.xaml.cs",
-              "RelativeToolTip": "PointofSale\\Views\\Settings\\Receiptsettingspage.xaml.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACIAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-18T21:07:46.94Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "Receiptsettingspage.xaml",
-              "DocumentMoniker": "D:\\POS\\PointofSale\\PointofSale\\Views\\Settings\\Receiptsettingspage.xaml",
-              "RelativeDocumentMoniker": "PointofSale\\Views\\Settings\\Receiptsettingspage.xaml",
-              "ToolTip": "D:\\POS\\PointofSale\\PointofSale\\Views\\Settings\\Receiptsettingspage.xaml",
-              "RelativeToolTip": "PointofSale\\Views\\Settings\\Receiptsettingspage.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-03-18T21:07:40.815Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "Storeinfopage.xaml.cs",
-              "DocumentMoniker": "D:\\POS\\PointofSale\\PointofSale\\Views\\Settings\\Storeinfopage.xaml.cs",
-              "RelativeDocumentMoniker": "PointofSale\\Views\\Settings\\Storeinfopage.xaml.cs",
-              "ToolTip": "D:\\POS\\PointofSale\\PointofSale\\Views\\Settings\\Storeinfopage.xaml.cs",
-              "RelativeToolTip": "PointofSale\\Views\\Settings\\Storeinfopage.xaml.cs",
-              "ViewState": "AgIAACQAAAAAAAAAAAAswD0AAAA9AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-18T21:06:11.31Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "Storeinfopage.xaml",
-              "DocumentMoniker": "D:\\POS\\PointofSale\\PointofSale\\Views\\Settings\\Storeinfopage.xaml",
-              "RelativeDocumentMoniker": "PointofSale\\Views\\Settings\\Storeinfopage.xaml",
-              "ToolTip": "D:\\POS\\PointofSale\\PointofSale\\Views\\Settings\\Storeinfopage.xaml",
-              "RelativeToolTip": "PointofSale\\Views\\Settings\\Storeinfopage.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-03-18T21:04:53.629Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "StoreSettingsWindow.xaml",
-              "DocumentMoniker": "D:\\POS\\PointofSale\\PointofSale\\Views\\Settings\\StoreSettingsWindow.xaml",
-              "RelativeDocumentMoniker": "PointofSale\\Views\\Settings\\StoreSettingsWindow.xaml",
-              "ToolTip": "D:\\POS\\PointofSale\\PointofSale\\Views\\Settings\\StoreSettingsWindow.xaml",
-              "RelativeToolTip": "PointofSale\\Views\\Settings\\StoreSettingsWindow.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-03-18T21:03:44.102Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "MainWindow.xaml",
-              "DocumentMoniker": "D:\\POS\\PointofSale\\PointofSale\\MainWindow.xaml",
-              "RelativeDocumentMoniker": "PointofSale\\MainWindow.xaml",
-              "ToolTip": "D:\\POS\\PointofSale\\PointofSale\\MainWindow.xaml",
-              "RelativeToolTip": "PointofSale\\MainWindow.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-03-18T20:46:15.574Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "MainWindow.xaml.cs",
-              "DocumentMoniker": "D:\\POS\\PointofSale\\PointofSale\\MainWindow.xaml.cs",
-              "RelativeDocumentMoniker": "PointofSale\\MainWindow.xaml.cs",
-              "ToolTip": "D:\\POS\\PointofSale\\PointofSale\\MainWindow.xaml.cs",
-              "RelativeToolTip": "PointofSale\\MainWindow.xaml.cs",
-              "ViewState": "AgIAAMwAAAAAAAAAAAAywOEAAABCAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-18T20:46:12.497Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 11,
-              "Title": "SendReceiptWindow.xaml.cs",
-              "DocumentMoniker": "D:\\POS\\PointofSale\\PointofSale\\Views\\SendReceiptWindow.xaml.cs",
-              "RelativeDocumentMoniker": "PointofSale\\Views\\SendReceiptWindow.xaml.cs",
-              "ToolTip": "D:\\POS\\PointofSale\\PointofSale\\Views\\SendReceiptWindow.xaml.cs",
-              "RelativeToolTip": "PointofSale\\Views\\SendReceiptWindow.xaml.cs",
-              "ViewState": "AgIAAJEAAAAAAAAAAAAAAMkAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-18T20:45:43.717Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "AppDbContext.cs",
-              "DocumentMoniker": "D:\\POS\\PointofSale\\PointofSale\\Data\\AppDbContext.cs",
-              "RelativeDocumentMoniker": "PointofSale\\Data\\AppDbContext.cs",
-              "ToolTip": "D:\\POS\\PointofSale\\PointofSale\\Data\\AppDbContext.cs",
-              "RelativeToolTip": "PointofSale\\Data\\AppDbContext.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAADsAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-18T20:42:41.466Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "StoreSettingsService.cs",
-              "DocumentMoniker": "D:\\POS\\PointofSale\\PointofSale\\Services\\StoreSettingsService.cs",
-              "RelativeDocumentMoniker": "PointofSale\\Services\\StoreSettingsService.cs",
-              "ToolTip": "D:\\POS\\PointofSale\\PointofSale\\Services\\StoreSettingsService.cs",
-              "RelativeToolTip": "PointofSale\\Services\\StoreSettingsService.cs",
-              "ViewState": "AgIAAA4AAAAAAAAAAIA7wBsAAABUAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-18T20:41:17.143Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "StoreSettings.cs",
-              "DocumentMoniker": "D:\\POS\\PointofSale\\PointofSale\\Models\\StoreSettings.cs",
-              "RelativeDocumentMoniker": "PointofSale\\Models\\StoreSettings.cs",
-              "ToolTip": "D:\\POS\\PointofSale\\PointofSale\\Models\\StoreSettings.cs",
-              "RelativeToolTip": "PointofSale\\Models\\StoreSettings.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-18T20:39:13.565Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 12,
-              "Title": "PointOfSaleWindow.xaml",
-              "DocumentMoniker": "D:\\POS\\PointofSale\\PointofSale\\Views\\PointOfSaleWindow.xaml",
-              "RelativeDocumentMoniker": "PointofSale\\Views\\PointOfSaleWindow.xaml",
-              "ToolTip": "D:\\POS\\PointofSale\\PointofSale\\Views\\PointOfSaleWindow.xaml",
-              "RelativeToolTip": "PointofSale\\Views\\PointOfSaleWindow.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-03-18T20:43:53.911Z",
-              "EditorCaption": ""
-            },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
@@ -239,6 +107,262 @@
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "LowStockWarning.cs",
+              "DocumentMoniker": "D:\\POS\\PointofSale\\PointofSale\\ViewModels\\LowStockWarning.cs",
+              "RelativeDocumentMoniker": "PointofSale\\ViewModels\\LowStockWarning.cs",
+              "ToolTip": "D:\\POS\\PointofSale\\PointofSale\\ViewModels\\LowStockWarning.cs",
+              "RelativeToolTip": "PointofSale\\ViewModels\\LowStockWarning.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-22T15:53:18.628Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "PosViewModel.cs",
+              "DocumentMoniker": "D:\\POS\\PointofSale\\PointofSale\\ViewModels\\PosViewModel.cs",
+              "RelativeDocumentMoniker": "PointofSale\\ViewModels\\PosViewModel.cs",
+              "ToolTip": "D:\\POS\\PointofSale\\PointofSale\\ViewModels\\PosViewModel.cs",
+              "RelativeToolTip": "PointofSale\\ViewModels\\PosViewModel.cs",
+              "ViewState": "AgIAAFEAAAAAAAAAAAAuwF4AAABBAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-22T15:51:25.255Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Product.cs",
+              "DocumentMoniker": "D:\\POS\\PointofSale\\PointofSale\\Models\\Product.cs",
+              "RelativeDocumentMoniker": "PointofSale\\Models\\Product.cs",
+              "ToolTip": "D:\\POS\\PointofSale\\PointofSale\\Models\\Product.cs",
+              "RelativeToolTip": "PointofSale\\Models\\Product.cs",
+              "ViewState": "AgIAAAoAAAAAAAAAAAAAAB8AAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-22T14:39:24.999Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "ReceiptData.cs",
+              "DocumentMoniker": "D:\\POS\\PointofSale\\PointofSale\\Models\\ReceiptData.cs",
+              "RelativeDocumentMoniker": "PointofSale\\Models\\ReceiptData.cs",
+              "ToolTip": "D:\\POS\\PointofSale\\PointofSale\\Models\\ReceiptData.cs",
+              "RelativeToolTip": "PointofSale\\Models\\ReceiptData.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB0AAAA1AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-22T13:59:55.799Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "generate_receipt.py",
+              "DocumentMoniker": "D:\\POS\\PointofSale\\PointofSale\\Scripts\\generate_receipt.py",
+              "RelativeDocumentMoniker": "PointofSale\\Scripts\\generate_receipt.py",
+              "ToolTip": "D:\\POS\\PointofSale\\PointofSale\\Scripts\\generate_receipt.py",
+              "RelativeToolTip": "PointofSale\\Scripts\\generate_receipt.py",
+              "ViewState": "AgIAAPwAAAAAAAAAAAAwwCIBAAAcAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002457|",
+              "WhenOpened": "2026-03-22T13:59:03.16Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "PointOfSaleWindow.xaml.cs",
+              "DocumentMoniker": "D:\\POS\\PointofSale\\PointofSale\\Views\\PointOfSaleWindow.xaml.cs",
+              "RelativeDocumentMoniker": "PointofSale\\Views\\PointOfSaleWindow.xaml.cs",
+              "ToolTip": "D:\\POS\\PointofSale\\PointofSale\\Views\\PointOfSaleWindow.xaml.cs",
+              "RelativeToolTip": "PointofSale\\Views\\PointOfSaleWindow.xaml.cs",
+              "ViewState": "AgIAAPgDAAAAAAAAAAAAAAsEAAAgAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-19T19:20:17.86Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "SendReceiptWindow.xaml",
+              "DocumentMoniker": "D:\\POS\\PointofSale\\PointofSale\\Views\\SendReceiptWindow.xaml",
+              "RelativeDocumentMoniker": "PointofSale\\Views\\SendReceiptWindow.xaml",
+              "ToolTip": "D:\\POS\\PointofSale\\PointofSale\\Views\\SendReceiptWindow.xaml",
+              "RelativeToolTip": "PointofSale\\Views\\SendReceiptWindow.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-03-19T19:16:16.686Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "Receiptsettingspage.xaml",
+              "DocumentMoniker": "D:\\POS\\PointofSale\\PointofSale\\Views\\Settings\\Receiptsettingspage.xaml",
+              "RelativeDocumentMoniker": "PointofSale\\Views\\Settings\\Receiptsettingspage.xaml",
+              "ToolTip": "D:\\POS\\PointofSale\\PointofSale\\Views\\Settings\\Receiptsettingspage.xaml",
+              "RelativeToolTip": "PointofSale\\Views\\Settings\\Receiptsettingspage.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-03-18T21:07:40.815Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "PointOfSaleWindow.xaml",
+              "DocumentMoniker": "D:\\POS\\PointofSale\\PointofSale\\Views\\PointOfSaleWindow.xaml",
+              "RelativeDocumentMoniker": "PointofSale\\Views\\PointOfSaleWindow.xaml",
+              "ToolTip": "D:\\POS\\PointofSale\\PointofSale\\Views\\PointOfSaleWindow.xaml",
+              "RelativeToolTip": "PointofSale\\Views\\PointOfSaleWindow.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-03-18T20:43:53.911Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "ReceiptPdfService.cs",
+              "DocumentMoniker": "D:\\POS\\PointofSale\\PointofSale\\Services\\ReceiptPdfService.cs",
+              "RelativeDocumentMoniker": "PointofSale\\Services\\ReceiptPdfService.cs",
+              "ToolTip": "D:\\POS\\PointofSale\\PointofSale\\Services\\ReceiptPdfService.cs",
+              "RelativeToolTip": "PointofSale\\Services\\ReceiptPdfService.cs",
+              "ViewState": "AgIAABYAAAAAAAAAAAAgwFwAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-22T14:01:03.54Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "Storeinfopage.xaml.cs",
+              "DocumentMoniker": "D:\\POS\\PointofSale\\PointofSale\\Views\\Settings\\Storeinfopage.xaml.cs",
+              "RelativeDocumentMoniker": "PointofSale\\Views\\Settings\\Storeinfopage.xaml.cs",
+              "ToolTip": "D:\\POS\\PointofSale\\PointofSale\\Views\\Settings\\Storeinfopage.xaml.cs",
+              "RelativeToolTip": "PointofSale\\Views\\Settings\\Storeinfopage.xaml.cs",
+              "ViewState": "AgIAAIIAAAAAAAAAAAAUwKsAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-18T21:06:11.31Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "Storeinfopage.xaml",
+              "DocumentMoniker": "D:\\POS\\PointofSale\\PointofSale\\Views\\Settings\\Storeinfopage.xaml",
+              "RelativeDocumentMoniker": "PointofSale\\Views\\Settings\\Storeinfopage.xaml",
+              "ToolTip": "D:\\POS\\PointofSale\\PointofSale\\Views\\Settings\\Storeinfopage.xaml",
+              "RelativeToolTip": "PointofSale\\Views\\Settings\\Storeinfopage.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-03-18T21:04:53.629Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "Receiptsettingspage.xaml.cs",
+              "DocumentMoniker": "D:\\POS\\PointofSale\\PointofSale\\Views\\Settings\\Receiptsettingspage.xaml.cs",
+              "RelativeDocumentMoniker": "PointofSale\\Views\\Settings\\Receiptsettingspage.xaml.cs",
+              "ToolTip": "D:\\POS\\PointofSale\\PointofSale\\Views\\Settings\\Receiptsettingspage.xaml.cs",
+              "RelativeToolTip": "PointofSale\\Views\\Settings\\Receiptsettingspage.xaml.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACIAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-18T21:07:46.94Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "ComingSoonPage.cs",
+              "DocumentMoniker": "D:\\POS\\PointofSale\\PointofSale\\Views\\Settings\\ComingSoonPage.cs",
+              "RelativeDocumentMoniker": "PointofSale\\Views\\Settings\\ComingSoonPage.cs",
+              "ToolTip": "D:\\POS\\PointofSale\\PointofSale\\Views\\Settings\\ComingSoonPage.cs",
+              "RelativeToolTip": "PointofSale\\Views\\Settings\\ComingSoonPage.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACkAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-18T21:11:48.546Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "StoreSettingsWindow.xaml",
+              "DocumentMoniker": "D:\\POS\\PointofSale\\PointofSale\\Views\\Settings\\StoreSettingsWindow.xaml",
+              "RelativeDocumentMoniker": "PointofSale\\Views\\Settings\\StoreSettingsWindow.xaml",
+              "ToolTip": "D:\\POS\\PointofSale\\PointofSale\\Views\\Settings\\StoreSettingsWindow.xaml",
+              "RelativeToolTip": "PointofSale\\Views\\Settings\\StoreSettingsWindow.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-03-18T21:03:44.102Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "MainWindow.xaml",
+              "DocumentMoniker": "D:\\POS\\PointofSale\\PointofSale\\MainWindow.xaml",
+              "RelativeDocumentMoniker": "PointofSale\\MainWindow.xaml",
+              "ToolTip": "D:\\POS\\PointofSale\\PointofSale\\MainWindow.xaml",
+              "RelativeToolTip": "PointofSale\\MainWindow.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-03-18T20:46:15.574Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "MainWindow.xaml.cs",
+              "DocumentMoniker": "D:\\POS\\PointofSale\\PointofSale\\MainWindow.xaml.cs",
+              "RelativeDocumentMoniker": "PointofSale\\MainWindow.xaml.cs",
+              "ToolTip": "D:\\POS\\PointofSale\\PointofSale\\MainWindow.xaml.cs",
+              "RelativeToolTip": "PointofSale\\MainWindow.xaml.cs",
+              "ViewState": "AgIAAMwAAAAAAAAAAAAywOEAAABCAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-18T20:46:12.497Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "SendReceiptWindow.xaml.cs",
+              "DocumentMoniker": "D:\\POS\\PointofSale\\PointofSale\\Views\\SendReceiptWindow.xaml.cs",
+              "RelativeDocumentMoniker": "PointofSale\\Views\\SendReceiptWindow.xaml.cs",
+              "ToolTip": "D:\\POS\\PointofSale\\PointofSale\\Views\\SendReceiptWindow.xaml.cs",
+              "RelativeToolTip": "PointofSale\\Views\\SendReceiptWindow.xaml.cs",
+              "ViewState": "AgIAAJEAAAAAAAAAAAAAAMkAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-18T20:45:43.717Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "AppDbContext.cs",
+              "DocumentMoniker": "D:\\POS\\PointofSale\\PointofSale\\Data\\AppDbContext.cs",
+              "RelativeDocumentMoniker": "PointofSale\\Data\\AppDbContext.cs",
+              "ToolTip": "D:\\POS\\PointofSale\\PointofSale\\Data\\AppDbContext.cs",
+              "RelativeToolTip": "PointofSale\\Data\\AppDbContext.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAADsAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-18T20:42:41.466Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "StoreSettingsService.cs",
+              "DocumentMoniker": "D:\\POS\\PointofSale\\PointofSale\\Services\\StoreSettingsService.cs",
+              "RelativeDocumentMoniker": "PointofSale\\Services\\StoreSettingsService.cs",
+              "ToolTip": "D:\\POS\\PointofSale\\PointofSale\\Services\\StoreSettingsService.cs",
+              "RelativeToolTip": "PointofSale\\Services\\StoreSettingsService.cs",
+              "ViewState": "AgIAAA4AAAAAAAAAAIA7wBsAAABUAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-18T20:41:17.143Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "StoreSettings.cs",
+              "DocumentMoniker": "D:\\POS\\PointofSale\\PointofSale\\Models\\StoreSettings.cs",
+              "RelativeDocumentMoniker": "PointofSale\\Models\\StoreSettings.cs",
+              "ToolTip": "D:\\POS\\PointofSale\\PointofSale\\Models\\StoreSettings.cs",
+              "RelativeToolTip": "PointofSale\\Models\\StoreSettings.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-18T20:39:13.565Z"
             }
           ]
         }
