@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using PointofSale.Data; 
+using PointofSale.Data;
+using PointofSale.Services;
 using System.Windows;
 
 namespace QuickInventoryTill
@@ -11,7 +12,10 @@ namespace QuickInventoryTill
             base.OnStartup(e);
 
             using var db = new AppDbContext();
-            db.Database.Migrate(); // creates missing tables like Suppliers automatically
+            db.Database.Migrate();
+
+            // Apply the user's saved theme before any window opens
+            ThemeService.ApplySaved();
         }
     }
 }

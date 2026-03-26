@@ -10,23 +10,17 @@
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <!-- Supplier Info -->
             <RowDefinition Height="*"/>
-            <!-- Blocks -->
             <RowDefinition Height="Auto"/>
-            <!-- Buttons -->
         </Grid.RowDefinitions>
 
-        <!-- =========================
-             TOP: SUPPLIER INFO
-             ========================= -->
+        <!-- TOP: SUPPLIER INFO -->
         <Border Grid.Row="0"
                 Background="{StaticResource PanelBrush}"
                 BorderBrush="{StaticResource BorderBrush}"
                 BorderThickness="1"
                 Padding="12"
                 CornerRadius="6">
-
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -34,7 +28,6 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <!-- Header -->
                 <DockPanel Grid.Row="0" Margin="0,0,0,10">
                     <TextBlock Text="Supplier Info"
                                Foreground="White"
@@ -49,21 +42,15 @@
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="18"/>
                     </Grid.ColumnDefinitions>
-
                     <TextBlock Text="Company Name"
                                VerticalAlignment="Center"
                                Foreground="White"
                                FontSize="12"/>
-
                     <ComboBox x:Name="CompanyNameBox"
                               Grid.Column="1"
                               Height="28"
                               IsEditable="True"
-                              Background="White"
-                              Foreground="Black"
-                              BorderBrush="{StaticResource BorderBrush}"
                               Padding="6,2"/>
-
                     <TextBlock Grid.Column="2"
                                Text="*"
                                Foreground="Red"
@@ -79,45 +66,32 @@
                         <ColumnDefinition Width="220"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-
                     <TextBlock Text="Supplier Code"
                                VerticalAlignment="Center"
                                Foreground="White"
                                FontSize="12"/>
-
                     <TextBox x:Name="SupplierCodeBox"
                              Grid.Column="1"
                              Height="28"
-                             Background="White"
-                             Foreground="Black"
-                             BorderBrush="{StaticResource BorderBrush}"
                              Padding="6,2"/>
                 </Grid>
             </Grid>
         </Border>
 
-        <!-- =========================
-             MIDDLE: 4 BLOCKS + NOTES + HISTORY
-             ========================= -->
+        <!-- MIDDLE: 4 BLOCKS + NOTES + HISTORY -->
         <Grid Grid.Row="1" Margin="0,10,0,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="320"/>
-                <!-- Left -->
                 <ColumnDefinition Width="300"/>
-                <!-- Middle -->
                 <ColumnDefinition Width="*"/>
-                <!-- Right -->
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
-                <!-- top row blocks -->
                 <RowDefinition Height="Auto"/>
-                <!-- middle row blocks -->
                 <RowDefinition Height="*"/>
-                <!-- history -->
             </Grid.RowDefinitions>
 
-            <!-- ===== CONTACT INFO (Left / Row 0-1 combined visually) ===== -->
+            <!-- CONTACT INFO -->
             <Border Grid.Column="0" Grid.Row="0" Grid.RowSpan="2"
                     Background="{StaticResource PanelBrush}"
                     BorderBrush="{StaticResource BorderBrush}"
@@ -131,26 +105,19 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
-                    <!-- Header -->
                     <DockPanel Grid.Row="0" Margin="0,0,0,10">
-                        <TextBlock Text="Contact Info"
-                                   Foreground="White"
-                                   FontWeight="SemiBold"
-                                   FontSize="14"/>
-                        <TextBlock Text="▾"
-                                   Foreground="{StaticResource MutedBrush}"
-                                   Margin="8,0,0,0"
-                                   VerticalAlignment="Center"/>
+                        <TextBlock Text="Contact Info" Foreground="White" FontWeight="SemiBold" FontSize="14"/>
+                        <TextBlock Text="▾" Foreground="{StaticResource MutedBrush}" Margin="8,0,0,0" VerticalAlignment="Center"/>
                     </DockPanel>
 
-                    <!-- Fields -->
                     <Grid Grid.Row="1">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="110"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-
                         <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
@@ -164,106 +131,61 @@
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
 
-                        <!-- Title -->
                         <TextBlock Grid.Row="0" Text="Title" Foreground="White" FontSize="12" VerticalAlignment="Center"/>
                         <ComboBox Grid.Row="0" Grid.Column="1" x:Name="TitleBox"
-                                  Height="26" Background="White" Foreground="Black"
-                                  BorderBrush="{StaticResource BorderBrush}" Padding="6,1" SelectionChanged="TitleBox_SelectionChanged">
-                            <!-- Ensure dropdown item visuals render black text by templating ComboBoxItem -->
-                            <ComboBox.ItemContainerStyle>
-                                <Style TargetType="ComboBoxItem">
-                                    <Setter Property="Foreground" Value="Black"/>
-                                    <Setter Property="Background" Value="White"/>
-                                    <Setter Property="Template">
-                                        <Setter.Value>
-                                            <ControlTemplate TargetType="ComboBoxItem">
-                                                <Border x:Name="Bd" Background="{TemplateBinding Background}">
-                                                    <TextBlock Text="{TemplateBinding Content}"
-                                                               Foreground="{TemplateBinding Foreground}"
-                                                               Padding="6,2"/>
-                                                </Border>
-                                                <ControlTemplate.Triggers>
-                                                    <Trigger Property="IsHighlighted" Value="True">
-                                                        <Setter TargetName="Bd" Property="Background" Value="#BDE7FF"/>
-                                                    </Trigger>
-                                                    <Trigger Property="IsSelected" Value="True">
-                                                        <Setter TargetName="Bd" Property="Background" Value="#BDE7FF"/>
-                                                        <Setter Property="Foreground" Value="Black"/>
-                                                    </Trigger>
-                                                </ControlTemplate.Triggers>
-                                            </ControlTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-                                </Style>
-                            </ComboBox.ItemContainerStyle>
-
+                                  Height="26" Padding="6,1"
+                                  SelectionChanged="TitleBox_SelectionChanged">
+                            <ComboBoxItem Content=""/>
                             <ComboBoxItem Content="Mr"/>
                             <ComboBoxItem Content="Mrs"/>
                             <ComboBoxItem Content="Ms"/>
-                            <ComboBoxItem Content="Miss"/>
+                            <ComboBoxItem Content="Dr"/>
                         </ComboBox>
 
-                        <!-- First -->
-                        <TextBlock Grid.Row="1" Text="First" Foreground="White" FontSize="12" VerticalAlignment="Center" Margin="0,8,0,0"/>
-                        <TextBox Grid.Row="1" Grid.Column="1" x:Name="FirstNameBox" Margin="0,8,0,0"
-                                 Height="26" Background="White" Foreground="Black" BorderBrush="{StaticResource BorderBrush}" Padding="6,1"/>
+                        <TextBlock Grid.Row="1" Text="First Name" Foreground="White" FontSize="12" VerticalAlignment="Center" Margin="0,8,0,0"/>
+                        <TextBox Grid.Row="1" Grid.Column="1" x:Name="FirstNameBox" Height="26" Padding="6,1" Margin="0,8,0,0"/>
 
-                        <!-- Last -->
-                        <TextBlock Grid.Row="2" Text="Last" Foreground="White" FontSize="12" VerticalAlignment="Center" Margin="0,8,0,0"/>
-                        <TextBox Grid.Row="2" Grid.Column="1" x:Name="LastNameBox" Margin="0,8,0,0"
-                                 Height="26" Background="White" Foreground="Black" BorderBrush="{StaticResource BorderBrush}" Padding="6,1"/>
+                        <TextBlock Grid.Row="2" Text="Last Name" Foreground="White" FontSize="12" VerticalAlignment="Center" Margin="0,8,0,0"/>
+                        <TextBox Grid.Row="2" Grid.Column="1" x:Name="LastNameBox" Height="26" Padding="6,1" Margin="0,8,0,0"/>
 
-                        <!-- Email -->
-                        <TextBlock Grid.Row="3" Text="Email" Foreground="White" FontSize="12" VerticalAlignment="Center" Margin="0,8,0,0"/>
-                        <TextBox Grid.Row="3" Grid.Column="1" x:Name="EmailBox" Margin="0,8,0,0"
-                                 Height="26" Background="White" Foreground="Black" BorderBrush="{StaticResource BorderBrush}" Padding="6,1"/>
+                        <TextBlock Grid.Row="3" Text="Phone" Foreground="White" FontSize="12" VerticalAlignment="Center" Margin="0,8,0,0"/>
+                        <TextBox Grid.Row="3" Grid.Column="1" x:Name="PhoneBox" Height="26" Padding="6,1" Margin="0,8,0,0"/>
 
-                        <!-- Website -->
-                        <TextBlock Grid.Row="4" Text="Web Site" Foreground="White" FontSize="12" VerticalAlignment="Center" Margin="0,8,0,0"/>
-                        <TextBox Grid.Row="4" Grid.Column="1" x:Name="WebsiteBox" Margin="0,8,0,0"
-                                 Height="26" Background="White" Foreground="Black" BorderBrush="{StaticResource BorderBrush}" Padding="6,1"/>
+                        <TextBlock Grid.Row="4" Text="Email" Foreground="White" FontSize="12" VerticalAlignment="Center" Margin="0,8,0,0"/>
+                        <TextBox Grid.Row="4" Grid.Column="1" x:Name="EmailBox" Height="26" Padding="6,1" Margin="0,8,0,0"/>
 
-                        <!-- Street -->
-                        <TextBlock Grid.Row="5" Text="Street" Foreground="White" FontSize="12" VerticalAlignment="Center" Margin="0,8,0,0"/>
-                        <TextBox Grid.Row="5" Grid.Column="1" x:Name="StreetBox" Margin="0,8,0,0"
-                                 Height="26" Background="White" Foreground="Black" BorderBrush="{StaticResource BorderBrush}" Padding="6,1"/>
+                        <TextBlock Grid.Row="5" Text="Website" Foreground="White" FontSize="12" VerticalAlignment="Center" Margin="0,8,0,0"/>
+                        <TextBox Grid.Row="5" Grid.Column="1" x:Name="WebsiteBox" Height="26" Padding="6,1" Margin="0,8,0,0"/>
 
-                        <!-- Street 2 -->
-                        <TextBlock Grid.Row="6" Text="Street 2" Foreground="White" FontSize="12" VerticalAlignment="Center" Margin="0,8,0,0"/>
-                        <TextBox Grid.Row="6" Grid.Column="1" x:Name="Street2Box" Margin="0,8,0,0"
-                                 Height="26" Background="White" Foreground="Black" BorderBrush="{StaticResource BorderBrush}" Padding="6,1"/>
+                        <TextBlock Grid.Row="6" Text="Street" Foreground="White" FontSize="12" VerticalAlignment="Center" Margin="0,8,0,0"/>
+                        <TextBox Grid.Row="6" Grid.Column="1" x:Name="StreetBox" Height="26" Padding="6,1" Margin="0,8,0,0"/>
 
-                        <!-- City -->
-                        <TextBlock Grid.Row="7" Text="City" Foreground="White" FontSize="12" VerticalAlignment="Center" Margin="0,8,0,0"/>
-                        <TextBox Grid.Row="7" Grid.Column="1" x:Name="CityBox" Margin="0,8,0,0"
-                                 Height="26" Background="White" Foreground="Black" BorderBrush="{StaticResource BorderBrush}" Padding="6,1"/>
+                        <TextBlock Grid.Row="7" Text="Street 2" Foreground="White" FontSize="12" VerticalAlignment="Center" Margin="0,8,0,0"/>
+                        <TextBox Grid.Row="7" Grid.Column="1" x:Name="Street2Box" Height="26" Padding="6,1" Margin="0,8,0,0"/>
 
-                        <!-- State -->
-                        <TextBlock Grid.Row="8" Text="State" Foreground="White" FontSize="12" VerticalAlignment="Center" Margin="0,8,0,0"/>
-                        <TextBox Grid.Row="8" Grid.Column="1" x:Name="StateBox" Margin="0,8,0,0"
-                                 Height="26" Background="White" Foreground="Black" BorderBrush="{StaticResource BorderBrush}" Padding="6,1"/>
+                        <TextBlock Grid.Row="8" Text="City" Foreground="White" FontSize="12" VerticalAlignment="Center" Margin="0,8,0,0"/>
+                        <TextBox Grid.Row="8" Grid.Column="1" x:Name="CityBox" Height="26" Padding="6,1" Margin="0,8,0,0"/>
 
-                        <!-- ZIP -->
-                        <TextBlock Grid.Row="9" Text="ZIP" Foreground="White" FontSize="12" VerticalAlignment="Center" Margin="0,8,0,0"/>
-                        <TextBox Grid.Row="9" Grid.Column="1" x:Name="ZipBox" Margin="0,8,0,0"
-                                 Height="26" Background="White" Foreground="Black" BorderBrush="{StaticResource BorderBrush}" Padding="6,1"/>
+                        <TextBlock Grid.Row="9" Text="State / Province" Foreground="White" FontSize="12" VerticalAlignment="Center" Margin="0,8,0,0"/>
+                        <TextBox Grid.Row="9" Grid.Column="1" x:Name="StateBox" Height="26" Padding="6,1" Margin="0,8,0,0"/>
 
-                        <!-- Phone -->
-                        <TextBlock Grid.Row="10" Text="Phone" Foreground="White" FontSize="12" VerticalAlignment="Center" Margin="0,8,0,0"/>
-                        <TextBox Grid.Row="10" Grid.Column="1" x:Name="PhoneBox" Margin="0,8,0,0"
-                                 Height="26" Background="White" Foreground="Black" BorderBrush="{StaticResource BorderBrush}" Padding="6,1"/>
+                        <TextBlock Grid.Row="10" Text="Zip / Postal" Foreground="White" FontSize="12" VerticalAlignment="Center" Margin="0,8,0,0"/>
+                        <TextBox Grid.Row="10" Grid.Column="1" x:Name="ZipBox" Height="26" Padding="6,1" Margin="0,8,0,0"/>
+
+                        <TextBlock Grid.Row="11" Text="Country" Foreground="White" FontSize="12" VerticalAlignment="Center" Margin="0,8,0,0"/>
+                        <TextBox Grid.Row="11" Grid.Column="1" x:Name="CountryBox" Height="26" Padding="6,1" Margin="0,8,0,0"/>
                     </Grid>
                 </Grid>
             </Border>
 
-            <!-- ===== TERMS (Middle / Top) ===== -->
-            <Border Grid.Column="1" Grid.Row="0"
+            <!-- SUPPLIER SETTINGS -->
+            <Border Grid.Column="1"
                     Background="{StaticResource PanelBrush}"
                     BorderBrush="{StaticResource BorderBrush}"
                     BorderThickness="1"
                     CornerRadius="6"
-                    Margin="0,0,10,10"
-                    Padding="10">
+                    Margin="5,0,5,231"
+                    Padding="10" Grid.RowSpan="2">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
@@ -271,74 +193,8 @@
                     </Grid.RowDefinitions>
 
                     <DockPanel Grid.Row="0" Margin="0,0,0,10">
-                        <TextBlock Text="Terms"
-                                   Foreground="White"
-                                   FontWeight="SemiBold"
-                                   FontSize="14"/>
-                        <TextBlock Text="▾"
-                                   Foreground="{StaticResource MutedBrush}"
-                                   Margin="8,0,0,0"
-                                   VerticalAlignment="Center"/>
-                    </DockPanel>
-
-                    <Grid Grid.Row="1">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="70"/>
-                            <ColumnDefinition Width="60"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-
-                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Net due in" Foreground="White" FontSize="12" VerticalAlignment="Center"/>
-                        <TextBox Grid.Row="0" Grid.Column="1" x:Name="NetDueDaysBox"
-                                 Height="26" Background="White" Foreground="Black" BorderBrush="{StaticResource BorderBrush}"
-                                 Padding="6,1" Text="0"/>
-                        <TextBlock Grid.Row="0" Grid.Column="2" Text="days" Foreground="White" FontSize="12" VerticalAlignment="Center" Margin="6,0,0,0"/>
-
-                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Discount percentage is" Foreground="White" FontSize="12" VerticalAlignment="Center" Margin="0,10,0,0"/>
-                        <TextBox Grid.Row="1" Grid.Column="1" x:Name="DiscountPercentBox"
-                                 Margin="0,10,0,0"
-                                 Height="26" Background="White" Foreground="Black" BorderBrush="{StaticResource BorderBrush}"
-                                 Padding="6,1" Text="0"/>
-                        <TextBlock Grid.Row="1" Grid.Column="2" Text="%" Foreground="White" FontSize="12" VerticalAlignment="Center" Margin="6,10,0,0"/>
-
-                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Discount if paid within" Foreground="White" FontSize="12" VerticalAlignment="Center" Margin="0,10,0,0"/>
-                        <TextBox Grid.Row="2" Grid.Column="1" x:Name="DiscountDaysBox"
-                                 Margin="0,10,0,0"
-                                 Height="26" Background="White" Foreground="Black" BorderBrush="{StaticResource BorderBrush}"
-                                 Padding="6,1" Text="0"/>
-                        <TextBlock Grid.Row="2" Grid.Column="2" Text="days" Foreground="White" FontSize="12" VerticalAlignment="Center" Margin="6,10,0,0"/>
-                    </Grid>
-                </Grid>
-            </Border>
-
-            <!-- ===== SUPPLIER SETTINGS (Middle / Row 1) ===== -->
-            <Border Grid.Column="1" Grid.Row="1"
-                    Background="{StaticResource PanelBrush}"
-                    BorderBrush="{StaticResource BorderBrush}"
-                    BorderThickness="1"
-                    CornerRadius="6"
-                    Margin="0,0,10,0"
-                    Padding="10">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-
-                    <DockPanel Grid.Row="0" Margin="0,0,0,10">
-                        <TextBlock Text="Supplier Settings"
-                                   Foreground="White"
-                                   FontWeight="SemiBold"
-                                   FontSize="14"/>
-                        <TextBlock Text="▾"
-                                   Foreground="{StaticResource MutedBrush}"
-                                   Margin="8,0,0,0"
-                                   VerticalAlignment="Center"/>
+                        <TextBlock Text="Supplier Settings" Foreground="White" FontWeight="SemiBold" FontSize="14"/>
+                        <TextBlock Text="▾" Foreground="{StaticResource MutedBrush}" Margin="8,0,0,0" VerticalAlignment="Center"/>
                     </DockPanel>
 
                     <Grid Grid.Row="1">
@@ -346,7 +202,6 @@
                             <ColumnDefinition Width="110"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
@@ -355,16 +210,13 @@
                         </Grid.RowDefinitions>
 
                         <TextBlock Grid.Row="0" Text="Account #" Foreground="White" FontSize="12" VerticalAlignment="Center"/>
-                        <TextBox Grid.Row="0" Grid.Column="1" x:Name="AccountBox"
-                                 Height="26" Background="White" Foreground="Black" BorderBrush="{StaticResource BorderBrush}" Padding="6,1"/>
+                        <TextBox Grid.Row="0" Grid.Column="1" x:Name="AccountBox" Height="26" Padding="6,1"/>
 
                         <TextBlock Grid.Row="1" Text="Alt. Phone" Foreground="White" FontSize="12" VerticalAlignment="Center" Margin="0,10,0,0"/>
-                        <TextBox Grid.Row="1" Grid.Column="1" x:Name="AltPhoneBox" Margin="0,10,0,0"
-                                 Height="26" Background="White" Foreground="Black" BorderBrush="{StaticResource BorderBrush}" Padding="6,1"/>
+                        <TextBox Grid.Row="1" Grid.Column="1" x:Name="AltPhoneBox" Height="26" Padding="6,1" Margin="0,10,0,0"/>
 
                         <TextBlock Grid.Row="2" Text="Alt. Contact" Foreground="White" FontSize="12" VerticalAlignment="Center" Margin="0,10,0,0"/>
-                        <TextBox Grid.Row="2" Grid.Column="1" x:Name="AltContactBox" Margin="0,10,0,0"
-                                 Height="26" Background="White" Foreground="Black" BorderBrush="{StaticResource BorderBrush}" Padding="6,1"/>
+                        <TextBox Grid.Row="2" Grid.Column="1" x:Name="AltContactBox" Height="26" Padding="6,1" Margin="0,10,0,0"/>
 
                         <CheckBox Grid.Row="3" Grid.Column="1" x:Name="InactiveCheck"
                                   Content="Inactive"
@@ -374,7 +226,7 @@
                 </Grid>
             </Border>
 
-            <!-- ===== SUPPLIER NOTES (Right / spans only top row, smaller) ===== -->
+            <!-- SUPPLIER NOTES -->
             <Border Grid.Column="2" Grid.Row="0"
                     Background="{StaticResource PanelBrush}"
                     BorderBrush="{StaticResource BorderBrush}"
@@ -389,21 +241,15 @@
                     </Grid.RowDefinitions>
 
                     <DockPanel Grid.Row="0" Margin="0,0,0,10">
-                        <TextBlock Text="Supplier Notes"
-                                   Foreground="White"
-                                   FontWeight="SemiBold"
-                                   FontSize="14"/>
-                        <TextBlock Text="▾"
-                                   Foreground="{StaticResource MutedBrush}"
-                                   Margin="8,0,0,0"
-                                   VerticalAlignment="Center"/>
+                        <TextBlock Text="Supplier Notes" Foreground="White" FontWeight="SemiBold" FontSize="14"/>
+                        <TextBlock Text="▾" Foreground="{StaticResource MutedBrush}" Margin="8,0,0,0" VerticalAlignment="Center"/>
                     </DockPanel>
 
                     <TextBox Grid.Row="1"
                              x:Name="NotesBox"
                              Height="170"
                              Width="220"
-                             Background="#F3F0D7"
+                             Background="{StaticResource Panel2Brush}"
                              Foreground="White"
                              BorderBrush="{StaticResource BorderBrush}"
                              BorderThickness="1"
@@ -414,13 +260,13 @@
                 </Grid>
             </Border>
 
-            <!-- ===== HISTORY (Left bottom) ===== -->
-            <Border Grid.Column="0" Grid.Row="2"
+            <!-- HISTORY -->
+            <Border Grid.Row="2"
                     Background="{StaticResource PanelBrush}"
                     BorderBrush="{StaticResource BorderBrush}"
                     BorderThickness="1"
                     CornerRadius="6"
-                    Margin="0,0,10,0"
+                    Margin="0,0,10,17"
                     Padding="10">
                 <Grid>
                     <Grid.RowDefinitions>
@@ -429,14 +275,8 @@
                     </Grid.RowDefinitions>
 
                     <DockPanel Grid.Row="0" Margin="0,0,0,10">
-                        <TextBlock Text="History"
-                                   Foreground="White"
-                                   FontWeight="SemiBold"
-                                   FontSize="14"/>
-                        <TextBlock Text="▾"
-                                   Foreground="{StaticResource MutedBrush}"
-                                   Margin="8,0,0,0"
-                                   VerticalAlignment="Center"/>
+                        <TextBlock Text="History" Foreground="White" FontWeight="SemiBold" FontSize="14"/>
+                        <TextBlock Text="▾" Foreground="{StaticResource MutedBrush}" Margin="8,0,0,0" VerticalAlignment="Center"/>
                     </DockPanel>
 
                     <ListBox Grid.Row="1"
@@ -447,14 +287,10 @@
                 </Grid>
             </Border>
 
-            <!-- Empty space under middle/right like screenshot -->
-            <Border Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="2"
-                    Background="Transparent"/>
+            <Border Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="2" Background="Transparent"/>
         </Grid>
 
-        <!-- =========================
-             BOTTOM BUTTONS
-             ========================= -->
+        <!-- BOTTOM BUTTONS -->
         <Grid Grid.Row="2" Margin="0,10,0,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
@@ -465,23 +301,20 @@
 
             <Button Grid.Column="0"
                     Content="Save &amp; New"
-                    Width="120"
-                    Height="32"
+                    Width="120" Height="32"
                     HorizontalAlignment="Left"
                     Margin="0,0,10,0"
                     Click="SaveAndNew_Click"/>
 
             <Button Grid.Column="1"
                     Content="Save"
-                    Width="110"
-                    Height="32"
+                    Width="110" Height="32"
                     Margin="0,0,10,0"
                     Click="Save_Click"/>
 
             <Button Grid.Column="2"
                     Content="Cancel"
-                    Width="110"
-                    Height="32"
+                    Width="110" Height="32"
                     Click="Cancel_Click"/>
         </Grid>
     </Grid>

@@ -11,7 +11,7 @@ namespace PointofSale.Views
         public StoreSettingsWindow()
         {
             InitializeComponent();
-            _navButtons.AddRange(new[] { NavStoreInfo, NavReceipt, NavTax, NavPrinter });
+            _navButtons.AddRange(new[] { NavStoreInfo, NavReceipt, NavTax, NavPrinter, NavTheme });
             NavigateTo("StoreInfo");
         }
 
@@ -57,6 +57,13 @@ namespace PointofSale.Views
                     PageTitle.Text = "Printer";
                     PageSubtitle.Text = "Receipt printer and paper settings.";
                     ContentFrame.Navigate(new Settings.ComingSoonPage("Printer settings coming soon."));
+                    break;
+
+                case "Theme":
+                    NavTheme.Style = active;
+                    PageTitle.Text = "Appearance";
+                    PageSubtitle.Text = "Choose a colour theme for the application.";
+                    ContentFrame.Navigate(new Settings.ThemePage());
                     break;
             }
         }

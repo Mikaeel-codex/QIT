@@ -50,9 +50,9 @@
                 <!-- Actions -->
                 <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
                     <Button Style="{StaticResource ModernButton}" Content="Refresh" Margin="0,0,8,0" Click="RefreshBtn_Click"/>
-                    <Button Style="{StaticResource ModernButton}" Content="Add" Margin="0,0,8,0" Click="AddBtn_Click"/>
-                    <Button Style="{StaticResource ModernButton}" Content="Edit" Margin="0,0,8,0" Click="EditBtn_Click"/>
-                    <Button Style="{StaticResource ModernButton}" Content="Delete" Click="DeleteBtn_Click"/>
+                    <Button Style="{StaticResource ModernButton}" Content="Add"     Margin="0,0,8,0" Click="AddBtn_Click"/>
+                    <Button Style="{StaticResource ModernButton}" Content="Edit"    Margin="0,0,8,0" Click="EditBtn_Click"/>
+                    <Button Style="{StaticResource ModernButton}" Content="Delete"  Click="DeleteBtn_Click"/>
                 </StackPanel>
             </Grid>
         </Border>
@@ -89,6 +89,7 @@
                           CanUserSortColumns="True"
                           CanUserReorderColumns="False"
                           CanUserResizeRows="False"
+                          HorizontalScrollBarVisibility="Hidden"
                           UseLayoutRounding="True"
                           SnapsToDevicePixels="True"
                           SelectionChanged="ProductsGrid_SelectionChanged"
@@ -98,81 +99,81 @@
 
                         <!-- Header -->
                         <Style TargetType="DataGridColumnHeader">
-                            <Setter Property="Foreground" Value="White"/>
-                            <Setter Property="Background" Value="#171717"/>
-                            <Setter Property="BorderBrush" Value="#2E2E2E"/>
-                            <Setter Property="BorderThickness" Value="0,0,0,1"/>
-                            <Setter Property="FontWeight" Value="SemiBold"/>
-                            <Setter Property="Padding" Value="10,0,10,0"/>
-                            <Setter Property="VerticalContentAlignment" Value="Center"/>
+                            <Setter Property="Foreground"                Value="White"/>
+                            <Setter Property="Background"                Value="{StaticResource BgBrush}"/>
+                            <Setter Property="BorderBrush"               Value="{StaticResource BorderBrush}"/>
+                            <Setter Property="BorderThickness"           Value="0,0,0,1"/>
+                            <Setter Property="FontWeight"                Value="SemiBold"/>
+                            <Setter Property="Padding"                   Value="10,0,10,0"/>
+                            <Setter Property="VerticalContentAlignment"  Value="Center"/>
                             <Setter Property="HorizontalContentAlignment" Value="Left"/>
-                            <Setter Property="Cursor" Value="Hand"/>
+                            <Setter Property="Cursor"                    Value="Hand"/>
                             <Style.Triggers>
                                 <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter Property="Background" Value="#222222"/>
+                                    <Setter Property="Background" Value="{StaticResource Panel2Brush}"/>
                                 </Trigger>
                                 <Trigger Property="IsPressed" Value="True">
-                                    <Setter Property="Background" Value="#2A2A2A"/>
+                                    <Setter Property="Background" Value="{StaticResource Panel2Brush}"/>
                                 </Trigger>
                             </Style.Triggers>
                         </Style>
 
                         <!-- Rows -->
                         <Style TargetType="DataGridRow">
-                            <Setter Property="Foreground" Value="White"/>
-                            <Setter Property="FontSize" Value="13"/>
-                            <Setter Property="Height" Value="34"/>
+                            <Setter Property="Foreground"              Value="White"/>
+                            <Setter Property="FontSize"                Value="13"/>
+                            <Setter Property="Height"                  Value="34"/>
                             <Setter Property="VerticalContentAlignment" Value="Center"/>
-                            <Setter Property="Background" Value="{StaticResource PanelBrush}"/>
-                            <Setter Property="BorderBrush" Value="#2E2E2E"/>
-                            <Setter Property="BorderThickness" Value="0,0,0,1"/>
-                            
+                            <Setter Property="Background"              Value="{StaticResource PanelBrush}"/>
+                            <Setter Property="BorderBrush"             Value="{StaticResource BorderBrush}"/>
+                            <Setter Property="BorderThickness"         Value="0,0,0,1"/>
                             <Style.Triggers>
-                                
-                                <!-- OUT OF STOCK (strong warning) -->
+
+                                <!-- OUT OF STOCK -->
                                 <DataTrigger Binding="{Binding IsOutOfStock}" Value="True">
                                     <Setter Property="Background" Value="#FF3B30"/>
                                     <Setter Property="Foreground" Value="White"/>
                                 </DataTrigger>
 
-                                <!-- LOW STOCK (reorder warning) -->
+                                <!-- LOW STOCK -->
                                 <DataTrigger Binding="{Binding IsLowStock}" Value="True">
                                     <Setter Property="Background" Value="#FFC107"/>
                                     <Setter Property="Foreground" Value="DarkOrange"/>
                                 </DataTrigger>
 
                                 <Trigger Property="IsSelected" Value="True">
-                                    <Setter Property="Background" Value="#FFC107"/>
+                                    <Setter Property="Background" Value="{StaticResource GoldBrush}"/>
                                     <Setter Property="Foreground" Value="Black"/>
                                 </Trigger>
                                 <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter Property="Background" Value="#252525"/>
+                                    <Setter Property="Background" Value="{StaticResource Panel2Brush}"/>
                                 </Trigger>
-                                
+
                             </Style.Triggers>
                         </Style>
 
-                        <!-- Cells: DON'T center content -->
+                        <!-- Cells -->
                         <Style TargetType="DataGridCell">
-                            <Setter Property="Padding" Value="0"/>
-                            <Setter Property="VerticalContentAlignment" Value="Center"/>
+                            <Setter Property="Padding"                   Value="0"/>
+                            <Setter Property="VerticalContentAlignment"  Value="Center"/>
                             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                            <Setter Property="BorderThickness" Value="0"/>
-                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="BorderThickness"           Value="0"/>
+                            <Setter Property="Background"                Value="Transparent"/>
                         </Style>
 
-                        <!-- This forces all DataGridTextColumn text to behave like QuickBooks -->
+                        <!-- Cell text style -->
                         <Style x:Key="QBCellText" TargetType="TextBlock">
-                            <Setter Property="VerticalAlignment" Value="Center"/>
+                            <Setter Property="VerticalAlignment"   Value="Center"/>
                             <Setter Property="HorizontalAlignment" Value="Left"/>
-                            <Setter Property="TextAlignment" Value="Left"/>
-                            <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
-                            <Setter Property="Margin" Value="10,0,10,0"/>
+                            <Setter Property="TextAlignment"       Value="Left"/>
+                            <Setter Property="TextTrimming"        Value="CharacterEllipsis"/>
+                            <Setter Property="Margin"              Value="10,0,10,0"/>
                         </Style>
 
                     </DataGrid.Resources>
 
                     <DataGrid.Columns>
+
                         <DataGridTextColumn Header="Item #"
                                             Binding="{Binding Id}"
                                             SortMemberPath="Id"
@@ -182,56 +183,51 @@
                         <DataGridTextColumn Header="Item Name"
                                             Binding="{Binding Name}"
                                             SortMemberPath="Name"
-                                            Width="220"
+                                            Width="*"
                                             ElementStyle="{StaticResource QBCellText}"/>
 
                         <DataGridTextColumn Header="Department"
                                             Binding="{Binding Department}"
                                             SortMemberPath="Department"
-                                            Width="160"
+                                            Width="150"
                                             ElementStyle="{StaticResource QBCellText}"/>
 
                         <DataGridTextColumn Header="Item Description"
                                             Binding="{Binding Description}"
                                             SortMemberPath="Description"
-                                            Width="220"
+                                            Width="180"
                                             ElementStyle="{StaticResource QBCellText}"/>
 
                         <DataGridTextColumn Header="Size"
                                             Binding="{Binding Size}"
                                             SortMemberPath="Size"
-                                            Width="110"
+                                            Width="90"
                                             ElementStyle="{StaticResource QBCellText}"/>
 
                         <DataGridTextColumn Header="Regular Price"
                                             Binding="{Binding Price, StringFormat=R {0:0.00}}"
                                             SortMemberPath="Price"
-                                            Width="130"
+                                            Width="120"
                                             ElementStyle="{StaticResource QBCellText}"/>
 
                         <DataGridTextColumn Header="On-hand Qty"
                                             Binding="{Binding StockQty}"
                                             SortMemberPath="StockQty"
-                                            Width="120"
+                                            Width="100"
                                             ElementStyle="{StaticResource QBCellText}"/>
 
                         <DataGridTextColumn Header="SKU"
                                             Binding="{Binding SKU}"
                                             SortMemberPath="SKU"
-                                            Width="150"
+                                            Width="140"
                                             ElementStyle="{StaticResource QBCellText}"/>
 
                         <DataGridTextColumn Header="Alternate Lookup"
                                             Binding="{Binding ALU}"
                                             SortMemberPath="ALU"
-                                            Width="150"
+                                            Width="140"
                                             ElementStyle="{StaticResource QBCellText}"/>
 
-                        <DataGridTextColumn Header="O/H Qty"
-                                            Binding="{Binding StockQty}"
-                                            SortMemberPath="StockQty"
-                                            Width="90"
-                                            ElementStyle="{StaticResource QBCellText}"/>
                     </DataGrid.Columns>
 
                 </DataGrid>

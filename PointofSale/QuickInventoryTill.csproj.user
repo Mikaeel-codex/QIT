@@ -44,6 +44,9 @@
     <Compile Update="Views\Settings\StoreSettingsWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Views\Settings\ThemePage.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Views\SupplierEditWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>

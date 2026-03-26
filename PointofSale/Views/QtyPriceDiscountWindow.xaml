@@ -5,14 +5,14 @@
         Height="353" Width="480"
         WindowStartupLocation="CenterOwner"
         ResizeMode="NoResize"
-        Background="#111111"
+        Background="{StaticResource BgBrush}"
         Foreground="White">
 
     <Window.Resources>
         <Style x:Key="QuickDiscount" TargetType="Button">
-            <Setter Property="Background"      Value="Black"/>
+            <Setter Property="Background"      Value="{StaticResource PanelBrush}"/>
             <Setter Property="Foreground"      Value="White"/>
-            <Setter Property="BorderBrush"     Value="White"/>
+            <Setter Property="BorderBrush"     Value="{StaticResource BorderBrush}"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="FontSize"        Value="13"/>
             <Setter Property="FontWeight"      Value="SemiBold"/>
@@ -21,54 +21,50 @@
             <Setter Property="Cursor"          Value="Hand"/>
         </Style>
         <Style x:Key="FieldLabel" TargetType="TextBlock">
-            <Setter Property="Foreground"   Value="#AAAAAA"/>
-            <Setter Property="FontSize"     Value="11"/>
-            <Setter Property="Margin"       Value="0,0,0,3"/>
+            <Setter Property="Foreground" Value="{StaticResource MutedBrush}"/>
+            <Setter Property="FontSize"   Value="11"/>
+            <Setter Property="Margin"     Value="0,0,0,3"/>
         </Style>
         <Style x:Key="InputBox" TargetType="TextBox">
-            <Setter Property="Background"              Value="#0E0E0E"/>
-            <Setter Property="Foreground"              Value="White"/>
-            <Setter Property="BorderBrush"             Value="#333333"/>
-            <Setter Property="BorderThickness"         Value="1"/>
-            <Setter Property="Height"                  Value="28"/>
-            <Setter Property="Padding"                 Value="6,0"/>
+            <Setter Property="Background"               Value="{StaticResource PanelBrush}"/>
+            <Setter Property="Foreground"               Value="White"/>
+            <Setter Property="BorderBrush"              Value="{StaticResource BorderBrush}"/>
+            <Setter Property="BorderThickness"          Value="1"/>
+            <Setter Property="Height"                   Value="28"/>
+            <Setter Property="Padding"                  Value="6,0"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Setter Property="FontSize"                Value="13"/>
-            <Setter Property="CaretBrush"              Value="White"/>
+            <Setter Property="FontSize"                 Value="13"/>
+            <Setter Property="CaretBrush"               Value="White"/>
         </Style>
         <Style x:Key="ReadonlyBox" TargetType="TextBox" BasedOn="{StaticResource InputBox}">
-            <Setter Property="Background"  Value="#1A1A1A"/>
-            <Setter Property="Foreground"  Value="#CCCCCC"/>
-            <Setter Property="IsReadOnly"  Value="True"/>
+            <Setter Property="Background" Value="{StaticResource Panel2Brush}"/>
+            <Setter Property="Foreground" Value="{StaticResource MutedBrush}"/>
+            <Setter Property="IsReadOnly" Value="True"/>
         </Style>
     </Window.Resources>
 
-    <Border Background="#111111" Padding="16" Margin="0,0,0,-58">
+    <Border Background="{StaticResource BgBrush}" Padding="16" Margin="0,0,0,-58">
         <StackPanel Margin="0,0,0,7">
 
-            <!-- Section: Quick Discount -->
             <TextBlock Text="Choose Quick Discount"
-                       FontSize="13" Foreground="#AAAAAA" Margin="0,0,0,8"/>
+                       FontSize="13" Foreground="{StaticResource MutedBrush}" Margin="0,0,0,8"/>
             <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
                 <Button Content="10%" Style="{StaticResource QuickDiscount}" Margin="0,0,8,0" Tag="10"  Click="QuickDiscount_Click"/>
                 <Button Content="15%" Style="{StaticResource QuickDiscount}" Margin="0,0,8,0" Tag="15"  Click="QuickDiscount_Click"/>
                 <Button Content="25%" Style="{StaticResource QuickDiscount}" Margin="0,0,8,0" Tag="25"  Click="QuickDiscount_Click"/>
-                <Button Content="50%" Style="{StaticResource QuickDiscount}"                   Tag="50"  Click="QuickDiscount_Click"/>
+                <Button Content="50%" Style="{StaticResource QuickDiscount}"                  Tag="50"  Click="QuickDiscount_Click"/>
             </StackPanel>
 
-            <!-- OR divider -->
             <Grid Margin="0,0,0,12">
-                <Separator Background="#333333" VerticalAlignment="Center"/>
-                <Border Background="#111111" HorizontalAlignment="Center" Padding="12,0">
-                    <TextBlock Text="OR" Foreground="#666666" FontSize="12" FontWeight="Bold"/>
+                <Separator Background="{StaticResource BorderBrush}" VerticalAlignment="Center"/>
+                <Border Background="{StaticResource BgBrush}" HorizontalAlignment="Center" Padding="12,0">
+                    <TextBlock Text="OR" Foreground="{StaticResource MutedBrush}" FontSize="12" FontWeight="Bold"/>
                 </Border>
             </Grid>
 
-            <!-- Section: Edit Price or Discount Amount -->
             <TextBlock Text="Edit Price or Discount Amount"
                        FontSize="13" FontWeight="Bold" Foreground="White" Margin="0,0,0,10"/>
 
-            <!-- Row 1: Qty × Unit Price = Extended Price -->
             <Grid Margin="0,0,0,8">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="80"/>
@@ -83,7 +79,7 @@
                              HorizontalContentAlignment="Right"
                              TextChanged="RecalcExtended"/>
                 </StackPanel>
-                <TextBlock Grid.Column="1" Text="X" Foreground="#666666" FontSize="14" FontWeight="Bold"
+                <TextBlock Grid.Column="1" Text="X" Foreground="{StaticResource MutedBrush}" FontSize="14" FontWeight="Bold"
                            HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,4"/>
                 <StackPanel Grid.Column="2">
                     <TextBlock Text="Unit Price" Style="{StaticResource FieldLabel}"/>
@@ -91,7 +87,7 @@
                              HorizontalContentAlignment="Right"
                              TextChanged="RecalcExtended"/>
                 </StackPanel>
-                <TextBlock Grid.Column="3" Text="=" Foreground="#666666" FontSize="14" FontWeight="Bold"
+                <TextBlock Grid.Column="3" Text="=" Foreground="{StaticResource MutedBrush}" FontSize="14" FontWeight="Bold"
                            HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,4"/>
                 <StackPanel Grid.Column="4">
                     <TextBlock Text="Extended Price" Style="{StaticResource FieldLabel}"/>
@@ -100,7 +96,6 @@
                 </StackPanel>
             </Grid>
 
-            <!-- Row 2: Discount | Discount % | Discount Name -->
             <Grid Margin="0,0,0,14">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="90"/>
@@ -125,9 +120,6 @@
                     <TextBlock Text="Discount Name" Style="{StaticResource FieldLabel}"/>
                     <ComboBox x:Name="DiscountNameBox"
                               Height="28"
-                              Background="#0E0E0E"
-                              Foreground="White"
-                              BorderBrush="#333333"
                               FontSize="12">
                         <ComboBoxItem Content=""/>
                         <ComboBoxItem Content="Comp"/>
@@ -142,16 +134,19 @@
                 </StackPanel>
             </Grid>
 
-            <!-- OK / Cancel -->
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                 <Button Content="OK" Width="90" Height="32"
-                        Background="#2F66C8" Foreground="White"
-                        BorderBrush="#1F4E9A" BorderThickness="1"
+                        Background="{StaticResource GoldBrush}"
+                        Foreground="White"
+                        BorderBrush="{StaticResource BorderBrush}"
+                        BorderThickness="1"
                         FontWeight="SemiBold" Cursor="Hand"
                         Margin="0,0,8,0" Click="Save_Click"/>
                 <Button Content="Cancel" Width="90" Height="32"
-                        Background="#333333" Foreground="White"
-                        BorderBrush="#444444" BorderThickness="1"
+                        Background="{StaticResource Panel2Brush}"
+                        Foreground="White"
+                        BorderBrush="{StaticResource BorderBrush}"
+                        BorderThickness="1"
                         FontWeight="SemiBold" Cursor="Hand"
                         Click="Cancel_Click"/>
             </StackPanel>

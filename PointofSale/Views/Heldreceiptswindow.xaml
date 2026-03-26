@@ -5,40 +5,40 @@
         Width="1300" Height="700"
         MinWidth="1000" MinHeight="500"
         WindowStartupLocation="CenterOwner"
-        Background="#111111"
+        Background="{StaticResource BgBrush}"
         Foreground="White">
 
     <Window.Resources>
         <Style TargetType="DataGridColumnHeader">
-            <Setter Property="Background"      Value="#1A1A2E"/>
+            <Setter Property="Background"      Value="{StaticResource PanelBrush}"/>
             <Setter Property="Foreground"      Value="White"/>
             <Setter Property="FontWeight"      Value="Bold"/>
             <Setter Property="Padding"         Value="8,6"/>
             <Setter Property="BorderThickness" Value="0,0,1,1"/>
-            <Setter Property="BorderBrush"     Value="#2B2B40"/>
+            <Setter Property="BorderBrush"     Value="{StaticResource BorderBrush}"/>
             <Setter Property="FontSize"        Value="12"/>
         </Style>
         <Style TargetType="DataGridRow">
-            <Setter Property="Background" Value="#181818"/>
+            <Setter Property="Background" Value="{StaticResource PanelBrush}"/>
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="FontSize"   Value="12"/>
             <Style.Triggers>
                 <Trigger Property="ItemsControl.AlternationIndex" Value="1">
-                    <Setter Property="Background" Value="#111111"/>
+                    <Setter Property="Background" Value="{StaticResource Panel2Brush}"/>
                 </Trigger>
                 <Trigger Property="IsSelected" Value="True">
-                    <Setter Property="Background" Value="#1E3A6E"/>
-                    <Setter Property="Foreground"  Value="White"/>
+                    <Setter Property="Background" Value="{StaticResource GoldBrush}"/>
+                    <Setter Property="Foreground" Value="White"/>
                 </Trigger>
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="#222244"/>
+                    <Setter Property="Background" Value="{StaticResource Panel2Brush}"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
         <Style x:Key="ToolBtn" TargetType="Button">
-            <Setter Property="Background"      Value="#2F66C8"/>
+            <Setter Property="Background"      Value="{StaticResource GoldBrush}"/>
             <Setter Property="Foreground"      Value="White"/>
-            <Setter Property="BorderBrush"     Value="#1F4E9A"/>
+            <Setter Property="BorderBrush"     Value="{StaticResource BorderBrush}"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="FontWeight"      Value="SemiBold"/>
             <Setter Property="FontSize"        Value="12"/>
@@ -55,7 +55,7 @@
             <Setter Property="BorderBrush" Value="#1B5E20"/>
         </Style>
         <Style x:Key="DetailLabel" TargetType="TextBlock">
-            <Setter Property="Foreground" Value="#AAAAAA"/>
+            <Setter Property="Foreground" Value="{StaticResource MutedBrush}"/>
             <Setter Property="FontSize"   Value="11"/>
         </Style>
         <Style x:Key="DetailValue" TargetType="TextBlock">
@@ -71,10 +71,10 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- ═══ TOOLBAR ═══ -->
+        <!-- TOOLBAR -->
         <Border Grid.Row="0"
-                Background="#0D0D1A"
-                BorderBrush="#2B2B40"
+                Background="{StaticResource PanelBrush}"
+                BorderBrush="{StaticResource BorderBrush}"
                 BorderThickness="0,0,0,1"
                 Padding="12,8">
             <Grid>
@@ -93,8 +93,6 @@
                                VerticalAlignment="Center" Margin="0,0,6,0"/>
                     <ComboBox x:Name="PeriodBox"
                               Width="130" Height="28"
-                              Background="#0E0E0E" Foreground="White"
-                              BorderBrush="#333"
                               SelectionChanged="Period_Changed">
                         <ComboBoxItem Content="Last 30 Days" IsSelected="True"/>
                         <ComboBoxItem Content="Last 7 Days"/>
@@ -104,17 +102,20 @@
                 </StackPanel>
 
                 <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
-                    <Border Background="#0E0E0E" BorderBrush="#333" BorderThickness="1"
+                    <Border Background="{StaticResource Panel2Brush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1"
                             CornerRadius="3" Padding="8,0">
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="🔍" Foreground="#666" VerticalAlignment="Center"
-                                       FontSize="11" Margin="0,0,4,0"/>
+                            <TextBlock Text="🔍" Foreground="{StaticResource MutedBrush}"
+                                       VerticalAlignment="Center" FontSize="11" Margin="0,0,4,0"/>
                             <TextBox x:Name="SearchBox"
                                      Width="190" Height="28"
-                                     Background="Transparent" Foreground="White"
+                                     Background="Transparent"
                                      BorderThickness="0"
-                                     Padding="0" VerticalContentAlignment="Center"
-                                     FontSize="12" CaretBrush="White"
+                                     Padding="0"
+                                     VerticalContentAlignment="Center"
+                                     FontSize="12"
                                      TextChanged="Search_Changed"
                                      ToolTip="Search by cashier, customer or items"/>
                         </StackPanel>
@@ -129,23 +130,23 @@
                             Content="Show Details" Margin="6,0,0,0"
                             Style="{StaticResource ToolBtn}"
                             Click="ShowDetails_Click"/>
-                    <Button Content="Close"  Margin="6,0,0,0"
+                    <Button Content="Close" Margin="6,0,0,0"
                             Style="{StaticResource ToolBtn}"
                             Click="Close_Click"/>
                 </StackPanel>
             </Grid>
         </Border>
 
-        <!-- ═══ BODY: list LEFT + detail RIGHT ═══ -->
-        <Grid Grid.Row="1" Margin="0">
+        <!-- BODY -->
+        <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" MinWidth="300"/>
                 <ColumnDefinition x:Name="DetailCol" Width="0" MinWidth="0"/>
             </Grid.ColumnDefinitions>
 
-            <!-- ── LEFT: Held receipts list ── -->
             <Border Grid.Column="0"
-                    BorderBrush="#2B2B40" BorderThickness="0,0,1,0">
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="0,0,1,0">
                 <DataGrid x:Name="HeldGrid"
                           AutoGenerateColumns="False"
                           CanUserAddRows="False"
@@ -159,8 +160,6 @@
                           HeadersVisibility="Column"
                           BorderThickness="0"
                           Background="Transparent"
-                          RowBackground="#181818"
-                          AlternatingRowBackground="#111111"
                           Foreground="White"
                           FontSize="12"
                           RowHeight="40"
@@ -179,8 +178,7 @@
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
                         <DataGridTextColumn Header="Cashier"
-                            Binding="{Binding Cashier}"
-                            Width="120">
+                            Binding="{Binding Cashier}" Width="120">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="VerticalAlignment" Value="Center"/>
@@ -189,8 +187,7 @@
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
                         <DataGridTextColumn Header="Customer"
-                            Binding="{Binding CustomerName}"
-                            Width="140">
+                            Binding="{Binding CustomerName}" Width="140">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="VerticalAlignment" Value="Center"/>
@@ -199,41 +196,37 @@
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
                         <DataGridTextColumn Header="Items Held"
-                            Binding="{Binding ItemsSummary}"
-                            Width="*">
+                            Binding="{Binding ItemsSummary}" Width="*">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
-                                    <Setter Property="TextTrimming"     Value="CharacterEllipsis"/>
-                                    <Setter Property="ToolTip"          Value="{Binding ItemsSummary}"/>
-                                    <Setter Property="Foreground"       Value="#88BBFF"/>
+                                    <Setter Property="TextTrimming"      Value="CharacterEllipsis"/>
+                                    <Setter Property="ToolTip"           Value="{Binding ItemsSummary}"/>
+                                    <Setter Property="Foreground"        Value="{StaticResource GoldBrush}"/>
                                     <Setter Property="VerticalAlignment" Value="Center"/>
-                                    <Setter Property="Padding"          Value="4,0"/>
+                                    <Setter Property="Padding"           Value="4,0"/>
                                 </Style>
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
                         <DataGridTextColumn Header="No. of Items"
-                            Binding="{Binding ItemCount}"
-                            Width="100">
+                            Binding="{Binding ItemCount}" Width="100">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
-                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                    <Setter Property="VerticalAlignment"   Value="Center"/>
                                     <Setter Property="HorizontalAlignment" Value="Center"/>
                                 </Style>
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
                         <DataGridTextColumn Header="Total Qty Sold"
-                            Binding="{Binding TotalQty}"
-                            Width="110">
+                            Binding="{Binding TotalQty}" Width="110">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
-                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                    <Setter Property="VerticalAlignment"   Value="Center"/>
                                     <Setter Property="HorizontalAlignment" Value="Center"/>
                                 </Style>
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
                         <DataGridTextColumn Header="Total"
-                            Binding="{Binding Total, StringFormat=N2}"
-                            Width="90">
+                            Binding="{Binding Total, StringFormat=N2}" Width="90">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="VerticalAlignment"   Value="Center"/>
@@ -243,8 +236,7 @@
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
                         <DataGridTextColumn Header="Payment"
-                            Binding="{Binding PaymentMethod}"
-                            Width="90">
+                            Binding="{Binding PaymentMethod}" Width="90">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="VerticalAlignment" Value="Center"/>
@@ -253,37 +245,33 @@
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
                     </DataGrid.Columns>
-
-                    <!-- Hint row at the bottom when empty -->
-                    <DataGrid.Style>
-                        <Style TargetType="DataGrid">
-                            <Setter Property="Background" Value="Transparent"/>
-                        </Style>
-                    </DataGrid.Style>
                 </DataGrid>
             </Border>
 
-            <!-- ── RIGHT: Detail Page hosted in a Frame ── -->
             <Border Grid.Column="1"
-                    BorderBrush="#CCCCCC" BorderThickness="1,0,0,0"
-                    Background="White">
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1,0,0,0"
+                    Background="{StaticResource PanelBrush}">
                 <Frame x:Name="DetailFrame"
                        NavigationUIVisibility="Hidden"
-                       Background="White"/>
+                       Background="Transparent"/>
             </Border>
         </Grid>
 
-        <!-- ═══ STATUS BAR ═══ -->
+        <!-- STATUS BAR -->
         <Border Grid.Row="2"
-                Background="#0D0D1A"
-                BorderBrush="#2B2B40" BorderThickness="0,1,0,0"
+                Background="{StaticResource PanelBrush}"
+                BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="0,1,0,0"
                 Padding="12,5">
             <Grid>
                 <TextBlock x:Name="StatusTxt"
-                           Foreground="#888888" FontSize="11"
+                           Foreground="{StaticResource MutedBrush}"
+                           FontSize="11"
                            VerticalAlignment="Center"/>
                 <TextBlock Text="Double-click a row to view receipt detail"
-                           Foreground="#555566" FontSize="11"
+                           Foreground="{StaticResource MutedBrush}"
+                           FontSize="11"
                            HorizontalAlignment="Right"
                            VerticalAlignment="Center"/>
             </Grid>

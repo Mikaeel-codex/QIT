@@ -35,7 +35,7 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <!-- ── LEFT SIDEBAR ── -->
+        <!-- LEFT SIDEBAR -->
         <Grid Grid.Column="0" Background="#0D0D0D">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -47,7 +47,7 @@
             <Border Grid.Row="0" Padding="16,14"
                     BorderBrush="#1E1E1E" BorderThickness="0,0,0,1">
                 <StackPanel>
-                    <TextBlock Text="⚙  Settings" FontSize="15" FontWeight="Bold" Foreground="White"/>
+                    <TextBlock Text="Settings" FontSize="15" FontWeight="Bold" Foreground="White"/>
                     <TextBlock Text="System configuration" Foreground="#555555" FontSize="11" Margin="0,2,0,0"/>
                 </StackPanel>
             </Border>
@@ -58,16 +58,20 @@
                 <TextBlock Text="STORE" Foreground="#444444" FontSize="10"
                            FontWeight="Bold" Margin="16,8,0,4"/>
 
-                <Button x:Name="NavStoreInfo" Style="{StaticResource NavBtnActive}"
-                        Click="Nav_Click" Tag="StoreInfo">
+                <Button x:Name="NavStoreInfo"
+                        Style="{StaticResource NavBtnActive}"
+                        Click="Nav_Click"
+                        Tag="StoreInfo">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="🏪" FontSize="13" Margin="0,0,10,0"/>
                         <TextBlock Text="Store &amp; Email"/>
                     </StackPanel>
                 </Button>
 
-                <Button x:Name="NavReceipt" Style="{StaticResource NavBtn}"
-                        Click="Nav_Click" Tag="Receipt">
+                <Button x:Name="NavReceipt"
+                        Style="{StaticResource NavBtn}"
+                        Click="Nav_Click"
+                        Tag="Receipt">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="🧾" FontSize="13" Margin="0,0,10,0"/>
                         <TextBlock Text="Receipt"/>
@@ -77,34 +81,54 @@
                 <TextBlock Text="SYSTEM" Foreground="#444444" FontSize="10"
                            FontWeight="Bold" Margin="16,16,0,4"/>
 
-                <Button x:Name="NavTax" Style="{StaticResource NavBtn}"
-                        Click="Nav_Click" Tag="Tax">
+                <Button x:Name="NavTax"
+                        Style="{StaticResource NavBtn}"
+                        Click="Nav_Click"
+                        Tag="Tax">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="💰" FontSize="13" Margin="0,0,10,0"/>
                         <TextBlock Text="Tax"/>
                     </StackPanel>
                 </Button>
 
-                <Button x:Name="NavPrinter" Style="{StaticResource NavBtn}"
-                        Click="Nav_Click" Tag="Printer">
+                <Button x:Name="NavPrinter"
+                        Style="{StaticResource NavBtn}"
+                        Click="Nav_Click"
+                        Tag="Printer">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="🖨" FontSize="13" Margin="0,0,10,0"/>
                         <TextBlock Text="Printer"/>
                     </StackPanel>
                 </Button>
 
+                <Button x:Name="NavTheme"
+                        Style="{StaticResource NavBtn}"
+                        Click="Nav_Click"
+                        Tag="Theme">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="🎨" FontSize="13" Margin="0,0,10,0"/>
+                        <TextBlock Text="Appearance"/>
+                    </StackPanel>
+                </Button>
+
             </StackPanel>
 
             <!-- Close -->
-            <Button Grid.Row="2" Content="✖  Close"
-                    Background="Transparent" Foreground="#666666"
-                    BorderThickness="0" FontSize="12" Height="40"
-                    Cursor="Hand" HorizontalContentAlignment="Left"
-                    Padding="16,0" Margin="0,0,0,8"
+            <Button Grid.Row="2"
+                    Content="Close"
+                    Background="Transparent"
+                    Foreground="#666666"
+                    BorderThickness="0"
+                    FontSize="12"
+                    Height="40"
+                    Cursor="Hand"
+                    HorizontalContentAlignment="Left"
+                    Padding="16,0"
+                    Margin="0,0,0,8"
                     Click="Close_Click"/>
         </Grid>
 
-        <!-- ── RIGHT CONTENT AREA ── -->
+        <!-- RIGHT CONTENT AREA -->
         <Grid Grid.Column="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -115,7 +139,8 @@
             <Border Grid.Row="0" Background="#0D0D0D" Padding="24,14"
                     BorderBrush="#1E1E1E" BorderThickness="0,0,0,1">
                 <StackPanel>
-                    <TextBlock x:Name="PageTitle" Text="Store &amp; Email"
+                    <TextBlock x:Name="PageTitle"
+                               Text="Store &amp; Email"
                                FontSize="16" FontWeight="Bold" Foreground="White"/>
                     <TextBlock x:Name="PageSubtitle"
                                Text="Your store details and email configuration."

@@ -4,21 +4,21 @@
         Title="Sales History"
         Width="1100" Height="680"
         WindowStartupLocation="CenterOwner"
-        Background="#111111"
+        Background="{StaticResource BgBrush}"
         Foreground="White">
 
     <Window.Resources>
 
         <Style x:Key="HeaderTxt" TargetType="TextBlock">
-            <Setter Property="Foreground"  Value="#BBBBBB"/>
-            <Setter Property="FontSize"    Value="11"/>
-            <Setter Property="FontWeight"  Value="SemiBold"/>
+            <Setter Property="Foreground" Value="{StaticResource MutedBrush}"/>
+            <Setter Property="FontSize"   Value="11"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
         </Style>
 
         <Style x:Key="FilterBox" TargetType="TextBox">
-            <Setter Property="Background"               Value="#1A1A1A"/>
+            <Setter Property="Background"               Value="{StaticResource PanelBrush}"/>
             <Setter Property="Foreground"               Value="White"/>
-            <Setter Property="BorderBrush"              Value="#2B2B2B"/>
+            <Setter Property="BorderBrush"              Value="{StaticResource BorderBrush}"/>
             <Setter Property="BorderThickness"          Value="1"/>
             <Setter Property="Height"                   Value="30"/>
             <Setter Property="Padding"                  Value="8,0"/>
@@ -28,19 +28,19 @@
         </Style>
 
         <Style x:Key="FilterCombo" TargetType="ComboBox">
-            <Setter Property="Background"               Value="#1A1A1A"/>
-            <Setter Property="Foreground"               Value="White"/>
-            <Setter Property="BorderBrush"              Value="#2B2B2B"/>
-            <Setter Property="BorderThickness"          Value="1"/>
-            <Setter Property="Height"                   Value="30"/>
-            <Setter Property="Padding"                  Value="8,0"/>
-            <Setter Property="FontSize"                 Value="12"/>
+            <Setter Property="Background"      Value="{StaticResource PanelBrush}"/>
+            <Setter Property="Foreground"      Value="White"/>
+            <Setter Property="BorderBrush"     Value="{StaticResource BorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Height"          Value="30"/>
+            <Setter Property="Padding"         Value="8,0"/>
+            <Setter Property="FontSize"        Value="12"/>
         </Style>
 
         <Style x:Key="ActionBtn" TargetType="Button">
-            <Setter Property="Background"      Value="#2F66C8"/>
+            <Setter Property="Background"      Value="{StaticResource GoldBrush}"/>
             <Setter Property="Foreground"      Value="White"/>
-            <Setter Property="BorderBrush"     Value="#1F4E9A"/>
+            <Setter Property="BorderBrush"     Value="{StaticResource BorderBrush}"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Height"          Value="30"/>
             <Setter Property="Padding"         Value="16,0"/>
@@ -49,26 +49,25 @@
         </Style>
 
         <Style TargetType="DataGridColumnHeader">
-            <Setter Property="Background"      Value="#1A1A1A"/>
-            <Setter Property="Foreground"      Value="#BBBBBB"/>
+            <Setter Property="Background"      Value="{StaticResource PanelBrush}"/>
+            <Setter Property="Foreground"      Value="{StaticResource MutedBrush}"/>
             <Setter Property="FontWeight"      Value="SemiBold"/>
             <Setter Property="FontSize"        Value="11"/>
             <Setter Property="Padding"         Value="8,6"/>
             <Setter Property="BorderThickness" Value="0,0,0,1"/>
-            <Setter Property="BorderBrush"     Value="#2B2B2B"/>
+            <Setter Property="BorderBrush"     Value="{StaticResource BorderBrush}"/>
         </Style>
 
         <Style TargetType="DataGridRow">
-            <Setter Property="Background" Value="#181818"/>
+            <Setter Property="Background" Value="{StaticResource PanelBrush}"/>
             <Style.Triggers>
                 <Trigger Property="ItemsControl.AlternationIndex" Value="1">
-                    <Setter Property="Background" Value="#111111"/>
+                    <Setter Property="Background" Value="{StaticResource Panel2Brush}"/>
                 </Trigger>
                 <Trigger Property="IsSelected" Value="True">
-                    <Setter Property="Background" Value="#1A3A6A"/>
+                    <Setter Property="Background" Value="{StaticResource GoldBrush}"/>
                     <Setter Property="Foreground" Value="White"/>
                 </Trigger>
-                <!-- Voided sales shown in red -->
                 <DataTrigger Binding="{Binding Status}" Value="Voided">
                     <Setter Property="Background" Value="#3A1A1A"/>
                     <Setter Property="Foreground" Value="#FF5555"/>
@@ -88,10 +87,12 @@
             <ColumnDefinition Width="340"/>
         </Grid.ColumnDefinitions>
 
-        <!-- ── HEADER ── -->
+        <!-- HEADER -->
         <Border Grid.Row="0" Grid.ColumnSpan="2"
-                Background="#0D0D0D" Padding="16,12"
-                BorderBrush="#1E1E1E" BorderThickness="0,0,0,1">
+                Background="{StaticResource PanelBrush}"
+                Padding="16,12"
+                BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="0,0,0,1">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
@@ -105,50 +106,52 @@
 
                 <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="0,0,20,0">
                     <TextBlock Text="Sales History" FontSize="16" FontWeight="Bold" Foreground="White"/>
-                    <TextBlock x:Name="SummaryTxt" Foreground="#555555" FontSize="11" Margin="0,2,0,0"/>
+                    <TextBlock x:Name="SummaryTxt"
+                               Foreground="{StaticResource MutedBrush}"
+                               FontSize="11" Margin="0,2,0,0"/>
                 </StackPanel>
 
-                <!-- Search -->
-                <TextBox Grid.Column="1" x:Name="SearchBox"
+                <TextBox Grid.Column="1"
+                         x:Name="SearchBox"
                          Style="{StaticResource FilterBox}"
                          Margin="0,0,8,0"
                          Tag="Search receipt #, customer, cashier..."
                          TextChanged="Filter_Changed"/>
 
-                <!-- Date from -->
-                <DatePicker Grid.Column="2" x:Name="DateFrom"
-                            Background="#1A1A1A" Foreground="White"
+                <DatePicker Grid.Column="2"
+                            x:Name="DateFrom"
                             Height="30" Margin="0,0,8,0"
                             SelectedDateChanged="Filter_Changed"/>
 
-                <!-- Date to -->
-                <DatePicker Grid.Column="3" x:Name="DateTo"
-                            Background="#1A1A1A" Foreground="White"
+                <DatePicker Grid.Column="3"
+                            x:Name="DateTo"
                             Height="30" Margin="0,0,8,0"
                             SelectedDateChanged="Filter_Changed"/>
 
-                <!-- Payment filter -->
-                <ComboBox Grid.Column="4" x:Name="PaymentFilter"
+                <ComboBox Grid.Column="4"
+                          x:Name="PaymentFilter"
                           Style="{StaticResource FilterCombo}"
                           Width="120" Margin="0,0,8,0"
                           SelectionChanged="Filter_Changed"/>
 
-                <!-- Clear filters -->
-                <Button Grid.Column="5" Content="Clear"
+                <Button Grid.Column="5"
+                        Content="Clear"
                         Style="{StaticResource ActionBtn}"
-                        Background="#333333" BorderBrush="#444444"
+                        Background="{StaticResource Panel2Brush}"
+                        BorderBrush="{StaticResource BorderBrush}"
                         Margin="0,0,8,0"
                         Click="ClearFilters_Click"/>
 
-                <!-- Close -->
-                <Button Grid.Column="6" Content="Close"
+                <Button Grid.Column="6"
+                        Content="Close"
                         Style="{StaticResource ActionBtn}"
-                        Background="#333333" BorderBrush="#444444"
+                        Background="{StaticResource Panel2Brush}"
+                        BorderBrush="{StaticResource BorderBrush}"
                         Click="Close_Click"/>
             </Grid>
         </Border>
 
-        <!-- ── SALES LIST ── -->
+        <!-- SALES LIST -->
         <DataGrid Grid.Row="1" Grid.Column="0"
                   x:Name="SalesGrid"
                   AutoGenerateColumns="False"
@@ -194,10 +197,11 @@
             </DataGrid.Columns>
         </DataGrid>
 
-        <!-- ── DETAIL PANEL ── -->
+        <!-- DETAIL PANEL -->
         <Border Grid.Row="1" Grid.Column="1"
-                Background="#0D0D0D"
-                BorderBrush="#1E1E1E" BorderThickness="1,0,0,0">
+                Background="{StaticResource PanelBrush}"
+                BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="1,0,0,0">
 
             <Grid>
                 <Grid.RowDefinitions>
@@ -208,14 +212,17 @@
                 </Grid.RowDefinitions>
 
                 <!-- Detail header -->
-                <Border Grid.Row="0" Padding="16,12"
-                        BorderBrush="#1E1E1E" BorderThickness="0,0,0,1">
+                <Border Grid.Row="0"
+                        Padding="16,12"
+                        BorderBrush="{StaticResource BorderBrush}"
+                        BorderThickness="0,0,0,1">
                     <StackPanel>
                         <TextBlock x:Name="DetailReceiptTxt"
                                    Text="Select a sale to view details"
                                    Foreground="White" FontWeight="SemiBold" FontSize="13"/>
                         <TextBlock x:Name="DetailDateTxt"
-                                   Foreground="#555555" FontSize="11" Margin="0,2,0,0"/>
+                                   Foreground="{StaticResource MutedBrush}"
+                                   FontSize="11" Margin="0,2,0,0"/>
                         <TextBlock x:Name="DetailStatusTxt"
                                    FontSize="11" FontWeight="SemiBold" Margin="0,2,0,0"
                                    Foreground="#FF5555" Visibility="Collapsed"/>
@@ -237,25 +244,27 @@
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
-                    <TextBlock Grid.Row="0" Text="Customer"   Style="{StaticResource HeaderTxt}"/>
+                    <TextBlock Grid.Row="0" Text="Customer" Style="{StaticResource HeaderTxt}"/>
                     <TextBlock Grid.Row="0" Grid.Column="1" x:Name="DetailCustomerTxt"
                                Foreground="White" FontSize="12" TextAlignment="Right"/>
 
-                    <TextBlock Grid.Row="1" Text="Cashier"    Style="{StaticResource HeaderTxt}" Margin="0,6,0,0"/>
+                    <TextBlock Grid.Row="1" Text="Cashier" Style="{StaticResource HeaderTxt}" Margin="0,6,0,0"/>
                     <TextBlock Grid.Row="1" Grid.Column="1" x:Name="DetailCashierTxt"
                                Foreground="White" FontSize="12" TextAlignment="Right" Margin="0,6,0,0"/>
 
-                    <TextBlock Grid.Row="2" Text="Payment"    Style="{StaticResource HeaderTxt}" Margin="0,6,0,0"/>
+                    <TextBlock Grid.Row="2" Text="Payment" Style="{StaticResource HeaderTxt}" Margin="0,6,0,0"/>
                     <TextBlock Grid.Row="2" Grid.Column="1" x:Name="DetailPaymentTxt"
                                Foreground="White" FontSize="12" TextAlignment="Right" Margin="0,6,0,0"/>
 
-                    <Separator Grid.Row="3" Grid.ColumnSpan="2" Background="#1E1E1E" Margin="0,10,0,10"/>
+                    <Separator Grid.Row="3" Grid.ColumnSpan="2"
+                               Background="{StaticResource BorderBrush}"
+                               Margin="0,10,0,10"/>
 
-                    <TextBlock Grid.Row="4" Text="Subtotal"   Style="{StaticResource HeaderTxt}"/>
+                    <TextBlock Grid.Row="4" Text="Subtotal" Style="{StaticResource HeaderTxt}"/>
                     <TextBlock Grid.Row="4" Grid.Column="1" x:Name="DetailSubtotalTxt"
                                Foreground="White" FontSize="12" TextAlignment="Right"/>
 
-                    <TextBlock Grid.Row="5" Text="Tax"        Style="{StaticResource HeaderTxt}" Margin="0,4,0,0"/>
+                    <TextBlock Grid.Row="5" Text="Tax" Style="{StaticResource HeaderTxt}" Margin="0,4,0,0"/>
                     <TextBlock Grid.Row="5" Grid.Column="1" x:Name="DetailTaxTxt"
                                Foreground="White" FontSize="12" TextAlignment="Right" Margin="0,4,0,0"/>
                 </Grid>
@@ -291,9 +300,11 @@
                 </DataGrid>
 
                 <!-- Total footer -->
-                <Border Grid.Row="3" Padding="16,10"
-                        Background="#111111"
-                        BorderBrush="#1E1E1E" BorderThickness="0,1,0,0">
+                <Border Grid.Row="3"
+                        Padding="16,10"
+                        Background="{StaticResource Panel2Brush}"
+                        BorderBrush="{StaticResource BorderBrush}"
+                        BorderThickness="0,1,0,0">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
@@ -303,16 +314,16 @@
                         <TextBlock Grid.Column="1" x:Name="DetailTotalTxt"
                                    FontWeight="Bold" FontSize="14" Foreground="White"/>
 
-                        <!-- Action buttons -->
                         <StackPanel Grid.ColumnSpan="2" Orientation="Horizontal"
                                     HorizontalAlignment="Right" Margin="0,26,0,0">
-                            <Button Content="🖨  Reprint Receipt"
+                            <Button Content="Reprint Receipt"
                                     Style="{StaticResource ActionBtn}"
                                     Margin="0,0,8,0"
                                     Click="Reprint_Click"/>
-                            <Button Content="🗑  Void Sale"
+                            <Button Content="Void Sale"
                                     Style="{StaticResource ActionBtn}"
-                                    Background="#8B1A1A" BorderBrush="#6B1212"
+                                    Background="#8B1A1A"
+                                    BorderBrush="#6B1212"
                                     Click="VoidSale_Click"/>
                         </StackPanel>
                     </Grid>

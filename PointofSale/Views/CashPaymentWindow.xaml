@@ -5,14 +5,14 @@
         Height="290" Width="480"
         WindowStartupLocation="CenterOwner"
         ResizeMode="NoResize"
-        Background="#000000"
+        Background="{StaticResource BgBrush}"
         Foreground="White">
 
     <Window.Resources>
         <Style x:Key="QuickBtn" TargetType="Button">
-            <Setter Property="Background"      Value="#181818"/>
+            <Setter Property="Background"      Value="{StaticResource PanelBrush}"/>
             <Setter Property="Foreground"      Value="White"/>
-            <Setter Property="BorderBrush"     Value="#333333"/>
+            <Setter Property="BorderBrush"     Value="{StaticResource BorderBrush}"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="FontSize"        Value="13"/>
             <Setter Property="FontWeight"      Value="SemiBold"/>
@@ -22,9 +22,9 @@
             <Setter Property="Padding"         Value="6,0"/>
         </Style>
         <Style x:Key="ActionBtn" TargetType="Button">
-            <Setter Property="Background"      Value="#2F66C8"/>
+            <Setter Property="Background"      Value="{StaticResource GoldBrush}"/>
             <Setter Property="Foreground"      Value="White"/>
-            <Setter Property="BorderBrush"     Value="#1F4E9A"/>
+            <Setter Property="BorderBrush"     Value="{StaticResource BorderBrush}"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="FontSize"        Value="13"/>
             <Setter Property="FontWeight"      Value="SemiBold"/>
@@ -34,14 +34,12 @@
         </Style>
     </Window.Resources>
 
-    <Border Background="#000000" Padding="16" Margin="0,0,0,-26">
+    <Border Background="{StaticResource BgBrush}" Padding="16" Margin="0,0,0,-26">
         <StackPanel Margin="0,0,0,-6">
 
-            <!-- Title -->
             <TextBlock Text="Cash" FontSize="16" FontWeight="Bold"
                        Foreground="White" Margin="0,0,0,12"/>
 
-            <!-- Payment summary -->
             <Grid x:Name="SummaryGrid" Margin="0,0,0,10">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -54,61 +52,54 @@
                 </Grid.RowDefinitions>
 
                 <TextBlock Grid.Row="0" Text="Sale Total"
-                           Foreground="#BBBBBB" FontSize="12"/>
+                           Foreground="{StaticResource MutedBrush}" FontSize="12"/>
                 <TextBlock x:Name="TotalTxt" Grid.Row="0" Grid.Column="1"
                            HorizontalAlignment="Right"
                            Foreground="White" FontSize="12"/>
 
                 <TextBlock x:Name="AlreadyPaidLbl" Grid.Row="1" Text="Already Paid"
-                           Foreground="#BBBBBB" FontSize="12" Visibility="Collapsed"/>
+                           Foreground="{StaticResource MutedBrush}" FontSize="12" Visibility="Collapsed"/>
                 <TextBlock x:Name="AlreadyPaidTxt" Grid.Row="1" Grid.Column="1"
                            HorizontalAlignment="Right"
                            Foreground="#88CC66" FontSize="12" Visibility="Collapsed"/>
 
                 <TextBlock Grid.Row="2" Text="Still Owing"
-                           Foreground="#BBBBBB" FontSize="12" FontWeight="Bold"/>
+                           Foreground="{StaticResource MutedBrush}" FontSize="12" FontWeight="Bold"/>
                 <TextBlock x:Name="OwingTxt" Grid.Row="2" Grid.Column="1"
                            HorizontalAlignment="Right"
                            Foreground="#FF8C00" FontSize="12" FontWeight="Bold"/>
             </Grid>
 
-            <Separator Background="#2B2B2B" Margin="0,0,0,10"/>
+            <Separator Background="{StaticResource BorderBrush}" Margin="0,0,0,10"/>
 
-            <!-- Amount row -->
             <Grid Margin="0,0,0,12">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="70"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="Amount" VerticalAlignment="Center"
-                           Foreground="#BBBBBB" FontSize="13"/>
+                           Foreground="{StaticResource MutedBrush}" FontSize="13"/>
                 <TextBox x:Name="AmountBox"
                          Grid.Column="1"
                          Height="32"
                          HorizontalContentAlignment="Right"
                          VerticalContentAlignment="Center"
                          Padding="8,0"
-                         Background="#0E0E0E"
-                         Foreground="White"
-                         BorderBrush="#333333"
-                         BorderThickness="1"
                          FontSize="15"
-                         FontWeight="SemiBold"
-                         CaretBrush="White"
-                         SelectionBrush="#2F66C8"/>
+                         FontWeight="SemiBold"/>
             </Grid>
 
-            <!-- Quick-amount buttons -->
             <StackPanel Orientation="Horizontal" Margin="0,0,0,14">
-                <Button Content="Next Rand"  Style="{StaticResource QuickBtn}" Click="NextRand_Click" MinWidth="80" Margin="212,0,0,0" Width="105"/>
+                <Button Content="Next Rand" Style="{StaticResource QuickBtn}" Click="NextRand_Click" MinWidth="80" Margin="212,0,0,0" Width="105"/>
                 <Button Content="Exact Amount" Style="{StaticResource QuickBtn}" Click="Exact_Click" MinWidth="90" Width="110" Margin="4,0,0,0"/>
             </StackPanel>
 
-            <!-- Save / Cancel -->
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                 <Button Content="Save"   Style="{StaticResource ActionBtn}" Margin="0,0,8,0" Click="Save_Click"/>
                 <Button Content="Cancel" Style="{StaticResource ActionBtn}"
-                        Background="#444" BorderBrush="#555" Click="Cancel_Click"/>
+                        Background="{StaticResource Panel2Brush}"
+                        BorderBrush="{StaticResource BorderBrush}"
+                        Click="Cancel_Click"/>
             </StackPanel>
 
         </StackPanel>

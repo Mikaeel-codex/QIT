@@ -198,14 +198,14 @@
                                VerticalAlignment="Center" Margin="0,0,6,0"/>
                     <DatePicker x:Name="DateFrom"
                                 Background="#1A1A1A" Foreground="White"
-                                Height="26" Width="120" Margin="0,0,8,0"
+                                Height="26" Width="142" Margin="0,0,8,0"
                                 SelectedDateChanged="DateFilter_Changed"/>
 
                     <TextBlock Text="To:" Foreground="#555555" FontSize="11"
                                VerticalAlignment="Center" Margin="0,0,6,0"/>
                     <DatePicker x:Name="DateTo"
                                 Background="#1A1A1A" Foreground="White"
-                                Height="26" Width="120" Margin="0,0,12,0"
+                                Height="26" Width="138" Margin="0,0,12,0"
                                 SelectedDateChanged="DateFilter_Changed"/>
 
                     <Button Content="Run Report"
