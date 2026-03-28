@@ -190,39 +190,161 @@ namespace PointofSale.Views
         }
 
         // ═══════════════════════════════════════
-        // CUSTOMER SEARCH (stubbed)
+        // CUSTOMER SEARCH
         // ═══════════════════════════════════════
 
-        private void CustomerDropdownArrow_Click(object sender, RoutedEventArgs e)
-        {
-            MessageBox.Show("Customers screen coming next.");
-        }
+        private Customer? _selectedCustomer;
 
         private void CustomerBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            CustomerPopup.IsOpen = false;
+            if (_suppressCustomerTextChanged) return;
+
+            var query = CustomerBoxTop.Text.Trim();
+
+            if (string.IsNullOrWhiteSpace(query))
+            {
+                CustomerPopup.IsOpen = false;
+                return;
+            }
+
+            using var db = new AppDbContext();
+            var results = db.Customers
+                .Where(c => c.IsActive &&
+                           (c.FirstName.Contains(query) ||
+                            c.LastName.Contains(query) ||
+                            c.Phone.Contains(query) ||
+                            (c.Email != null && c.Email.Contains(query))))
+                .OrderBy(c => c.LastName)
+                .Take(15)
+                .ToList();
+
+            CustomerList.ItemsSource = results;
+            CustomerPopup.IsOpen = results.Count > 0;
         }
 
         private void CustomerBox_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Escape)
+            {
                 CustomerPopup.IsOpen = false;
+            }
+            else if (e.Key == Key.Down && CustomerPopup.IsOpen)
+            {
+                CustomerList.Focus();
+                if (CustomerList.Items.Count > 0)
+                    CustomerList.SelectedIndex = 0;
+                e.Handled = true;
+            }
         }
 
         private void CustomerBox_LostFocus(object sender, RoutedEventArgs e)
         {
-            CustomerPopup.IsOpen = false;
+            if (!CustomerList.IsKeyboardFocusWithin)
+                CustomerPopup.IsOpen = false;
         }
 
-        private void CustomerList_MouseDoubleClick(object sender, MouseButtonEventArgs e) { }
+        private void CustomerList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (CustomerList.SelectedItem is Customer c)
+                SelectCustomer(c);
+        }
 
         private void CustomerList_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Escape)
+            if (e.Key == Key.Enter && CustomerList.SelectedItem is Customer c)
+            {
+                SelectCustomer(c);
+                e.Handled = true;
+            }
+            else if (e.Key == Key.Escape)
             {
                 CustomerPopup.IsOpen = false;
                 CustomerBoxTop.Focus();
             }
+        }
+
+        private void SelectCustomer(Customer c)
+        {
+            _selectedCustomer = c;
+            CustomerPopup.IsOpen = false;
+
+            // Clear the search box — customer is shown in the info bar instead
+            _suppressCustomerTextChanged = true;
+            CustomerBoxTop.Clear();
+            _suppressCustomerTextChanged = false;
+
+            // Update the ViewModel so Account payment can find the customer
+            if (DataContext is PosViewModel vm)
+                vm.CustomerSearchText = c.FullName;
+
+            // Show the customer info bar
+            ShowCustomerBar(c);
+        }
+
+        private void ShowCustomerBar(Customer c)
+        {
+            var available = c.CreditLimit - c.AccountBalance;
+
+            CustomerInitialsTxt.Text = BuildInitials(c.FullName);
+            CustomerNameTxt.Text = c.FullName;
+            CustomerCityTxt.Text = string.IsNullOrWhiteSpace(c.City) ? "" : c.City;
+            CustomerPhoneTxt.Text = string.IsNullOrWhiteSpace(c.Phone) ? "—" : c.Phone;
+            CustomerBalanceTxt.Text = $"R{c.AccountBalance:N2}";
+            CustomerAvailableTxt.Text = $"R{available:N2}";
+
+            // Colour code available credit — red if none left
+            CustomerAvailableTxt.Foreground = available <= 0
+                ? System.Windows.Media.Brushes.OrangeRed
+                : System.Windows.Media.Brushes.LightGreen;
+
+            // Tooltip values
+            TooltipHeader.Text = $"{c.FullName} — Account Summary";
+            TooltipLimit.Text = $"R{c.CreditLimit:N2}";
+            TooltipUsed.Text = $"R{c.AccountBalance:N2}";
+            TooltipAvail.Text = $"R{available:N2}";
+
+            CustomerInfoBar.Visibility = Visibility.Visible;
+        }
+
+        private void ClearCustomer_Click(object sender, RoutedEventArgs e)
+        {
+            _selectedCustomer = null;
+
+            _suppressCustomerTextChanged = true;
+            CustomerBoxTop.Clear();
+            _suppressCustomerTextChanged = false;
+
+            if (DataContext is PosViewModel vm)
+                vm.CustomerSearchText = "";
+
+            CustomerInfoBar.Visibility = Visibility.Collapsed;
+        }
+
+        private void CustomerDropdownArrow_Click(object sender, RoutedEventArgs e)
+        {
+            using var db = new AppDbContext();
+            var query = CustomerBoxTop.Text.Trim();
+
+            var results = string.IsNullOrWhiteSpace(query)
+                ? db.Customers.Where(c => c.IsActive).OrderBy(c => c.LastName).Take(20).ToList()
+                : db.Customers.Where(c => c.IsActive &&
+                                         (c.FirstName.Contains(query) ||
+                                          c.LastName.Contains(query) ||
+                                          c.Phone.Contains(query)))
+                              .OrderBy(c => c.LastName).Take(20).ToList();
+
+            CustomerList.ItemsSource = results;
+            CustomerPopup.IsOpen = results.Count > 0;
+            CustomerBoxTop.Focus();
+        }
+
+        private static string BuildInitials(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name)) return "?";
+            var parts = name.Trim().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            return parts.Length == 1
+                ? parts[0][0].ToString().ToUpper()
+                : $"{parts[0][0]}{parts[^1][0]}".ToUpper();
         }
 
         // ═══════════════════════════════════════
@@ -238,6 +360,24 @@ namespace PointofSale.Views
         {
             if (DataContext is not PosViewModel vm) return;
             if (SelectedLine == null) return;
+
+            // Manager override required for non-admins
+            if (!(Session.CurrentUser?.IsAdmin ?? false))
+            {
+                var overrideWin = new ManagerOverrideWindow(
+                    $"Return item: \"{SelectedLine.Name}\"") { Owner = this };
+                overrideWin.ShowDialog();
+                if (!overrideWin.Authorized) return;
+            }
+
+            // Receipt lookup and validation
+            var returnWin = new ReturnItemWindow(SelectedLine) { Owner = this };
+            returnWin.ShowDialog();
+            if (!returnWin.Confirmed) return;
+
+            SelectedLine.IsReturn = true;
+            SelectedLine.ReturnReceiptNo = returnWin.ReceiptNumber;
+            SelectedLine.ReturnReason    = returnWin.ReturnReason;
             SelectedLine.Qty = -System.Math.Abs(SelectedLine.Qty);
             vm.RefreshTotals();
         }
@@ -262,11 +402,16 @@ namespace PointofSale.Views
         // Returns entered amount or null if cancelled.
         private decimal? AskPaymentAmount(string method, PosViewModel vm)
         {
-            var owing = vm.AmountDue > 0 ? vm.AmountDue : vm.Total;
+            bool isReturn = vm.Total < 0;
+
+            // For returns, work in positive amounts (e.g. "give back R50") — stored as negative splits
+            decimal owing = isReturn
+                ? (vm.AmountDue > 0 ? vm.AmountDue : Math.Abs(vm.Total))
+                : (vm.AmountDue > 0 ? vm.AmountDue : vm.Total);
 
             var win = new Window
             {
-                Title = $"{method} Payment",
+                Title = isReturn ? $"{method} Refund" : $"{method} Payment",
                 Width = 380,
                 Height = 310,
                 WindowStartupLocation = WindowStartupLocation.CenterOwner,
@@ -309,10 +454,13 @@ namespace PointofSale.Views
                 outer.Children.Add(row);
             }
 
-            AddRow("Sale Total", $"{vm.Total:N2}");
-            if (vm.TotalTendered > 0)
-                AddRow("Already Paid", $"{vm.TotalTendered:N2}", hexColor: "#88CC66");
-            AddRow("Still Owing", $"{owing:N2}", bold: true, hexColor: "#FF8C00");
+            AddRow(isReturn ? "Refund Total" : "Sale Total",
+                   $"R {Math.Abs(vm.Total):N2}");
+            if (vm.TotalTendered != 0)
+                AddRow(isReturn ? "Already Refunded" : "Already Paid",
+                       $"R {Math.Abs(vm.TotalTendered):N2}", hexColor: "#88CC66");
+            AddRow(isReturn ? "Still to Refund" : "Still Owing",
+                   $"R {owing:N2}", bold: true, hexColor: "#FF8C00");
 
             // ── Separator ─────────────────────────────────────────────────
             outer.Children.Add(new System.Windows.Controls.Separator
@@ -325,7 +473,7 @@ namespace PointofSale.Views
             // ── Amount entry ──────────────────────────────────────────────
             outer.Children.Add(new System.Windows.Controls.TextBlock
             {
-                Text = $"Enter {method} amount:",
+                Text = isReturn ? $"Enter refund amount ({method}):" : $"Enter {method} amount:",
                 Foreground = System.Windows.Media.Brushes.LightGray,
                 FontSize = 13,
                 Margin = new Thickness(0, 0, 0, 6)
@@ -382,11 +530,12 @@ namespace PointofSale.Views
             {
                 if (decimal.TryParse(amtBox.Text.Replace(",", ""), out var amt) && amt > 0)
                 {
-                    result = amt;
+                    // For returns, store as a negative split (money going out to customer)
+                    result = isReturn ? -amt : amt;
                     win.DialogResult = true;
                 }
                 else
-                    System.Windows.MessageBox.Show("Please enter a valid amount.", "Invalid Amount",
+                    System.Windows.MessageBox.Show("Please enter a valid amount greater than zero.", "Invalid Amount",
                         MessageBoxButton.OK, MessageBoxImage.Warning);
             };
             btnCancel.Click += (s, ev) => win.Close();
@@ -410,15 +559,22 @@ namespace PointofSale.Views
             if (DataContext is not PosViewModel vm) return;
             if (vm.Cart.Count == 0) { MessageBox.Show("Add items first."); return; }
 
-            // Cash uses CashPaymentWindow (has quick R5/R10/R20 buttons)
-            var owing = vm.AmountDue > 0 ? vm.AmountDue : vm.Total;
-            var cashWin = new CashPaymentWindow(owing, saleTotal: vm.Total, alreadyPaid: vm.TotalTendered) { Owner = this };
+            bool isReturn = vm.Total < 0;
+            var owing = vm.AmountDue > 0 ? vm.AmountDue : Math.Abs(vm.Total);
+
+            var cashWin = new CashPaymentWindow(
+                owing,
+                saleTotal: Math.Abs(vm.Total),
+                alreadyPaid: Math.Abs(vm.TotalTendered),
+                isReturn: isReturn) { Owner = this };
+
             if (cashWin.ShowDialog() != true) return;
 
             var tendered = cashWin.AmountTendered;
-            if (tendered <= 0) { MessageBox.Show("Amount tendered must be greater than zero."); return; }
+            if (tendered <= 0) { MessageBox.Show("Amount must be greater than zero."); return; }
 
-            vm.AddSplit("Cash", tendered, label: "Cash");
+            // Store as negative for returns (money going out to customer)
+            vm.AddSplit("Cash", isReturn ? -tendered : tendered, label: "Cash");
             vm.RefreshTotals();
             UpdatePaymentCard(vm, BtnCash);
         }

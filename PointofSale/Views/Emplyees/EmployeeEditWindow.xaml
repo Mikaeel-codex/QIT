@@ -1,0 +1,280 @@
+﻿<Window x:Class="PointofSale.Views.EmployeeEditWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Add Employee"
+        Width="860" Height="640"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        Background="{StaticResource BgBrush}">
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- ═══ TOP: EMPLOYEE INFO ═══ -->
+        <Border Grid.Row="0"
+                Background="{StaticResource PanelBrush}"
+                BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="1" CornerRadius="6"
+                Padding="12" Margin="0,0,0,10">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <DockPanel Grid.Row="0" Margin="0,0,0,10">
+                    <TextBlock Text="Employee Info"
+                               Foreground="White" FontWeight="SemiBold" FontSize="14"/>
+                </DockPanel>
+
+                <!-- Full Name + Username -->
+                <Grid Grid.Row="1" Margin="0,0,0,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="130"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="12"/>
+                        <ColumnDefinition Width="130"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="18"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="Full Name"
+                               VerticalAlignment="Center" Foreground="White" FontSize="12"/>
+                    <TextBox x:Name="FullNameBox"
+                             Grid.Column="1" Height="28" Padding="6,2"/>
+                    <TextBlock Grid.Column="3" Text="Username"
+                               VerticalAlignment="Center" Foreground="White" FontSize="12"/>
+                    <TextBox x:Name="UsernameBox"
+                             Grid.Column="4" Height="28" Padding="6,2"/>
+                    <TextBlock Grid.Column="5" Text="*" Foreground="Red" FontSize="14"
+                               VerticalAlignment="Center" Margin="4,0,0,0"/>
+                </Grid>
+
+                <!-- Phone + Email + Role -->
+                <Grid Grid.Row="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="130"/>
+                        <ColumnDefinition Width="160"/>
+                        <ColumnDefinition Width="12"/>
+                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="160"/>
+                        <ColumnDefinition Width="12"/>
+                        <ColumnDefinition Width="80"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="Phone"
+                               VerticalAlignment="Center" Foreground="White" FontSize="12"/>
+                    <TextBox x:Name="PhoneBox"
+                             Grid.Column="1" Height="28" Padding="6,2"/>
+                    <TextBlock Grid.Column="3" Text="Email"
+                               VerticalAlignment="Center" Foreground="White" FontSize="12"/>
+                    <TextBox x:Name="EmailBox"
+                             Grid.Column="4" Height="28" Padding="6,2"/>
+                    <TextBlock Grid.Column="6" Text="Role"
+                               VerticalAlignment="Center" Foreground="White" FontSize="12"/>
+                    <ComboBox x:Name="RoleBox"
+                              Grid.Column="7" Height="28" Padding="6,2"
+                              SelectionChanged="RoleBox_SelectionChanged">
+                        <ComboBoxItem Content="Admin"/>
+                        <ComboBoxItem Content="Co-Admin"/>
+                        <ComboBoxItem Content="Manager"/>
+                        <ComboBoxItem Content="Supervisor"/>
+                        <ComboBoxItem Content="Stock Controller"/>
+                        <ComboBoxItem Content="Cashier"/>
+                    </ComboBox>
+                </Grid>
+            </Grid>
+        </Border>
+
+        <!-- ═══ MIDDLE: PASSWORD + PERMISSIONS ═══ -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="260"/>
+                <ColumnDefinition Width="10"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Password block -->
+            <Border Grid.Column="0"
+                    Background="{StaticResource PanelBrush}"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1" CornerRadius="6"
+                    Padding="12">
+                <StackPanel>
+                    <DockPanel Margin="0,0,0,12">
+                        <TextBlock Text="Password"
+                                   Foreground="White" FontWeight="SemiBold" FontSize="14"/>
+                        <TextBlock Text="▾" Foreground="{StaticResource MutedBrush}"
+                                   Margin="8,0,0,0" VerticalAlignment="Center"/>
+                    </DockPanel>
+
+                    <TextBlock x:Name="PasswordSectionLbl"
+                               Text="Set a password for this employee."
+                               Foreground="{StaticResource MutedBrush}"
+                               FontSize="11" TextWrapping="Wrap"
+                               Margin="0,0,0,12"/>
+
+                    <TextBlock Text="Password" Foreground="White" FontSize="12" Margin="0,0,0,4"/>
+                    <PasswordBox x:Name="PasswordBox"
+                                 Height="28" Padding="6,2"/>
+
+                    <TextBlock Text="Confirm Password" Foreground="White" FontSize="12"
+                               Margin="0,10,0,4"/>
+                    <PasswordBox x:Name="ConfirmPasswordBox"
+                                 Height="28" Padding="6,2"/>
+
+                    <TextBlock x:Name="PasswordHintTxt"
+                               Text="Leave blank to keep current password."
+                               Foreground="{StaticResource MutedBrush}"
+                               FontSize="10" Margin="0,8,0,0"
+                               TextWrapping="Wrap"
+                               Visibility="Collapsed"/>
+
+                    <CheckBox x:Name="IsActiveCheck"
+                              Content="Account is Active"
+                              Foreground="White"
+                              IsChecked="True"
+                              Margin="0,16,0,0"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Permissions block -->
+            <Border Grid.Column="2"
+                    Background="{StaticResource PanelBrush}"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1" CornerRadius="6"
+                    Padding="12">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <DockPanel Grid.Row="0" Margin="0,0,0,6">
+                        <TextBlock Text="Permissions"
+                                   Foreground="White" FontWeight="SemiBold" FontSize="14"/>
+                        <TextBlock Text="▾" Foreground="{StaticResource MutedBrush}"
+                                   Margin="8,0,0,0" VerticalAlignment="Center"/>
+                    </DockPanel>
+
+                    <!-- Admin notice -->
+                    <Border x:Name="AdminNoticeBorder"
+                            Grid.Row="1"
+                            Background="#1A2A1A"
+                            BorderBrush="#2E5E2E"
+                            BorderThickness="1"
+                            CornerRadius="4"
+                            Padding="10,7"
+                            Margin="0,0,0,10"
+                            Visibility="Collapsed">
+                        <TextBlock Text="✔  Admin and Co-Admin roles automatically receive all permissions."
+                                   Foreground="#4CAF50" FontSize="11" TextWrapping="Wrap"/>
+                    </Border>
+
+                    <!-- Permission checkboxes -->
+                    <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+                        <StackPanel x:Name="PermissionsPanel">
+
+                            <!-- Sales -->
+                            <TextBlock Text="SALES" Foreground="{StaticResource MutedBrush}"
+                                       FontSize="10" FontWeight="Bold" Margin="0,0,0,6"/>
+                            <CheckBox x:Name="PermMakeSales"
+                                      Content="Make Sales"
+                                      Foreground="White" Margin="0,0,0,8"
+                                      Tag="MakeSales"/>
+                            <CheckBox x:Name="PermViewSalesHistory"
+                                      Content="View Sales History"
+                                      Foreground="White" Margin="0,0,0,8"
+                                      Tag="ViewSalesHistory"/>
+                            <CheckBox x:Name="PermVoidSales"
+                                      Content="Void Sales"
+                                      Foreground="White" Margin="0,0,0,14"
+                                      Tag="VoidSales"/>
+
+                            <!-- Inventory -->
+                            <TextBlock Text="INVENTORY" Foreground="{StaticResource MutedBrush}"
+                                       FontSize="10" FontWeight="Bold" Margin="0,0,0,6"/>
+                            <CheckBox x:Name="PermViewInventory"
+                                      Content="View Inventory"
+                                      Foreground="White" Margin="0,0,0,8"
+                                      Tag="ViewInventory"/>
+                            <CheckBox x:Name="PermManageInventory"
+                                      Content="Add / Edit Inventory"
+                                      Foreground="White" Margin="0,0,0,14"
+                                      Tag="ManageInventory"/>
+
+                            <!-- Customers & Suppliers -->
+                            <TextBlock Text="CUSTOMERS &amp; SUPPLIERS"
+                                       Foreground="{StaticResource MutedBrush}"
+                                       FontSize="10" FontWeight="Bold" Margin="0,0,0,6"/>
+                            <CheckBox x:Name="PermManageCustomers"
+                                      Content="Manage Customers"
+                                      Foreground="White" Margin="0,0,0,8"
+                                      Tag="ManageCustomers"/>
+                            <CheckBox x:Name="PermManageSuppliers"
+                                      Content="Manage Suppliers"
+                                      Foreground="White" Margin="0,0,0,14"
+                                      Tag="ManageSuppliers"/>
+
+                            <!-- Reports & Settings -->
+                            <TextBlock Text="REPORTS &amp; SETTINGS"
+                                       Foreground="{StaticResource MutedBrush}"
+                                       FontSize="10" FontWeight="Bold" Margin="0,0,0,6"/>
+                            <CheckBox x:Name="PermViewReports"
+                                      Content="View Reports"
+                                      Foreground="White" Margin="0,0,0,8"
+                                      Tag="ViewReports"/>
+                            <CheckBox x:Name="PermAccessSettings"
+                                      Content="Access Settings"
+                                      Foreground="White" Margin="0,0,0,8"
+                                      Tag="AccessSettings"/>
+                            <CheckBox x:Name="PermManageEmployees"
+                                      Content="Manage Employees"
+                                      Foreground="White" Margin="0,0,0,8"
+                                      Tag="ManageEmployees"/>
+
+                        </StackPanel>
+                    </ScrollViewer>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- ═══ BOTTOM BUTTONS ═══ -->
+        <Grid Grid.Row="2" Margin="0,10,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock x:Name="StatusTxt"
+                       Grid.Column="0"
+                       VerticalAlignment="Center"
+                       FontSize="12" Foreground="#FF5555"
+                       Visibility="Collapsed"/>
+
+            <Button Grid.Column="1"
+                    Content="Save &amp; New"
+                    Width="120" Height="32"
+                    Margin="0,0,10,0"
+                    Click="SaveAndNew_Click"/>
+
+            <Button Grid.Column="2"
+                    Content="Save"
+                    Width="110" Height="32"
+                    Margin="0,0,10,0"
+                    Click="Save_Click"/>
+
+            <Button Grid.Column="3"
+                    Content="Cancel"
+                    Width="110" Height="32"
+                    Click="Cancel_Click"/>
+        </Grid>
+    </Grid>
+</Window>

@@ -41,19 +41,35 @@ namespace PointofSale.ViewModels
         // Total amount tendered across all splits
         public decimal TotalTendered => Splits.Sum(s => s.Amount);
 
-        // How much is still unpaid
-        public decimal AmountDue => Math.Max(0, Math.Round(Total - TotalTendered, 2));
+        // For a normal sale: how much is still unpaid.
+        // For a return (Total < 0): how much still needs to be refunded to the customer.
+        public decimal AmountDue
+        {
+            get
+            {
+                if (Total < 0)
+                    return Math.Max(0, Math.Round(Math.Abs(Total) - Math.Abs(TotalTendered), 2));
+                return Math.Max(0, Math.Round(Total - TotalTendered, 2));
+            }
+        }
 
         // Change only applies when cash is involved and overpaid
         public decimal CashChange
         {
             get
             {
+                if (Total < 0)
+                {
+                    // Return: change only if cashier over-refunded
+                    var absRefunded = Math.Abs(TotalTendered);
+                    var absOwed     = Math.Abs(Total);
+                    if (absRefunded <= absOwed) return 0;
+                    var cashSplits = Splits.Where(s => s.Method == "Cash").Sum(s => Math.Abs(s.Amount));
+                    return cashSplits > 0 ? Math.Round(absRefunded - absOwed, 2) : 0;
+                }
                 if (TotalTendered <= Total) return 0;
-                // Only give change on cash overpayment
                 var cashTotal = Splits.Where(s => s.Method == "Cash").Sum(s => s.Amount);
-                var nonCash = Splits.Where(s => s.Method != "Cash").Sum(s => s.Amount);
-                var overpaid = TotalTendered - Total;
+                var overpaid  = TotalTendered - Total;
                 return cashTotal > 0 ? Math.Round(overpaid, 2) : 0;
             }
         }
@@ -63,23 +79,20 @@ namespace PointofSale.ViewModels
         public string PaymentMethod => Splits.Count == 1 ? Splits[0].Method
                                         : Splits.Count > 1 ? "Split" : "";
 
-        // Legacy compat — used by totals panel visibility
+        // Legacy compat
         public decimal CashTendered => TotalTendered;
         public Visibility CashTenderedVisibility =>
             TotalTendered > 0 ? Visibility.Visible : Visibility.Collapsed;
         public Visibility CashChangeVisibility =>
             CashChange > 0 ? Visibility.Visible : Visibility.Collapsed;
 
-        // Pending gift card — card ID waiting to be deducted on finalize
+        // Pending gift card
         public int PendingGiftCardId { get; set; } = 0;
         public decimal PendingGiftCardAmount { get; set; } = 0m;
 
         public int ItemsSold => Cart.Count;
         public int TotalQtySold => Cart.Sum(x => x.Qty);
         public decimal Subtotal => Cart.Sum(x => x.LineTotal);
-
-        // Tax is calculated per line using each line's individual TaxRate
-        // so items marked "No Tax" contribute 0 regardless of other lines
         public decimal Tax => Math.Round(Cart.Sum(x => x.LineTotal * x.TaxRate / 100m), 2);
         public decimal Total => Subtotal + Tax;
 
@@ -87,10 +100,6 @@ namespace PointofSale.ViewModels
 
         public string CashChangeDisplay => CashChange > 0 ? $"Cash Change  {CashChange:N2}" : "";
 
-        /// <summary>
-        /// Set this from the UI layer to receive low stock warnings
-        /// from IncreaseQtyCommand (Qty+ button on cart row).
-        /// </summary>
         public Action<LowStockWarning>? OnLowStock { get; set; }
 
         public RelayCommand<CartLine> IncreaseQtyCommand { get; }
@@ -101,7 +110,6 @@ namespace PointofSale.ViewModels
         {
             Cart.CollectionChanged += Cart_CollectionChanged;
 
-            // Load tax code options from existing products
             try
             {
                 using var db = new AppDbContext();
@@ -112,7 +120,6 @@ namespace PointofSale.ViewModels
                     .OrderBy(t => t)
                     .ToList();
 
-                // Always include the standard options
                 foreach (var standard in new[] { "No Tax", "Tax", "5%", "7.5%", "10%", "15%", "20%" })
                     if (!codes.Contains(standard))
                         codes.Add(standard);
@@ -122,7 +129,6 @@ namespace PointofSale.ViewModels
             }
             catch
             {
-                // Fallback if DB not ready
                 TaxCodeOptions.AddRange(new[] { "No Tax", "Tax", "5%", "10%", "15%", "20%" });
             }
 
@@ -136,7 +142,6 @@ namespace PointofSale.ViewModels
                 line.Qty += 1;
                 RefreshTotals();
 
-                // Check reorder point after qty increase
                 if (p.ReorderPoint > 0)
                 {
                     var remaining = p.StockQty - line.Qty;
@@ -219,7 +224,6 @@ namespace PointofSale.ViewModels
 
         public void AddSplit(string method, decimal amount, int giftCardId = 0, string label = "")
         {
-            // If same method already exists (non-gift), update amount instead of adding
             var existing = Splits.FirstOrDefault(s => s.Method == method && s.GiftCardId == 0 && giftCardId == 0);
             if (existing != null)
             {
@@ -247,11 +251,6 @@ namespace PointofSale.ViewModels
             RefreshPayment();
         }
 
-        /// <summary>
-        /// Adds a product to the cart by SKU or ALU.
-        /// Returns a LowStockWarning if the product is at or below its reorder point
-        /// after being added, otherwise returns null.
-        /// </summary>
         public LowStockWarning? ScanSkuAndAddToCart(string skuOrAlu)
         {
             skuOrAlu = (skuOrAlu ?? "").Trim();
@@ -292,7 +291,6 @@ namespace PointofSale.ViewModels
 
             RefreshTotals();
 
-            // Check reorder point — cart qty is what will be deducted on finalize
             if (p.ReorderPoint > 0)
             {
                 var cartQty = Cart.First(x => x.ProductId == p.Id).Qty;
@@ -311,17 +309,10 @@ namespace PointofSale.ViewModels
             return null;
         }
 
-        /// <summary>
-        /// Parses the product Tax field into a decimal rate (percentage).
-        /// "No Tax", "None", "0", empty  -> 0
-        /// "15" or "15%"                 -> 15 (stored directly)
-        /// "VAT", "Tax", "yes"           -> 15 (SA standard VAT)
-        /// </summary>
         private static decimal ParseTaxRate(string? taxField)
         {
             var t = (taxField ?? "").Trim().ToLowerInvariant();
 
-            // Explicit zero cases
             if (string.IsNullOrWhiteSpace(t)) return 0m;
             if (t == "no tax") return 0m;
             if (t == "notax") return 0m;
@@ -330,15 +321,13 @@ namespace PointofSale.ViewModels
             if (t == "no" || t == "n") return 0m;
             if (t == "false" || t == "0") return 0m;
 
-            // Numeric rate stored directly e.g. "15" or "15%"
             var clean = t.Replace("%", "").Trim();
             if (decimal.TryParse(clean, NumberStyles.Any,
                     CultureInfo.InvariantCulture, out var rate))
                 return rate;
 
-            // Named taxable keywords -> read configured rate from DB
             if (t == "vat" || t == "tax" || t == "yes" || t == "y" || t == "true" || t == "1")
-                return 15m; // SA standard VAT
+                return 15m;
 
             return 0m;
         }
@@ -348,7 +337,6 @@ namespace PointofSale.ViewModels
             ClearSplits();
         }
 
-        /// <summary>Restores a held receipt back into the cart.</summary>
         public void RestoreFromHeld(PointofSale.Models.HeldReceipt held)
         {
             Cart.Clear();
@@ -381,22 +369,26 @@ namespace PointofSale.ViewModels
             {
                 using var db = new AppDbContext();
 
-                foreach (var line in Cart)
+                // ── Validate stock (only for sale lines, not returns) ─────
+                foreach (var line in Cart.Where(l => !l.IsReturn))
                 {
                     var p = db.Products.FirstOrDefault(x => x.Id == line.ProductId);
                     if (p == null) throw new Exception("A product no longer exists.");
                     if (line.Qty > p.StockQty) throw new Exception($"Not enough stock for {p.Name}.");
                 }
 
+                // ── Update stock ──────────────────────────────────────────
                 foreach (var line in Cart)
                 {
                     var p = db.Products.First(x => x.Id == line.ProductId);
-                    p.StockQty -= line.Qty;
+                    if (line.IsReturn)
+                        p.StockQty += Math.Abs(line.Qty);   // restore stock for returns
+                    else
+                        p.StockQty -= line.Qty;             // deduct stock for sales
                 }
-
                 db.SaveChanges();
 
-                // Deduct all gift card splits now that sale is confirmed
+                // ── Deduct gift card balances ─────────────────────────────
                 foreach (var split in Splits.Where(s => s.GiftCardId > 0))
                 {
                     var giftCard = db.GiftCards.Find(split.GiftCardId);
@@ -407,18 +399,87 @@ namespace PointofSale.ViewModels
                         giftCard.Status = giftCard.Balance <= 0 ? "Depleted" : "Active";
                     }
                 }
+
+                // ── Update customer account balance for Account payments ──
+                var accountTotal = Splits
+                    .Where(s => s.Method == "Account")
+                    .Sum(s => s.Amount);
+
+                if (accountTotal > 0)
+                {
+                    if (string.IsNullOrWhiteSpace(CustomerSearchText))
+                    {
+                        MessageBox.Show(
+                            $"Account payment of R{accountTotal:N2} could not be applied.\n\n" +
+                            "No customer is attached to this sale.\n" +
+                            "Please search and select a customer before using Account payment.",
+                            "Account Payment — No Customer",
+                            MessageBoxButton.OK,
+                            MessageBoxImage.Warning);
+                    }
+                    else
+                    {
+                        var customerName = CustomerSearchText.Trim();
+                        var customer = db.Customers.FirstOrDefault(c =>
+                            c.IsActive &&
+                            (c.FirstName + " " + c.LastName).Trim() == customerName);
+
+                        if (customer == null)
+                        {
+                            MessageBox.Show(
+                                $"Account payment of R{accountTotal:N2} could not be applied.\n\n" +
+                                $"No active customer named '{customerName}' was found.\n" +
+                                "Please attach a valid customer before using Account payment.",
+                                "Account Payment — Customer Not Found",
+                                MessageBoxButton.OK,
+                                MessageBoxImage.Warning);
+                        }
+                        else
+                        {
+                            // Hard block — do not allow exceeding credit limit
+                            if (customer.CreditLimit > 0 &&
+                                customer.AccountBalance + accountTotal > customer.CreditLimit)
+                            {
+                                var available = customer.CreditLimit - customer.AccountBalance;
+                                MessageBox.Show(
+                                    $"Account payment blocked for {customerName}.\n\n" +
+                                    $"Current balance:   R{customer.AccountBalance:N2}\n" +
+                                    $"Credit limit:      R{customer.CreditLimit:N2}\n" +
+                                    $"Available credit:  R{available:N2}\n\n" +
+                                    $"This charge of R{accountTotal:N2} would exceed the credit limit.\n\n" +
+                                    "Please use a different payment method or ask the customer to settle their account first.\n" +
+                                    "An admin can increase the credit limit in the Customers screen.",
+                                    "Credit Limit Reached",
+                                    MessageBoxButton.OK,
+                                    MessageBoxImage.Stop);
+
+                                // Abort the entire sale — do not finalize
+                                return null;
+                            }
+
+                            customer.AccountBalance += accountTotal;
+                        }
+                    }
+                }
+
                 db.SaveChanges();
 
+                // ── Build split summary ───────────────────────────────────
                 var splitSummary = Splits.Count == 1
                     ? Splits[0].Method
                     : string.Join(" + ", Splits.Select(s => $"{s.Method} {s.Amount:N2}"));
 
-                // ── Persist sale to DB ────────────────────────────────────
-                // Generate receipt number from settings (same prefix/counter used by SaveEmail_Click)
+                // ── Persist sale ──────────────────────────────────────────
                 var prefix = StoreSettingsService.Get("ReceiptPrefix", "REC");
                 var nextNo = int.TryParse(StoreSettingsService.Get("NextReceiptNumber", "1"), out var n) ? n : 1;
                 var receiptNo = $"{prefix}-{nextNo:D4}";
                 StoreSettingsService.Set("NextReceiptNumber", (nextNo + 1).ToString());
+
+                bool hasReturns = Cart.Any(l => l.IsReturn);
+                bool hasSales   = Cart.Any(l => !l.IsReturn);
+                string saleStatus = hasReturns && !hasSales ? "Return"
+                                  : hasReturns              ? "Sale/Return"
+                                                            : "Completed";
 
                 var sale = new Sale
                 {
@@ -430,21 +491,23 @@ namespace PointofSale.ViewModels
                     Tax = Tax,
                     Total = Total,
                     PaymentMethod = splitSummary,
-                    Status = "Completed",
+                    Status = saleStatus,
                     Items = Cart.Select(l => new SaleItem
                     {
-                        ProductId = l.ProductId,
-                        SKU = l.SKU ?? "",
-                        ProductName = l.Name ?? "",
-                        Quantity = l.Qty,
-                        UnitPrice = l.UnitPrice,
-                        LineTotal = l.LineTotal,
+                        ProductId    = l.ProductId,
+                        SKU          = l.SKU ?? "",
+                        ProductName  = l.Name ?? "",
+                        Quantity     = l.Qty,
+                        UnitPrice    = l.UnitPrice,
+                        LineTotal    = l.LineTotal,
+                        DiscountPct  = l.DiscountPct,
+                        ReturnReason = l.ReturnReason ?? "",
                     }).ToList(),
                 };
                 db.Sales.Add(sale);
                 db.SaveChanges();
 
-                // Build receipt data before clearing
+                // ── Build receipt data ────────────────────────────────────
                 var receiptData = new ReceiptData
                 {
                     ReceiptNumber = sale.Id.ToString(),
@@ -494,15 +557,13 @@ namespace PointofSale.ViewModels
             try
             {
                 using var db = new AppDbContext();
-
-                // Build a short summary e.g. "Pepsi x1, Lays x2" for the list view
                 var summary = string.Join(", ", Cart.Select(l => $"{l.Name} x{l.Qty}"));
 
                 var held = new PointofSale.Models.HeldReceipt
                 {
                     HeldAt = DateTime.Now,
                     Cashier = cashierName,
-                    PaymentMethod = "",   // manual hold has no confirmed payment
+                    PaymentMethod = "",
                     Subtotal = Subtotal,
                     Tax = Tax,
                     Total = Total,
@@ -543,7 +604,6 @@ namespace PointofSale.ViewModels
             }
         }
 
-        /// <summary>Put cart on hold with a custom note and status (used for pending EFT).</summary>
         public bool PutOnHoldWithNote(string cashierName, string note, string status)
         {
             if (Cart.Count == 0) return false;

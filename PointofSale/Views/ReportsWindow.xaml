@@ -131,6 +131,11 @@
                         Style="{StaticResource SideBtn}"
                         Click="NavBtn_Click" Tag="ProfitMargin"/>
 
+                <Button x:Name="BtnReturns"
+                        Content="🔄  Returns"
+                        Style="{StaticResource SideBtn}"
+                        Click="NavBtn_Click" Tag="Returns"/>
+
             </StackPanel>
         </Border>
 
@@ -228,33 +233,41 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
                         <Border Grid.Column="0" Background="#0D0D0D" BorderBrush="#2B2B2B" BorderThickness="1" CornerRadius="6" Padding="14" Margin="0,0,8,0">
                             <StackPanel>
-                                <TextBlock Text="Total Revenue" Foreground="#888" FontSize="11"/>
-                                <TextBlock x:Name="KpiRevenue" Text="R 0.00" Foreground="White" FontSize="22" FontWeight="Bold" Margin="0,4,0,0"/>
+                                <TextBlock Text="Net Revenue" Foreground="#888" FontSize="11"/>
+                                <TextBlock x:Name="KpiNetRevenue" Text="R 0.00" Foreground="White" FontSize="20" FontWeight="Bold" Margin="0,4,0,0"/>
                             </StackPanel>
                         </Border>
 
                         <Border Grid.Column="1" Background="#0D0D0D" BorderBrush="#2B2B2B" BorderThickness="1" CornerRadius="6" Padding="14" Margin="0,0,8,0">
                             <StackPanel>
-                                <TextBlock Text="No. of Sales" Foreground="#888" FontSize="11"/>
-                                <TextBlock x:Name="KpiSalesCount" Text="0" Foreground="White" FontSize="22" FontWeight="Bold" Margin="0,4,0,0"/>
+                                <TextBlock Text="Gross Revenue" Foreground="#888" FontSize="11"/>
+                                <TextBlock x:Name="KpiGrossRevenue" Text="R 0.00" Foreground="White" FontSize="20" FontWeight="Bold" Margin="0,4,0,0"/>
                             </StackPanel>
                         </Border>
 
                         <Border Grid.Column="2" Background="#0D0D0D" BorderBrush="#2B2B2B" BorderThickness="1" CornerRadius="6" Padding="14" Margin="0,0,8,0">
                             <StackPanel>
-                                <TextBlock Text="Avg. Sale Value" Foreground="#888" FontSize="11"/>
-                                <TextBlock x:Name="KpiAvgSale" Text="R 0.00" Foreground="White" FontSize="22" FontWeight="Bold" Margin="0,4,0,0"/>
+                                <TextBlock Text="Total Returns" Foreground="#888" FontSize="11"/>
+                                <TextBlock x:Name="KpiReturnsValue" Text="R 0.00" Foreground="Salmon" FontSize="20" FontWeight="Bold" Margin="0,4,0,0"/>
                             </StackPanel>
                         </Border>
 
-                        <Border Grid.Column="3" Background="#0D0D0D" BorderBrush="#2B2B2B" BorderThickness="1" CornerRadius="6" Padding="14">
+                        <Border Grid.Column="3" Background="#0D0D0D" BorderBrush="#2B2B2B" BorderThickness="1" CornerRadius="6" Padding="14" Margin="0,0,8,0">
                             <StackPanel>
-                                <TextBlock Text="Total Tax Collected" Foreground="#888" FontSize="11"/>
-                                <TextBlock x:Name="KpiTax" Text="R 0.00" Foreground="White" FontSize="22" FontWeight="Bold" Margin="0,4,0,0"/>
+                                <TextBlock Text="No. of Sales" Foreground="#888" FontSize="11"/>
+                                <TextBlock x:Name="KpiSalesCount" Text="0" Foreground="White" FontSize="20" FontWeight="Bold" Margin="0,4,0,0"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Grid.Column="4" Background="#0D0D0D" BorderBrush="#2B2B2B" BorderThickness="1" CornerRadius="6" Padding="14">
+                            <StackPanel>
+                                <TextBlock Text="Tax Collected" Foreground="#888" FontSize="11"/>
+                                <TextBlock x:Name="KpiTax" Text="R 0.00" Foreground="White" FontSize="20" FontWeight="Bold" Margin="0,4,0,0"/>
                             </StackPanel>
                         </Border>
                     </Grid>
@@ -273,12 +286,12 @@
                               Foreground="White"
                               MaxHeight="380">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Date"          Binding="{Binding Date}"         Width="120"/>
-                            <DataGridTextColumn Header="No. of Sales"  Binding="{Binding SalesCount}"   Width="110"/>
-                            <DataGridTextColumn Header="Items Sold"    Binding="{Binding ItemsSold}"    Width="110"/>
-                            <DataGridTextColumn Header="Subtotal"      Binding="{Binding Subtotal, StringFormat=R {0:N2}}"  Width="120"/>
-                            <DataGridTextColumn Header="Tax"           Binding="{Binding Tax, StringFormat=R {0:N2}}"       Width="100"/>
-                            <DataGridTextColumn Header="Total Revenue" Binding="{Binding Total, StringFormat=R {0:N2}}"     Width="*"/>
+                            <DataGridTextColumn Header="Date"          Binding="{Binding Date}"                                    Width="130"/>
+                            <DataGridTextColumn Header="No. of Sales"  Binding="{Binding SalesCount}"                              Width="100"/>
+                            <DataGridTextColumn Header="Items Sold"    Binding="{Binding ItemsSold}"                               Width="100"/>
+                            <DataGridTextColumn Header="Gross Revenue" Binding="{Binding GrossRevenue, StringFormat=R {0:N2}}"     Width="*"/>
+                            <DataGridTextColumn Header="Returns"       Binding="{Binding ReturnsValue, StringFormat=R {0:N2}}"     Width="120"/>
+                            <DataGridTextColumn Header="Net Revenue"   Binding="{Binding NetRevenue, StringFormat=R {0:N2}}"       Width="120"/>
                         </DataGrid.Columns>
                     </DataGrid>
                 </StackPanel>
@@ -297,12 +310,14 @@
                               FontSize="12"
                               Foreground="White">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Item #"        Binding="{Binding ProductId}"   Width="70"/>
-                            <DataGridTextColumn Header="Product Name"  Binding="{Binding ProductName}" Width="*"/>
-                            <DataGridTextColumn Header="SKU"           Binding="{Binding SKU}"         Width="120"/>
-                            <DataGridTextColumn Header="Qty Sold"      Binding="{Binding QtySold}"     Width="90"/>
-                            <DataGridTextColumn Header="Revenue"       Binding="{Binding Revenue, StringFormat=R {0:N2}}"    Width="120"/>
-                            <DataGridTextColumn Header="Avg Price"     Binding="{Binding AvgPrice, StringFormat=R {0:N2}}"   Width="110"/>
+                            <DataGridTextColumn Header="Item #"        Binding="{Binding ProductId}"                          Width="70"/>
+                            <DataGridTextColumn Header="Product Name"  Binding="{Binding ProductName}"                        Width="*"/>
+                            <DataGridTextColumn Header="SKU"           Binding="{Binding SKU}"                                Width="110"/>
+                            <DataGridTextColumn Header="Qty Sold"      Binding="{Binding QtySold}"                            Width="90"/>
+                            <DataGridTextColumn Header="Qty Returned"  Binding="{Binding QtyReturned}"                        Width="100"/>
+                            <DataGridTextColumn Header="Net Qty"       Binding="{Binding NetQty}"                             Width="80"/>
+                            <DataGridTextColumn Header="Net Revenue"   Binding="{Binding Revenue, StringFormat=R {0:N2}}"     Width="110"/>
+                            <DataGridTextColumn Header="Avg Price"     Binding="{Binding AvgPrice, StringFormat=R {0:N2}}"    Width="100"/>
                         </DataGrid.Columns>
                     </DataGrid>
                 </StackPanel>
@@ -382,12 +397,70 @@
                               MaxHeight="340">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Product Name"  Binding="{Binding ProductName}"                              Width="*"/>
-                            <DataGridTextColumn Header="Qty Sold"      Binding="{Binding QtySold}"                                  Width="90"/>
-                            <DataGridTextColumn Header="Sell Price"    Binding="{Binding SellPrice, StringFormat=R {0:N2}}"         Width="110"/>
-                            <DataGridTextColumn Header="Cost Price"    Binding="{Binding CostPrice, StringFormat=R {0:N2}}"         Width="110"/>
-                            <DataGridTextColumn Header="Revenue"       Binding="{Binding Revenue, StringFormat=R {0:N2}}"           Width="110"/>
-                            <DataGridTextColumn Header="Est. Profit"   Binding="{Binding GrossProfit, StringFormat=R {0:N2}}"       Width="110"/>
-                            <DataGridTextColumn Header="Margin %"      Binding="{Binding MarginPct, StringFormat={}{0:N1}%}"        Width="100"/>
+                            <DataGridTextColumn Header="Qty Sold"      Binding="{Binding QtySold}"                                  Width="80"/>
+                            <DataGridTextColumn Header="Qty Returned"  Binding="{Binding QtyReturned}"                              Width="90"/>
+                            <DataGridTextColumn Header="Sell Price"    Binding="{Binding SellPrice, StringFormat=R {0:N2}}"         Width="100"/>
+                            <DataGridTextColumn Header="Cost Price"    Binding="{Binding CostPrice, StringFormat=R {0:N2}}"         Width="100"/>
+                            <DataGridTextColumn Header="Net Revenue"   Binding="{Binding Revenue, StringFormat=R {0:N2}}"           Width="100"/>
+                            <DataGridTextColumn Header="Est. Profit"   Binding="{Binding GrossProfit, StringFormat=R {0:N2}}"       Width="100"/>
+                            <DataGridTextColumn Header="Margin %"      Binding="{Binding MarginPct, StringFormat={}{0:N1}%}"        Width="90"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </StackPanel>
+
+                <!-- RETURNS REPORT -->
+                <StackPanel x:Name="PanelReturns" Visibility="Collapsed">
+
+                    <!-- KPI cards -->
+                    <Grid Margin="0,0,0,16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Border Grid.Column="0" Background="#0D0D0D" BorderBrush="#2B2B2B" BorderThickness="1" CornerRadius="6" Padding="14" Margin="0,0,8,0">
+                            <StackPanel>
+                                <TextBlock Text="Return Transactions" Foreground="#888" FontSize="11"/>
+                                <TextBlock x:Name="KpiReturnsTxCount" Text="0" Foreground="Salmon" FontSize="22" FontWeight="Bold" Margin="0,4,0,0"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Grid.Column="1" Background="#0D0D0D" BorderBrush="#2B2B2B" BorderThickness="1" CornerRadius="6" Padding="14" Margin="0,0,8,0">
+                            <StackPanel>
+                                <TextBlock Text="Total Return Value" Foreground="#888" FontSize="11"/>
+                                <TextBlock x:Name="KpiReturnsTxValue" Text="R 0.00" Foreground="Salmon" FontSize="22" FontWeight="Bold" Margin="0,4,0,0"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Grid.Column="2" Background="#0D0D0D" BorderBrush="#2B2B2B" BorderThickness="1" CornerRadius="6" Padding="14">
+                            <StackPanel>
+                                <TextBlock Text="Items Returned" Foreground="#888" FontSize="11"/>
+                                <TextBlock x:Name="KpiReturnsItemCount" Text="0" Foreground="Salmon" FontSize="22" FontWeight="Bold" Margin="0,4,0,0"/>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+
+                    <DataGrid x:Name="GridReturns"
+                              AutoGenerateColumns="False"
+                              CanUserAddRows="False"
+                              IsReadOnly="True"
+                              AlternationCount="2"
+                              GridLinesVisibility="Horizontal"
+                              BorderThickness="1"
+                              BorderBrush="#2B2B2B"
+                              Background="Transparent"
+                              FontSize="12"
+                              Foreground="White">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Date"          Binding="{Binding Date}"                               Width="150"/>
+                            <DataGridTextColumn Header="Receipt #"     Binding="{Binding ReceiptNumber}"                      Width="100"/>
+                            <DataGridTextColumn Header="Item"          Binding="{Binding ProductName}"                        Width="*"/>
+                            <DataGridTextColumn Header="Qty"           Binding="{Binding Qty}"                                Width="50"/>
+                            <DataGridTextColumn Header="Unit Price"    Binding="{Binding UnitPrice, StringFormat=R {0:N2}}"   Width="90"/>
+                            <DataGridTextColumn Header="Return Value"  Binding="{Binding ReturnValue, StringFormat=R {0:N2}}" Width="100"/>
+                            <DataGridTextColumn Header="Cashier"       Binding="{Binding Cashier}"                            Width="100"/>
+                            <DataGridTextColumn Header="Reason"        Binding="{Binding Reason}"                             Width="180"/>
                         </DataGrid.Columns>
                     </DataGrid>
                 </StackPanel>

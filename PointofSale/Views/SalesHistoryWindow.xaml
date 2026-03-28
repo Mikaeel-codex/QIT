@@ -283,6 +283,17 @@
                           Foreground="White"
                           HeadersVisibility="Column"
                           Margin="0,12,0,0">
+                    <DataGrid.RowStyle>
+                        <Style TargetType="DataGridRow">
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsReturn}" Value="True">
+                                    <Setter Property="Background" Value="#2A1A2A"/>
+                                    <Setter Property="Foreground" Value="#FF8C94"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGrid.RowStyle>
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Item"
                                             Binding="{Binding ProductName}"
@@ -296,6 +307,9 @@
                         <DataGridTextColumn Header="Total"
                                             Binding="{Binding LineTotal, StringFormat=N2}"
                                             Width="65"/>
+                        <DataGridTextColumn Header="Return Reason"
+                                            Binding="{Binding ReturnReason}"
+                                            Width="110"/>
                     </DataGrid.Columns>
                 </DataGrid>
 
@@ -320,7 +334,8 @@
                                     Style="{StaticResource ActionBtn}"
                                     Margin="0,0,8,0"
                                     Click="Reprint_Click"/>
-                            <Button Content="Void Sale"
+                            <Button x:Name="VoidSaleBtn"
+                                    Content="Void Sale"
                                     Style="{StaticResource ActionBtn}"
                                     Background="#8B1A1A"
                                     BorderBrush="#6B1212"

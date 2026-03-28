@@ -168,6 +168,18 @@ namespace PointofSale.Views
                 return;
             }
 
+            // If current user cannot void sales, require a manager override
+            if (!(Session.CurrentUser?.CanVoidSales ?? false))
+            {
+                var overrideWin = new ManagerOverrideWindow(
+                    $"Void Sale — Receipt #{_selected.ReceiptNumber}",
+                    "VoidSales")
+                { Owner = this };
+                overrideWin.ShowDialog();
+
+                if (!overrideWin.Authorized) return;
+            }
+
             var confirm = MessageBox.Show(
                 $"Are you sure you want to void Receipt #{_selected.ReceiptNumber}?\n\n" +
                 $"Total: R{_selected.Total:N2}\n\n" +

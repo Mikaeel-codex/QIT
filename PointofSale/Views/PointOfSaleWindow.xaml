@@ -96,6 +96,8 @@
           Loaded="MainWindow_Loaded">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
+            <!-- Customer info bar -->
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
@@ -118,10 +120,10 @@
                 <!-- PRODUCT SEARCH -->
                 <Grid Grid.Column="0">
                     <!-- Scan box with placeholder + dropdown arrow -->
-                    <Grid Height="28">
+                    <Grid Height="32">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="28"/>
+                            <ColumnDefinition Width="32"/>
                         </Grid.ColumnDefinitions>
                         <Border Grid.ColumnSpan="2"
                                 Background="#0E0E0E"
@@ -131,7 +133,7 @@
                         <TextBox x:Name="ScanBoxTop"
                                  Grid.Column="0"
                                  VerticalContentAlignment="Center"
-                                 Padding="8,0"
+                                 Padding="8,0,8,0"
                                  Background="Transparent"
                                  BorderThickness="0"
                                  Foreground="White"
@@ -140,7 +142,7 @@
                                  KeyDown="ScanBox_KeyDown"
                                  TextChanged="ScanBox_TextChanged"
                                  LostFocus="ScanBox_LostFocus"
-                                 Panel.ZIndex="1"/>
+                                 Panel.ZIndex="1" Height="37" Margin="-5,-2,5,-2"/>
                         <!-- Placeholder -->
                         <TextBlock Grid.Column="0"
                                    Text="Scan or enter item information  (Name / SKU / ALU)"
@@ -148,7 +150,7 @@
                                    FontSize="12"
                                    IsHitTestVisible="False"
                                    VerticalAlignment="Center"
-                                   Margin="10,0,0,0"
+                                   Padding="10,0,0,0"
                                    Panel.ZIndex="0">
                             <TextBlock.Style>
                                 <Style TargetType="TextBlock">
@@ -264,10 +266,10 @@
                 <!-- CUSTOMER SEARCH -->
                 <Grid Grid.Column="2">
                     <!-- Customer box with placeholder + dropdown arrow -->
-                    <Grid Height="28">
+                    <Grid Height="32">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="28"/>
+                            <ColumnDefinition Width="32"/>
                         </Grid.ColumnDefinitions>
                         <Border Grid.ColumnSpan="2"
                                 Background="#0E0E0E"
@@ -277,24 +279,23 @@
                         <TextBox x:Name="CustomerBoxTop"
                                  Grid.Column="0"
                                  VerticalContentAlignment="Center"
-                                 Padding="8,0"
+                                 Padding="8,0,8,0"
                                  Background="Transparent"
                                  BorderThickness="0"
                                  Foreground="White"
                                  FontSize="13"
-                                 Text="{Binding CustomerSearchText, UpdateSourceTrigger=PropertyChanged}"
                                  KeyDown="CustomerBox_KeyDown"
                                  TextChanged="CustomerBox_TextChanged"
                                  LostFocus="CustomerBox_LostFocus"
-                                 Panel.ZIndex="1"/>
+                                 Panel.ZIndex="1" Height="38" Margin="0,-3,0,-3"/>
                         <!-- Placeholder -->
                         <TextBlock Grid.Column="0"
-                                   Text="Enter customer name or phone"
+                                   Text="Search customer..."
                                    Foreground="#555555"
                                    FontSize="12"
                                    IsHitTestVisible="False"
                                    VerticalAlignment="Center"
-                                   Margin="10,0,0,0"
+                                   Padding="10,0,0,0"
                                    Panel.ZIndex="0">
                             <TextBlock.Style>
                                 <Style TargetType="TextBlock">
@@ -326,41 +327,61 @@
                         <Border Background="#1C1C2E"
                                 BorderBrush="#2F66C8"
                                 BorderThickness="1"
-                                MinWidth="{Binding ActualWidth, ElementName=CustomerBoxTop}"
+                                Width="420"
                                 MaxHeight="280">
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="*"/>
                                 </Grid.RowDefinitions>
+
+                                <!-- Header -->
                                 <Grid Grid.Row="0" Background="#222831">
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="150"/>
+                                        <ColumnDefinition Width="130"/>
                                         <ColumnDefinition Width="140"/>
                                     </Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Column="0" Text="Last Name"  Foreground="White" FontWeight="Bold" FontSize="11" Padding="8,5"/>
-                                    <TextBlock Grid.Column="1" Text="First Name" Foreground="White" FontWeight="Bold" FontSize="11" Padding="4,5"/>
-                                    <TextBlock Grid.Column="2" Text="Phone"      Foreground="White" FontWeight="Bold" FontSize="11" Padding="4,5"/>
+                                    <TextBlock Grid.Column="0" Text="Last Name"  Foreground="White" FontWeight="Bold" FontSize="11" Padding="10,6"/>
+                                    <TextBlock Grid.Column="1" Text="First Name" Foreground="White" FontWeight="Bold" FontSize="11" Padding="8,6"/>
+                                    <TextBlock Grid.Column="2" Text="Phone"      Foreground="White" FontWeight="Bold" FontSize="11" Padding="8,6"/>
                                 </Grid>
+
+                                <!-- Rows -->
                                 <ListBox x:Name="CustomerList"
                                          Grid.Row="1"
                                          Background="Transparent"
                                          BorderThickness="0"
                                          ItemContainerStyle="{StaticResource DropdownRowStyle}"
                                          MouseDoubleClick="CustomerList_MouseDoubleClick"
-                                         KeyDown="CustomerList_KeyDown">
+                                         KeyDown="CustomerList_KeyDown"
+                                         ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                                     <ListBox.ItemTemplate>
                                         <DataTemplate>
-                                            <Grid>
+                                            <Grid Width="400">
                                                 <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="*"/>
-                                                    <ColumnDefinition Width="*"/>
-                                                    <ColumnDefinition Width="140"/>
+                                                    <ColumnDefinition Width="150"/>
+                                                    <ColumnDefinition Width="130"/>
+                                                    <ColumnDefinition Width="120"/>
                                                 </Grid.ColumnDefinitions>
-                                                <TextBlock Grid.Column="0" Text="{Binding LastName}"  VerticalAlignment="Center" FontSize="12" FontWeight="SemiBold"/>
-                                                <TextBlock Grid.Column="1" Text="{Binding FirstName}" VerticalAlignment="Center" FontSize="12"/>
-                                                <TextBlock Grid.Column="2" Text="{Binding Phone}"     VerticalAlignment="Center" FontSize="12"/>
+                                                <TextBlock Grid.Column="0"
+                                                           Text="{Binding LastName}"
+                                                           VerticalAlignment="Center"
+                                                           FontSize="12" FontWeight="SemiBold"
+                                                           TextTrimming="CharacterEllipsis"
+                                                           Padding="2,0"/>
+                                                <TextBlock Grid.Column="1"
+                                                           Text="{Binding FirstName}"
+                                                           VerticalAlignment="Center"
+                                                           FontSize="12"
+                                                           TextTrimming="CharacterEllipsis"
+                                                           Padding="8,0"/>
+                                                <TextBlock Grid.Column="2"
+                                                           Text="{Binding Phone}"
+                                                           VerticalAlignment="Center"
+                                                           FontSize="12"
+                                                           TextTrimming="CharacterEllipsis"
+                                                           Padding="8,0"/>
                                             </Grid>
                                         </DataTemplate>
                                     </ListBox.ItemTemplate>
@@ -385,8 +406,109 @@
             </Grid>
         </Border>
 
-        <!-- ═══ ROW 1 — RECEIPT DATAGRID ═══ -->
-        <DataGrid Grid.Row="1"
+        <!-- ═══ ROW 1 — CUSTOMER INFO BAR ═══ -->
+        <Border x:Name="CustomerInfoBar"
+                Grid.Row="1"
+                Background="#0D1B2A"
+                BorderBrush="#1A3A5C"
+                BorderThickness="0,0,0,1"
+                Padding="10,5"
+                Visibility="Collapsed">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Avatar + Name -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,20,0">
+                    <Border Width="28" Height="28" CornerRadius="14"
+                            Background="#2F66C8" Margin="0,0,8,0">
+                        <TextBlock x:Name="CustomerInitialsTxt"
+                                   Text="?"
+                                   Foreground="White" FontSize="11" FontWeight="Bold"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock x:Name="CustomerNameTxt"
+                                   Foreground="White" FontSize="13" FontWeight="SemiBold"/>
+                        <TextBlock x:Name="CustomerCityTxt"
+                                   Foreground="#AFAFAF" FontSize="10"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- Contact -->
+                <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="0,0,24,0">
+                    <TextBlock Foreground="#AFAFAF" FontSize="10" Text="Contact"/>
+                    <TextBlock x:Name="CustomerPhoneTxt"
+                               Foreground="White" FontSize="12"/>
+                </StackPanel>
+
+                <!-- Account balance + available credit with tooltip -->
+                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,24,0">
+                    <StackPanel Margin="0,0,16,0">
+                        <TextBlock Foreground="#AFAFAF" FontSize="10" Text="Account Balance"/>
+                        <TextBlock x:Name="CustomerBalanceTxt"
+                                   Foreground="#FF6B6B" FontSize="12" FontWeight="SemiBold"/>
+                    </StackPanel>
+                    <StackPanel>
+                        <TextBlock Foreground="#AFAFAF" FontSize="10" Text="Available Credit"/>
+                        <TextBlock x:Name="CustomerAvailableTxt"
+                                   Foreground="#4CAF50" FontSize="12" FontWeight="SemiBold"/>
+                    </StackPanel>
+
+                    <!-- Hover tooltip with full credit details -->
+                    <StackPanel.ToolTip>
+                        <ToolTip Background="#1B1B1B" BorderBrush="#2E2E2E" BorderThickness="1" Padding="12,8">
+                            <StackPanel>
+                                <TextBlock x:Name="TooltipHeader"
+                                           Foreground="#F4C542" FontSize="12" FontWeight="Bold"
+                                           Margin="0,0,0,6"/>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="130"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Credit Limit:"    Foreground="#AFAFAF" FontSize="11"/>
+                                    <TextBlock Grid.Row="0" Grid.Column="1" x:Name="TooltipLimit"   Foreground="White"   FontSize="11" FontWeight="SemiBold"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Credit Used:"     Foreground="#AFAFAF" FontSize="11" Margin="0,4,0,0"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="1" x:Name="TooltipUsed"    Foreground="#FF6B6B" FontSize="11" FontWeight="SemiBold" Margin="0,4,0,0"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Available Credit:" Foreground="#AFAFAF" FontSize="11" Margin="0,4,0,0"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="1" x:Name="TooltipAvail"   Foreground="#4CAF50" FontSize="11" FontWeight="SemiBold" Margin="0,4,0,0"/>
+                                </Grid>
+                            </StackPanel>
+                        </ToolTip>
+                    </StackPanel.ToolTip>
+                </StackPanel>
+
+                <!-- Spacer -->
+                <StackPanel Grid.Column="3"/>
+
+                <!-- Clear customer button -->
+                <Button Grid.Column="4"
+                        Content="✕ Clear Customer"
+                        Background="Transparent"
+                        BorderBrush="#2E2E2E"
+                        BorderThickness="1"
+                        Foreground="#AFAFAF"
+                        FontSize="11"
+                        Cursor="Hand"
+                        Padding="10,4"
+                        VerticalAlignment="Center"
+                        Click="ClearCustomer_Click"/>
+            </Grid>
+        </Border>
+
+        <!-- ═══ ROW 2 — RECEIPT DATAGRID ═══ -->
+        <DataGrid Grid.Row="2"
                   x:Name="ReceiptGrid"
                   CellEditEnding="ReceiptGrid_CellEditEnding"
                   ItemsSource="{Binding Cart}"
@@ -642,8 +764,8 @@
             </DataGrid.RowDetailsTemplate>
         </DataGrid>
 
-        <!-- ═══ ROW 2 — BOTTOM BAR ═══ -->
-        <Border Grid.Row="2"
+        <!-- ═══ ROW 3 — BOTTOM BAR ═══ -->
+        <Border Grid.Row="3"
                 Background="#111111"
                 BorderBrush="{StaticResource BorderBrush}"
                 BorderThickness="0,1,0,0"
@@ -854,7 +976,7 @@
 
         <!-- ═══ LOW STOCK TOAST — floats top-right over everything ═══ -->
         <Border x:Name="LowStockToast"
-                Grid.RowSpan="3"
+                Grid.RowSpan="4"
                 Visibility="Collapsed"
                 VerticalAlignment="Top"
                 HorizontalAlignment="Right"

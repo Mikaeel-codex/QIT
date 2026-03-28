@@ -1,0 +1,97 @@
+<Window x:Class="PointofSale.Views.ManagerOverrideWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Manager Override"
+        Width="400" Height="310"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent">
+
+    <Border CornerRadius="14"
+            Background="#1B1B1B"
+            BorderBrush="#2E2E2E"
+            BorderThickness="1">
+        <Border.Effect>
+            <DropShadowEffect Color="#000000" Opacity="0.5"
+                              BlurRadius="24" ShadowDepth="6" Direction="270"/>
+        </Border.Effect>
+
+        <Grid Margin="28,24,28,24">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Header -->
+            <StackPanel Grid.Row="0" Margin="0,0,0,18">
+                <TextBlock Text="Manager Authorization"
+                           Foreground="White"
+                           FontSize="17" FontWeight="Bold"/>
+                <TextBlock x:Name="ReasonTxt"
+                           Foreground="#B8B8B8"
+                           FontSize="12"
+                           Margin="0,4,0,0"
+                           TextWrapping="Wrap"/>
+            </StackPanel>
+
+            <!-- Username -->
+            <Grid Grid.Row="1" Margin="0,0,0,12">
+                <TextBlock Text="Username"
+                           Foreground="#B8B8B8"
+                           FontSize="11"
+                           VerticalAlignment="Top"/>
+                <TextBox x:Name="UsernameBox"
+                         Margin="0,16,0,0"
+                         Height="36"
+                         KeyDown="Field_KeyDown"/>
+            </Grid>
+
+            <!-- Password -->
+            <Grid Grid.Row="2" Margin="0,0,0,6">
+                <TextBlock Text="Password"
+                           Foreground="#B8B8B8"
+                           FontSize="11"
+                           VerticalAlignment="Top"/>
+                <PasswordBox x:Name="PasswordBox"
+                             Margin="0,16,0,0"
+                             Height="36"
+                             KeyDown="Field_KeyDown"/>
+            </Grid>
+
+            <!-- Error -->
+            <TextBlock x:Name="ErrorTxt"
+                       Grid.Row="3"
+                       Foreground="#D9534F"
+                       FontSize="11"
+                       Margin="0,4,0,10"
+                       Visibility="Collapsed"
+                       TextWrapping="Wrap"/>
+
+            <!-- Buttons -->
+            <Grid Grid.Row="4" Margin="0,8,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="8"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Button Grid.Column="0"
+                        Content="Cancel"
+                        Style="{StaticResource ModernButton}"
+                        Click="Cancel_Click"/>
+
+                <Button Grid.Column="2"
+                        Content="Authorize"
+                        Style="{StaticResource GoldButton}"
+                        Click="Authorize_Click"/>
+            </Grid>
+
+        </Grid>
+    </Border>
+</Window>

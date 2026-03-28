@@ -189,13 +189,18 @@ namespace PointofSale
             HelpCenterMenuItem.Visibility = Visibility.Visible;
             SignOutMenuItem.Visibility = Visibility.Visible;
 
-            bool isAdmin = user.Role == "Admin";
-            SetEnabled(true, MakeSaleBtn, HeldReceiptsBtn, EndOfDayBtn_Tile);
-            SetEnabled(isAdmin,
-                ProductsBtn_Tile, CustomersListBtn_Tile,
-                EmployeesBtn_Tile, ReportsBtn_Tile,
-                SalesHistoryBtn, ReceiveStockBtn_Tile,
-                SettingsBtn_Tile, SupplierTileBtn, DepartmentsTileBtn);
+            SetEnabled(user.CanMakeSales,         MakeSaleBtn);
+            SetEnabled(user.CanMakeSales,         HeldReceiptsBtn);
+            SetEnabled(user.CanMakeSales,         EndOfDayBtn_Tile);
+            SetEnabled(user.CanViewInventory,     ProductsBtn_Tile);
+            SetEnabled(user.CanManageInventory,   ReceiveStockBtn_Tile);
+            SetEnabled(user.CanManageCustomers,   CustomersListBtn_Tile);
+            SetEnabled(user.CanManageEmployees,   EmployeesBtn_Tile);
+            SetEnabled(user.CanViewReports,       ReportsBtn_Tile);
+            SetEnabled(user.CanViewSalesHistory,  SalesHistoryBtn);
+            SetEnabled(user.CanAccessSettings,    SettingsBtn_Tile);
+            SetEnabled(user.CanManageSuppliers,   SupplierTileBtn);
+            SetEnabled(user.CanManageSuppliers,   DepartmentsTileBtn);
 
             UpdateButtonVisuals();
         }
@@ -277,12 +282,13 @@ namespace PointofSale
         private void CustomersList_Click(object sender, RoutedEventArgs e)
         {
             if (!RequireLogin()) return;
-            MessageBox.Show("Customers screen coming next.");
+            new CustomersWindow { Owner = this }.ShowDialog();
         }
+        
         private void Users_Click(object sender, RoutedEventArgs e)
         {
             if (!RequireLogin()) return;
-            MessageBox.Show("Users screen coming next.");
+            new EmployeesWindow { Owner = this }.ShowDialog();
         }
         private void Reports_Click(object sender, RoutedEventArgs e)
         {

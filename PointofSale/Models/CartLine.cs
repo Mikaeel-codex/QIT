@@ -19,6 +19,11 @@ namespace PointofSale.Models
         public decimal CostPrice { get; set; } = 0m;
         public int StockQty { get; set; } = 0;    // Stock on hand snapshot
 
+        // ── return tracking ──────────────────────────────────────────────
+        public bool IsReturn { get; set; } = false;
+        public string ReturnReceiptNo { get; set; } = "";
+        public string ReturnReason { get; set; } = "";
+
         // ── discount tracking ────────────────────────────────────────────
         private decimal _originalPrice = 0m;
         private decimal _discountPct = 0m;

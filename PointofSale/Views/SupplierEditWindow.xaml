@@ -249,14 +249,13 @@
                              x:Name="NotesBox"
                              Height="170"
                              Width="220"
-                             Background="{StaticResource Panel2Brush}"
                              Foreground="White"
                              BorderBrush="{StaticResource BorderBrush}"
                              BorderThickness="1"
                              AcceptsReturn="True"
                              TextWrapping="Wrap"
                              VerticalScrollBarVisibility="Auto"
-                             Padding="8"/>
+                             Padding="8" Background="#FFF3F0D7"/>
                 </Grid>
             </Border>
 

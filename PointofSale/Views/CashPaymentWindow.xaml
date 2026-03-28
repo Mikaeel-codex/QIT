@@ -51,7 +51,7 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <TextBlock Grid.Row="0" Text="Sale Total"
+                <TextBlock x:Name="SaleTotalLbl" Grid.Row="0" Text="Sale Total"
                            Foreground="{StaticResource MutedBrush}" FontSize="12"/>
                 <TextBlock x:Name="TotalTxt" Grid.Row="0" Grid.Column="1"
                            HorizontalAlignment="Right"
@@ -63,7 +63,7 @@
                            HorizontalAlignment="Right"
                            Foreground="#88CC66" FontSize="12" Visibility="Collapsed"/>
 
-                <TextBlock Grid.Row="2" Text="Still Owing"
+                <TextBlock x:Name="OwingLbl" Grid.Row="2" Text="Still Owing"
                            Foreground="{StaticResource MutedBrush}" FontSize="12" FontWeight="Bold"/>
                 <TextBlock x:Name="OwingTxt" Grid.Row="2" Grid.Column="1"
                            HorizontalAlignment="Right"

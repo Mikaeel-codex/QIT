@@ -1,4 +1,5 @@
 ﻿using PointofSale.Models;
+using PointofSale.Services;
 using System;
 using System.Globalization;
 using System.Windows;
@@ -67,6 +68,22 @@ namespace PointofSale.Views
             if (!decimal.TryParse(UnitPriceBox.Text, NumberStyles.Any, CultureInfo.CurrentCulture, out var price) || price < 0)
             { MessageBox.Show("Invalid price.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning); return; }
             decimal.TryParse(DiscountPctBox.Text, NumberStyles.Any, CultureInfo.CurrentCulture, out var discPct);
+
+            bool hasDiscount  = discPct > 0;
+            bool priceChanged = price < _line.UnitPrice;
+
+            // Require manager override if a discount or price reduction is applied by a non-admin
+            if ((hasDiscount || priceChanged) && !(Session.CurrentUser?.IsAdmin ?? false))
+            {
+                var reason = hasDiscount
+                    ? $"Apply {discPct:N1}% discount on \"{_line.Name}\""
+                    : $"Reduce price of \"{_line.Name}\" from R{_line.UnitPrice:N2} to R{price:N2}";
+
+                var overrideWin = new ManagerOverrideWindow(reason) { Owner = this };
+                overrideWin.ShowDialog();
+                if (!overrideWin.Authorized) return;
+            }
+
             _line.Qty = qty;
             if (discPct > 0)
             {

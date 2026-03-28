@@ -13,12 +13,19 @@ namespace PointofSale.Views
         /// <param name="owing">Amount still due (remaining after other splits).</param>
         /// <param name="saleTotal">Full sale total — shown in summary.</param>
         /// <param name="alreadyPaid">Sum of splits already added — shown in summary.</param>
-        public CashPaymentWindow(decimal owing, decimal saleTotal = 0, decimal alreadyPaid = 0)
+        public CashPaymentWindow(decimal owing, decimal saleTotal = 0, decimal alreadyPaid = 0, bool isReturn = false)
         {
             InitializeComponent();
             _owing = owing;
 
-            // Populate summary rows
+            if (isReturn)
+            {
+                Title = "Cash Refund";
+                SaleTotalLbl.Text  = "Refund Total";
+                OwingLbl.Text      = "Still to Refund";
+                AlreadyPaidLbl.Text = "Already Refunded";
+            }
+
             var total = saleTotal > 0 ? saleTotal : owing;
             TotalTxt.Text = total.ToString("N2");
             OwingTxt.Text = owing.ToString("N2");

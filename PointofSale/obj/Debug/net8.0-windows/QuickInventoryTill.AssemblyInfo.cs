@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("QuickInventoryTill")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+88bf836fcf5856a3db56562d129fe3b2dab1ea5e")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+eb336e404deeb4216e1800bda32506971e1f2f2d")]
 [assembly: System.Reflection.AssemblyProductAttribute("QuickInventoryTill")]
 [assembly: System.Reflection.AssemblyTitleAttribute("QuickInventoryTill")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

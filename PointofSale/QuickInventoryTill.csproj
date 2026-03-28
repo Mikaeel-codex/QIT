@@ -10,7 +10,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="QIT Logo.png" />
     <None Remove="Scripts\generate_receipt.py" />
+    <None Remove="Views\QIT Logo.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -34,6 +36,11 @@
 
   <ItemGroup>
     <Folder Include="icon\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="QIT Logo.png" />
+    <Resource Include="Views\QIT Logo.png" />
   </ItemGroup>
 
 </Project>

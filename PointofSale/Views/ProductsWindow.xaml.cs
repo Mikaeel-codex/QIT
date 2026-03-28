@@ -1,5 +1,6 @@
 using PointofSale.Data;
 using PointofSale.Models;
+using PointofSale.Services;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
@@ -23,6 +24,14 @@ namespace PointofSale.Views
             LoadProducts();
             SetupFilter();
             SetMessage("Ready.");
+
+            bool canManage = Session.CurrentUser?.CanManageInventory ?? false;
+            if (!canManage)
+            {
+                AddBtn.Visibility    = Visibility.Collapsed;
+                EditBtn.Visibility   = Visibility.Collapsed;
+                DeleteBtn.Visibility = Visibility.Collapsed;
+            }
         }
 
         private void LoadProducts()
@@ -150,8 +159,7 @@ namespace PointofSale.Views
 
         private void ProductsGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            // Double-click row = edit
-            if (SelectedProduct != null)
+            if (SelectedProduct != null && (Session.CurrentUser?.CanManageInventory ?? false))
                 EditBtn_Click(sender, e);
         }
 

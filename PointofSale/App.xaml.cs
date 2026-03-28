@@ -3,7 +3,7 @@ using PointofSale.Data;
 using PointofSale.Services;
 using System.Windows;
 
-namespace QuickInventoryTill
+namespace PointofSale
 {
     public partial class App : Application
     {
