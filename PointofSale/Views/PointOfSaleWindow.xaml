@@ -142,7 +142,7 @@
                                  KeyDown="ScanBox_KeyDown"
                                  TextChanged="ScanBox_TextChanged"
                                  LostFocus="ScanBox_LostFocus"
-                                 Panel.ZIndex="1" Height="37" Margin="-5,-2,5,-2"/>
+                                 Panel.ZIndex="1" Height="38" Margin="0,-9,0,-8"/>
                         <!-- Placeholder -->
                         <TextBlock Grid.Column="0"
                                    Text="Scan or enter item information  (Name / SKU / ALU)"
@@ -264,7 +264,7 @@
                 </Grid>
 
                 <!-- CUSTOMER SEARCH -->
-                <Grid Grid.Column="2">
+                <Grid x:Name="CustomerSearchGrid" Grid.Column="2">
                     <!-- Customer box with placeholder + dropdown arrow -->
                     <Grid Height="32">
                         <Grid.ColumnDefinitions>
@@ -287,7 +287,7 @@
                                  KeyDown="CustomerBox_KeyDown"
                                  TextChanged="CustomerBox_TextChanged"
                                  LostFocus="CustomerBox_LostFocus"
-                                 Panel.ZIndex="1" Height="38" Margin="0,-3,0,-3"/>
+                                 Panel.ZIndex="1" Height="38" Margin="0,-9,0,-8"/>
                         <!-- Placeholder -->
                         <TextBlock Grid.Column="0"
                                    Text="Search customer..."
@@ -529,7 +529,7 @@
                   Foreground="White"
                   HorizontalGridLinesBrush="#222222"
                   RowHeight="32"
-                  EnableRowVirtualization="True" SelectionChanged="ReceiptGrid_SelectionChanged">
+                  EnableRowVirtualization="True" SelectionChanged="ReceiptGrid_SelectionChanged" Margin="0,5,0,0">
 
             <!-- Row height auto-expands when discount line is shown via StackPanel -->
 

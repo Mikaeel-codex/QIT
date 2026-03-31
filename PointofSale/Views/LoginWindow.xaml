@@ -6,7 +6,8 @@
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize"
         WindowStyle="None"
-        AllowsTransparency="True">
+        AllowsTransparency="True"
+        KeyDown="Window_KeyDown">
 
     <Window.Resources>
 
@@ -107,9 +108,10 @@
         </Style>
 
     </Window.Resources>
+
     <Window.Background>
         <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-            <GradientStop Color="Black" Offset="0.003"/>
+            <GradientStop Color="Black"     Offset="0.003"/>
             <GradientStop Color="White"/>
             <GradientStop Color="#FF1D3563" Offset="0.893"/>
             <GradientStop Color="#FFF8F8F8"/>
@@ -128,26 +130,23 @@
 
         <Grid>
             <Grid.ColumnDefinitions>
-                <!-- Left — form (66%) -->
                 <ColumnDefinition Width="2.2*"/>
-                <!-- Right — illustration (34%) -->
                 <ColumnDefinition Width="1*"/>
             </Grid.ColumnDefinitions>
 
-            <!-- ── RIGHT — decorative gradient circle + illustration ── -->
+            <!-- ── RIGHT — illustration panel ── -->
             <Border Grid.Column="1" CornerRadius="0,15,15,0" ClipToBounds="True">
                 <Grid>
-                    <!-- Soft radial background -->
                     <Ellipse Width="232" Height="215"
                              HorizontalAlignment="Right"
                              VerticalAlignment="Top"
                              Margin="0,124,-34,0">
                         <Ellipse.Fill>
-                            <ImageBrush Stretch="None" Opacity="0.7" TileMode="None" ImageSource="/Views/QIT Logo.png"/>
+                            <ImageBrush Stretch="None" Opacity="0.7"
+                                        TileMode="None"
+                                        ImageSource="/Views/QIT Logo.png"/>
                         </Ellipse.Fill>
                     </Ellipse>
-
-                    <!-- Illustration placeholder — gold Q badge -->
                     <StackPanel HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
                                 Margin="0,0,10,0"/>
@@ -155,38 +154,29 @@
             </Border>
 
             <!-- ── LEFT — form panel ── -->
-            <Border Grid.Column="0"
-                    CornerRadius="15,0,0,15"
-                    ClipToBounds="True">
-
-                <!-- Blur glow blob behind the form -->
+            <Border Grid.Column="0" CornerRadius="15,0,0,15" ClipToBounds="True">
                 <Grid>
+                    <StackPanel VerticalAlignment="Center" Margin="40,0,30,0">
 
-                    <!-- Form content -->
-                    <StackPanel VerticalAlignment="Center"
-                                Margin="40,0,30,0">
-
-                        <!-- App name / heading -->
                         <TextBlock Text="Sign In"
                                    Foreground="White"
                                    FontSize="24" FontWeight="Bold"
                                    Margin="0,0,0,4"/>
                         <TextBlock Text="Welcome back to Quick Inventory Till"
-                                   Foreground="White"
-                                   FontSize="11"
+                                   Foreground="White" FontSize="11"
                                    Margin="0,0,0,28"/>
 
                         <!-- Username field -->
                         <Grid Margin="0,0,0,20">
                             <TextBox x:Name="UsernameBox"
                                      Style="{StaticResource FloatLabelBox}"
+                                     Foreground="White"
                                      KeyDown="Field_KeyDown"
                                      GotFocus="Field_GotFocus"
-                                     LostFocus="Field_LostFocus" Foreground="White"/>
+                                     LostFocus="Field_LostFocus"/>
                             <TextBlock x:Name="UsernameLbl"
                                        Text="Username"
-                                       Foreground="White"
-                                       FontSize="13"
+                                       Foreground="White" FontSize="13"
                                        IsHitTestVisible="False"
                                        VerticalAlignment="Bottom"
                                        Margin="4,0,0,8"
@@ -204,13 +194,13 @@
                         <Grid Margin="0,0,0,8">
                             <PasswordBox x:Name="PasswordBox"
                                          Style="{StaticResource FloatLabelPass}"
+                                         Foreground="White"
                                          KeyDown="Field_KeyDown"
                                          GotFocus="PassField_GotFocus"
-                                         LostFocus="PassField_LostFocus" Foreground="White"/>
+                                         LostFocus="PassField_LostFocus"/>
                             <TextBlock x:Name="PasswordLbl"
                                        Text="Password"
-                                       Foreground="White"
-                                       FontSize="13"
+                                       Foreground="White" FontSize="13"
                                        IsHitTestVisible="False"
                                        VerticalAlignment="Bottom"
                                        Margin="4,0,0,8"
@@ -226,8 +216,7 @@
 
                         <!-- Error message -->
                         <TextBlock x:Name="ErrorTxt"
-                                   Foreground="#D9534F"
-                                   FontSize="11"
+                                   Foreground="#D9534F" FontSize="11"
                                    Margin="4,0,0,8"
                                    Visibility="Collapsed"
                                    TextWrapping="Wrap"/>
@@ -256,14 +245,10 @@
             <Button Grid.Column="1"
                     Content="✕"
                     Width="28" Height="28"
-                    HorizontalAlignment="Right"
-                    VerticalAlignment="Top"
+                    HorizontalAlignment="Right" VerticalAlignment="Top"
                     Margin="0,10,10,0"
-                    Background="Transparent"
-                    BorderThickness="0"
-                    Foreground="White"
-                    FontSize="13"
-                    Cursor="Hand"
+                    Background="Transparent" BorderThickness="0"
+                    Foreground="White" FontSize="13" Cursor="Hand"
                     Click="CloseBtn_Click"/>
 
         </Grid>

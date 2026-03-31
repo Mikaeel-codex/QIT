@@ -24,12 +24,32 @@ namespace PointofSale.Views
             var vm = new PosViewModel();
             DataContext = vm;
 
-            // Wire low stock callback so Qty+ button on cart rows also triggers toast
             vm.OnLowStock = warn => ShowLowStockToast(warn);
-
-            // Update Hold button label whenever cart changes
             vm.Cart.CollectionChanged += (_, __) => RefreshHoldButton();
             RefreshHoldButton();
+
+            // ── Apply dev feature flags ───────────────────────────────────────
+            ApplyPosFeatureFlags();
+        }
+
+        /// <summary>
+        /// Hides POS-level UI elements based on dev feature flags.
+        /// Customers flag hides: customer search bar + Account payment button.
+        /// </summary>
+        private void ApplyPosFeatureFlags()
+        {
+            if (!DevSettings.CustomersEnabled)
+            {
+                // Hide the entire customer search column in the toolbar
+                // CustomerSearchGrid is the Grid wrapping the customer box
+                CustomerSearchGrid.Visibility = Visibility.Collapsed;
+
+                // Hide the Account payment button — no customer = no account charge
+                BtnAccount.Visibility = Visibility.Collapsed;
+
+                // Also hide the customer info bar in case it was left open
+                CustomerInfoBar.Visibility = Visibility.Collapsed;
+            }
         }
 
         // ═══════════════════════════════════════
@@ -718,14 +738,14 @@ namespace PointofSale.Views
                 PaymentStatusTxt.Text = $"✔  {s.Method}";
                 PaymentStatusTxt.Foreground = System.Windows.Media.Brushes.White;
                 PaymentStatusTxt.FontStyle = FontStyles.Normal;
-                PaymentAmountTxt.Text = $"{s.Amount:C2}";
+                PaymentAmountTxt.Text = $"R{s.Amount:N2}";
                 PaymentAmountTxt.Visibility = Visibility.Visible;
                 PaymentChangeTxt.Visibility = Visibility.Collapsed;
             }
             else
             {
                 // Split payment — show each line
-                var lines = string.Join("   ", vm.Splits.Select(s => $"{s.Method}: {s.Amount:C2}"));
+                var lines = string.Join("   ", vm.Splits.Select(s => $"{s.Method}: R{s.Amount:N2}"));
                 PaymentStatusTxt.Text = $"✔  Split Payment";
                 PaymentStatusTxt.Foreground = System.Windows.Media.Brushes.White;
                 PaymentStatusTxt.FontStyle = FontStyles.Normal;
@@ -736,13 +756,13 @@ namespace PointofSale.Views
 
             if (vm.AmountDue > 0)
             {
-                PaymentChangeTxt.Text = $"Still owing: {vm.AmountDue:C2}";
+                PaymentChangeTxt.Text = $"Still owing: R{vm.AmountDue:N2}";
                 PaymentChangeTxt.Foreground = System.Windows.Media.Brushes.OrangeRed;
                 PaymentChangeTxt.Visibility = Visibility.Visible;
             }
             else if (vm.CashChange > 0)
             {
-                PaymentChangeTxt.Text = $"Change: {vm.CashChange:C2}";
+                PaymentChangeTxt.Text = $"Change: R{vm.CashChange:N2}";
                 PaymentChangeTxt.Foreground = System.Windows.Media.Brushes.LightGreen;
                 PaymentChangeTxt.Visibility = Visibility.Visible;
             }
@@ -865,8 +885,40 @@ namespace PointofSale.Views
         {
             if (DataContext is not PosViewModel vm) return;
             if (!CanFinalize(vm)) return;
-            vm.FinalizeSale(vm.PaymentMethod, _currentUser.Username);
+
+            // Finalize the sale first
+            var receipt = vm.FinalizeSale(vm.PaymentMethod, _currentUser.Username);
             ResetPaymentCard();
+
+            if (receipt == null) return;
+
+            // Populate store info from settings
+            receipt.StoreName = StoreSettingsService.Get("StoreName", "My Store");
+            receipt.StoreAddress = StoreSettingsService.Get("StoreAddress", "");
+            receipt.StorePhone = StoreSettingsService.Get("StorePhone", "");
+            receipt.StoreEmail = StoreSettingsService.Get("StoreEmail", "");
+            receipt.ReceiptFooter = StoreSettingsService.Get("ReceiptFooter", "Thank you for your business!");
+            receipt.LogoPath = StoreSettingsService.Get("LogoPath", "");
+
+            // Ask user what to do
+            var printWin = new PrintReceiptWindow(receipt.ReceiptNumber) { Owner = this };
+            printWin.ShowDialog();
+
+            switch (printWin.Choice)
+            {
+                case PrintReceiptChoice.Print:
+                    ThermalReceiptPrinter.PrintReceipt(receipt, this);
+                    break;
+
+                case PrintReceiptChoice.Preview:
+                    ThermalReceiptPrinter.PreviewReceipt(receipt, this);
+                    break;
+
+                case PrintReceiptChoice.Skip:
+                case PrintReceiptChoice.Cancelled:
+                    // Sale already saved — just do nothing
+                    break;
+            }
         }
 
         private bool CanFinalize(PosViewModel vm)
@@ -876,7 +928,7 @@ namespace PointofSale.Views
             if (vm.AmountDue > 0)
             {
                 var r = MessageBox.Show(
-                    $"There is still {vm.AmountDue:C2} owing.\n\nDo you want to save anyway?",
+                    $"There is still R{vm.AmountDue:N2} owing.\n\nDo you want to save anyway?",
                     "Amount Still Owing", MessageBoxButton.YesNo, MessageBoxImage.Warning);
                 if (r != MessageBoxResult.Yes) return false;
             }

@@ -5,6 +5,7 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
 using PointofSale.Services;
+using PointofSale.ViewModels;
 using PointofSale.Views;
 
 namespace PointofSale
@@ -44,7 +45,6 @@ namespace PointofSale
         }
 
         // ── Hamburger toggle ──────────────────────────────────────────────
-
         private void CloseProfilePopup()
         {
             _profileOpen = false;
@@ -59,52 +59,33 @@ namespace PointofSale
             AnimateHamburger(_profileOpen);
         }
 
-        // Close the popup when the user left-clicks anywhere outside it.
-        // Only fires for left-clicks, so right-clicking elsewhere is ignored.
         private void MainGrid_PreviewMouseLeftButtonDown(object sender,
             System.Windows.Input.MouseButtonEventArgs e)
         {
             if (!_profileOpen) return;
-            // ProfileToggle is inside the main window grid — let its own Click
-            // handler toggle the state; don't double-close here.
             if (ProfileToggle.IsMouseOver) return;
             CloseProfilePopup();
         }
 
-        /// <summary>
-        /// Line1 rotates +45 and slides down  → \
-        /// Line2 fades out
-        /// Line3 rotates -45 and slides up    → /
-        /// Together they form an X when open=true.
-        /// Stroke turns gold when open, grey when closed.
-        /// </summary>
         private void AnimateHamburger(bool open)
         {
             var duration = new Duration(TimeSpan.FromMilliseconds(220));
             var ease = new CubicEase { EasingMode = EasingMode.EaseInOut };
 
-            Line1Rotate.BeginAnimation(
-                RotateTransform.AngleProperty,
+            Line1Rotate.BeginAnimation(RotateTransform.AngleProperty,
                 new DoubleAnimation(open ? 45 : 0, duration) { EasingFunction = ease });
-            Line1Translate.BeginAnimation(
-                TranslateTransform.YProperty,
+            Line1Translate.BeginAnimation(TranslateTransform.YProperty,
                 new DoubleAnimation(open ? 6 : 0, duration) { EasingFunction = ease });
-
-            Line2.BeginAnimation(
-                OpacityProperty,
+            Line2.BeginAnimation(OpacityProperty,
                 new DoubleAnimation(open ? 0 : 1, duration) { EasingFunction = ease });
-
-            Line3Rotate.BeginAnimation(
-                RotateTransform.AngleProperty,
+            Line3Rotate.BeginAnimation(RotateTransform.AngleProperty,
                 new DoubleAnimation(open ? -45 : 0, duration) { EasingFunction = ease });
-            Line3Translate.BeginAnimation(
-                TranslateTransform.YProperty,
+            Line3Translate.BeginAnimation(TranslateTransform.YProperty,
                 new DoubleAnimation(open ? -6 : 0, duration) { EasingFunction = ease });
 
             var strokeBrush = new SolidColorBrush(open
                 ? Color.FromRgb(0xF4, 0xC5, 0x42)
                 : Color.FromRgb(0xAF, 0xAF, 0xAF));
-
             Line1.Stroke = strokeBrush;
             Line2.Stroke = strokeBrush;
             Line3.Stroke = strokeBrush;
@@ -149,10 +130,13 @@ namespace PointofSale
                 "Signed Out", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
-        // ── Permissions ───────────────────────────────────────────────────
+        // ── Permissions + feature flags ───────────────────────────────────
         private void ApplyPermissions()
         {
             var user = Session.CurrentUser;
+
+            // Step 1 — Apply dev feature flags first (hides tiles completely)
+            ApplyFeatureFlags();
 
             if (user == null)
             {
@@ -189,20 +173,71 @@ namespace PointofSale
             HelpCenterMenuItem.Visibility = Visibility.Visible;
             SignOutMenuItem.Visibility = Visibility.Visible;
 
-            SetEnabled(user.CanMakeSales,         MakeSaleBtn);
-            SetEnabled(user.CanMakeSales,         HeldReceiptsBtn);
-            SetEnabled(user.CanMakeSales,         EndOfDayBtn_Tile);
-            SetEnabled(user.CanViewInventory,     ProductsBtn_Tile);
-            SetEnabled(user.CanManageInventory,   ReceiveStockBtn_Tile);
-            SetEnabled(user.CanManageCustomers,   CustomersListBtn_Tile);
-            SetEnabled(user.CanManageEmployees,   EmployeesBtn_Tile);
-            SetEnabled(user.CanViewReports,       ReportsBtn_Tile);
-            SetEnabled(user.CanViewSalesHistory,  SalesHistoryBtn);
-            SetEnabled(user.CanAccessSettings,    SettingsBtn_Tile);
-            SetEnabled(user.CanManageSuppliers,   SupplierTileBtn);
-            SetEnabled(user.CanManageSuppliers,   DepartmentsTileBtn);
+            // Step 2 — Apply user role permissions
+            SetEnabled(user.CanMakeSales, MakeSaleBtn);
+            SetEnabled(user.CanMakeSales, HeldReceiptsBtn);
+            SetEnabled(user.CanMakeSales, EndOfDayBtn_Tile);
+            SetEnabled(user.CanViewInventory, ProductsBtn_Tile);
+            SetEnabled(user.CanManageInventory, ReceiveStockBtn_Tile);
+            SetEnabled(user.CanManageCustomers, CustomersListBtn_Tile);
+            SetEnabled(user.CanManageEmployees, EmployeesBtn_Tile);
+            SetEnabled(user.CanViewReports, ReportsBtn_Tile);
+            SetEnabled(user.CanViewSalesHistory, SalesHistoryBtn);
+            SetEnabled(user.CanAccessSettings, SettingsBtn_Tile);
+            SetEnabled(user.CanManageSuppliers, SupplierTileBtn);
+            SetEnabled(user.CanManageSuppliers, DepartmentsTileBtn);
+
+            // Step 3 — Feature flags override permissions (disabled = also force off)
+            if (!DevSettings.CustomersEnabled) SetEnabled(false, CustomersListBtn_Tile);
+            if (!DevSettings.InventoryEnabled) SetEnabled(false, ProductsBtn_Tile);
+            if (!DevSettings.ReceiveStockEnabled) SetEnabled(false, ReceiveStockBtn_Tile);
+            if (!DevSettings.SalesHistoryEnabled) SetEnabled(false, SalesHistoryBtn);
+            if (!DevSettings.ReportsEnabled) SetEnabled(false, ReportsBtn_Tile);
+            if (!DevSettings.SuppliersEnabled) SetEnabled(false, SupplierTileBtn);
+            if (!DevSettings.DepartmentsEnabled) SetEnabled(false, DepartmentsTileBtn);
+            if (!DevSettings.EndOfDayEnabled) SetEnabled(false, EndOfDayBtn_Tile);
 
             UpdateButtonVisuals();
+        }
+
+        /// <summary>
+        /// Collapses entire tile cards based on dev feature flags.
+        /// Runs before permission checks — zero trace for disabled features.
+        /// </summary>
+        private void ApplyFeatureFlags()
+        {
+            SetVisible(DevSettings.CustomersEnabled, CustomersListBtn_Tile);
+            SetVisible(DevSettings.InventoryEnabled, ProductsBtn_Tile);
+            SetVisible(DevSettings.ReceiveStockEnabled, ReceiveStockBtn_Tile);
+            SetVisible(DevSettings.SalesHistoryEnabled, SalesHistoryBtn);
+            SetVisible(DevSettings.ReportsEnabled, ReportsBtn_Tile);
+            SetVisible(DevSettings.SuppliersEnabled, SupplierTileBtn);
+            SetVisible(DevSettings.DepartmentsEnabled, DepartmentsTileBtn);
+            SetVisible(DevSettings.EndOfDayEnabled, EndOfDayBtn_Tile);
+        }
+
+        /// <summary>
+        /// Walks up the visual tree to find the wrapping Border tile
+        /// and collapses the whole card — not just the button.
+        /// </summary>
+        private static void SetVisible(bool visible, Button? btn)
+        {
+            if (btn == null) return;
+            var visibility = visible ? Visibility.Visible : Visibility.Collapsed;
+
+            var parent = VisualTreeHelper.GetParent(btn);
+            while (parent != null)
+            {
+                if (parent is Border border)
+                {
+                    border.Visibility = visibility;
+                    return;
+                }
+                parent = VisualTreeHelper.GetParent(parent);
+            }
+
+            // Fallback
+            btn.Visibility = visibility;
         }
 
         private void SetNavbarUser(string name, string role, string initials)
@@ -269,62 +304,83 @@ namespace PointofSale
             new PointOfSaleWindow(Session.CurrentUser!).Show();
             Close();
         }
+
         private void HeldReceipts_Click(object sender, RoutedEventArgs e)
         {
             if (!RequireLogin()) return;
-            new HeldReceiptsWindow().ShowDialog();
+            var win = new HeldReceiptsWindow { Owner = this };
+            win.OnUnhold = held =>
+            {
+                _clock.Stop();
+                var posWin = new PointOfSaleWindow(Session.CurrentUser!);
+                posWin.Show();
+                if (posWin.DataContext is PosViewModel vm)
+                    vm.RestoreFromHeld(held);
+                Close();
+            };
+            win.ShowDialog();
         }
+
         private void Products_Click(object sender, RoutedEventArgs e)
         {
             if (!RequireLogin()) return;
             new ProductsWindow().ShowDialog();
         }
+
         private void CustomersList_Click(object sender, RoutedEventArgs e)
         {
             if (!RequireLogin()) return;
             new CustomersWindow { Owner = this }.ShowDialog();
         }
-        
+
         private void Users_Click(object sender, RoutedEventArgs e)
         {
             if (!RequireLogin()) return;
             new EmployeesWindow { Owner = this }.ShowDialog();
         }
+
         private void Reports_Click(object sender, RoutedEventArgs e)
         {
             if (!RequireLogin()) return;
             new ReportsWindow { Owner = this }.ShowDialog();
         }
+
         private void EndOfDay_Click(object sender, RoutedEventArgs e)
         {
             if (!RequireLogin()) return;
             MessageBox.Show("End of Day screen coming next.");
         }
+
         private void SalesHistory_Click(object sender, RoutedEventArgs e)
         {
             if (!RequireLogin()) return;
             new SalesHistoryWindow { Owner = this }.ShowDialog();
         }
+
         private void ReceiveStock_Click(object sender, RoutedEventArgs e)
         {
             if (!RequireLogin()) return;
             MessageBox.Show("Receive Stock screen coming next.");
         }
+
         private void Settings_Click(object sender, RoutedEventArgs e)
         {
             if (!RequireLogin()) return;
             new StoreSettingsWindow { Owner = this }.ShowDialog();
         }
+
         private void Supplier_Click(object sender, RoutedEventArgs e)
         {
             if (!RequireLogin()) return;
             new SuppliersWindow { Owner = this }.ShowDialog();
         }
+
         private void Departments_Click(object sender, RoutedEventArgs e)
         {
             if (!RequireLogin()) return;
             new DepartmentsWindow { Owner = this }.ShowDialog();
         }
+
         private void Logout_Click(object sender, RoutedEventArgs e)
         {
             _clock.Stop();

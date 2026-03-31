@@ -217,10 +217,16 @@ namespace PointofSale.Views
                     .Include(h => h.Items)
                     .First(h => h.Id == hr.Id);
 
+                // Capture items before RemoveRange — EF Core's relationship fix-up
+                // clears the navigation collection when items are marked for deletion,
+                // so full.Items would be empty by the time OnUnhold fires.
+                var itemsSnapshot = full.Items.ToList();
+
                 db.HeldReceiptItems.RemoveRange(full.Items);
                 db.HeldReceipts.Remove(full);
                 db.SaveChanges();
 
+                full.Items = itemsSnapshot;
                 OnUnhold?.Invoke(full);
                 Close();
             }

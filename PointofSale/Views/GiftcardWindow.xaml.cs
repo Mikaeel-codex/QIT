@@ -48,7 +48,7 @@ namespace PointofSale.Views
                 if (card != null)
                 {
                     BalanceTxt.Text = card.Status == "Active"
-                        ? $"Card found  ·  Balance: {card.Balance:C2}"
+                        ? $"Card found  ·  Balance: R{card.Balance:N2}"
                         : $"Card status: {card.Status} — cannot redeem";
                     BalancePanel.Background = card.Status == "Active"
                         ? System.Windows.Media.Brushes.Honeydew
@@ -88,7 +88,7 @@ namespace PointofSale.Views
                     if (card.Balance < amount)
                     {
                         var p = MessageBox.Show(
-                            $"Card balance ({card.Balance:C2}) is less than the amount ({amount:C2}).\n\nApply the full card balance and collect the remaining {amount - card.Balance:C2} separately?",
+                            $"Card balance (R{card.Balance:N2}) is less than the amount (R{amount:N2}).\n\nApply the full card balance and collect the remaining R{amount - card.Balance:N2} separately?",
                             "Insufficient Balance", MessageBoxButton.YesNo, MessageBoxImage.Question);
                         if (p != MessageBoxResult.Yes) return;
                         amount = card.Balance;
@@ -103,13 +103,13 @@ namespace PointofSale.Views
                     {
                         existing.Balance += amount; existing.Status = "Active"; existing.LastUsedAt = DateTime.Now;
                         db.SaveChanges();
-                        MessageBox.Show($"Card recharged.\nNew balance: {existing.Balance:C2}", "Recharge Complete", MessageBoxButton.OK, MessageBoxImage.Information);
+                        MessageBox.Show($"Card recharged.\nNew balance: R{existing.Balance:N2}", "Recharge Complete", MessageBoxButton.OK, MessageBoxImage.Information);
                     }
                     else
                     {
                         db.GiftCards.Add(new GiftCard { CardNumber = cardNo, Balance = amount, IssuedValue = amount, IssuedAt = DateTime.Now, Status = "Active", IssuedBy = _cashier });
                         db.SaveChanges();
-                        MessageBox.Show($"New gift card issued.\nCard: {cardNo}\nBalance: {amount:C2}", "Card Issued", MessageBoxButton.OK, MessageBoxImage.Information);
+                        MessageBox.Show($"New gift card issued.\nCard: {cardNo}\nBalance: R{amount:N2}", "Card Issued", MessageBoxButton.OK, MessageBoxImage.Information);
                     }
                     IsRedeem = false; DialogResult = true;
                 }

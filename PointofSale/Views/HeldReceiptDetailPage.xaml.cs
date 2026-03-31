@@ -1,9 +1,10 @@
 ﻿using PointofSale.Models;
+using PointofSale.Services;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Media;
 
 namespace PointofSale.Views
 {
@@ -54,9 +55,9 @@ namespace PointofSale.Views
             ItemsGrid.ItemsSource = items;
 
             // Totals
-            SubtotalTxt.Text = $"${receipt.Subtotal:N2}";
-            TaxTxt.Text = $"${receipt.Tax:N2}";
-            TotalTxt.Text = $"${receipt.Total:N2}";
+            SubtotalTxt.Text = $"R{receipt.Subtotal:N2}";
+            TaxTxt.Text = $"R{receipt.Tax:N2}";
+            TotalTxt.Text = $"R{receipt.Total:N2}";
         }
 
         // ── Reprint ──────────────────────────────────────────────────────
@@ -65,62 +66,55 @@ namespace PointofSale.Views
         {
             if (_receipt == null) return;
 
-            // Build a simple print document
-            var doc = new FlowDocument
+            var receiptNumber = $"HELD-{_receipt.Id}";
+            var receipt = new ReceiptData
             {
-                FontFamily = new FontFamily("Courier New"),
-                FontSize = 12,
-                PageWidth = 320,
-                PagePadding = new Thickness(20)
+                ReceiptNumber = receiptNumber,
+                SaleDate = _receipt.HeldAt,
+                Cashier = _receipt.Cashier,
+                CustomerName = _receipt.CustomerName,
+                StoreName = StoreSettingsService.Get("StoreName", "My Store"),
+                StoreAddress = StoreSettingsService.Get("StoreAddress", ""),
+                StorePhone = StoreSettingsService.Get("StorePhone", ""),
+                StoreEmail = StoreSettingsService.Get("StoreEmail", ""),
+                ReceiptFooter = StoreSettingsService.Get("ReceiptFooter", "Thank you for your business!"),
+                LogoPath = StoreSettingsService.Get("LogoPath", ""),
+                Subtotal = _receipt.Subtotal,
+                Tax = _receipt.Tax,
+                Total = _receipt.Total,
+                Lines = _items.Select(i => new ReceiptLineItem
+                {
+                    SKU = i.SKU,
+                    Name = i.Name,
+                    Attribute = i.Attribute,
+                    Size = i.Size,
+                    Qty = i.Qty,
+                    UnitPrice = i.UnitPrice,
+                    LineTotal = i.LineTotal,
+                    TaxCode = i.TaxCode,
+                }).ToList(),
+                Payments = new List<ReceiptPaymentLine>
+                {
+                    new() { Label = _receipt.PaymentMethod, Amount = _receipt.Total }
+                },
             };
 
-            // Header
-            doc.Blocks.Add(MakePara("HELD RECEIPT - REPRINT", 14, FontWeights.Bold, TextAlignment.Center));
-            doc.Blocks.Add(MakePara($"Date: {_receipt.HeldAt:MM/dd/yyyy HH:mm}", 11, FontWeights.Normal, TextAlignment.Center));
-            if (!string.IsNullOrWhiteSpace(_receipt.Cashier))
-                doc.Blocks.Add(MakePara($"Cashier: {_receipt.Cashier}", 11, FontWeights.Normal, TextAlignment.Center));
-            doc.Blocks.Add(MakePara(new string('-', 40), 11, FontWeights.Normal, TextAlignment.Left));
+            var owner = Window.GetWindow(this);
+            var printWin = new PrintReceiptWindow(receiptNumber, showDigitalOption: true) { Owner = owner };
+            printWin.ShowDialog();
 
-            // Column headers
-            doc.Blocks.Add(MakePara(
-                $"{"Item",-22} {"Qty",4} {"Price",8} {"Total",8}",
-                10, FontWeights.Bold, TextAlignment.Left));
-            doc.Blocks.Add(MakePara(new string('-', 40), 10, FontWeights.Normal, TextAlignment.Left));
-
-            // Line items
-            foreach (var item in _items)
+            switch (printWin.Choice)
             {
-                var name = item.Name.Length > 22 ? item.Name[..22] : item.Name;
-                doc.Blocks.Add(MakePara(
-                    $"{name,-22} {item.Qty,4} {item.UnitPrice,8:N2} {item.LineTotal,8:N2}",
-                    10, FontWeights.Normal, TextAlignment.Left));
+                case PrintReceiptChoice.Print:
+                    ThermalReceiptPrinter.PrintReceipt(receipt, owner);
+                    break;
+                case PrintReceiptChoice.Preview:
+                    ThermalReceiptPrinter.PreviewReceipt(receipt, owner);
+                    break;
+                case PrintReceiptChoice.SendDigital:
+                    new SendReceiptWindow(receipt) { Owner = owner }.ShowDialog();
+                    break;
             }
-
-            doc.Blocks.Add(MakePara(new string('-', 40), 10, FontWeights.Normal, TextAlignment.Left));
-            doc.Blocks.Add(MakePara($"{"Subtotal:",-28} {_receipt.Subtotal,10:N2}", 11, FontWeights.Normal, TextAlignment.Left));
-            doc.Blocks.Add(MakePara($"{"Tax:",-28} {_receipt.Tax,10:N2}", 11, FontWeights.Normal, TextAlignment.Left));
-            doc.Blocks.Add(MakePara($"{"TOTAL:",-28} {_receipt.Total,10:N2}", 13, FontWeights.Bold, TextAlignment.Left));
-
-            // Print
-            var pd = new PrintDialog();
-            if (pd.ShowDialog() == true)
-            {
-                doc.PageWidth = pd.PrintableAreaWidth;
-                var paginator = ((IDocumentPaginatorSource)doc).DocumentPaginator;
-                pd.PrintDocument(paginator, "Held Receipt Reprint");
-            }
-        }
-
-        private static Paragraph MakePara(string text, double size,
-            FontWeight weight, TextAlignment align)
-        {
-            return new Paragraph(new Run(text))
-            {
-                FontSize = size,
-                FontWeight = weight,
-                TextAlignment = align,
-                Margin = new Thickness(0, 1, 0, 1)
-            };
         }
     }
 }

@@ -149,7 +149,22 @@ namespace PointofSale.Views
             try
             {
                 var receipt = BuildReceiptData(_selected);
-                new SendReceiptWindow(receipt) { Owner = this }.ShowDialog();
+
+                var printWin = new PrintReceiptWindow(receipt.ReceiptNumber, showDigitalOption: true) { Owner = this };
+                printWin.ShowDialog();
+
+                switch (printWin.Choice)
+                {
+                    case PrintReceiptChoice.Print:
+                        Services.ThermalReceiptPrinter.PrintReceipt(receipt, this);
+                        break;
+                    case PrintReceiptChoice.Preview:
+                        Services.ThermalReceiptPrinter.PreviewReceipt(receipt, this);
+                        break;
+                    case PrintReceiptChoice.SendDigital:
+                        new SendReceiptWindow(receipt) { Owner = this }.ShowDialog();
+                        break;
+                }
             }
             catch (Exception ex)
             {
@@ -227,9 +242,11 @@ namespace PointofSale.Views
                 Cashier = sale.Cashier,
                 CustomerName = sale.CustomerName,
                 StoreName = StoreSettingsService.Get("StoreName", "My Store"),
-                StoreAddress = StoreSettingsService.Get("StoreAddress"),
-                StorePhone = StoreSettingsService.Get("StorePhone"),
-                StoreEmail = StoreSettingsService.Get("StoreEmail"),
+                StoreAddress = StoreSettingsService.Get("StoreAddress", ""),
+                StorePhone = StoreSettingsService.Get("StorePhone", ""),
+                StoreEmail = StoreSettingsService.Get("StoreEmail", ""),
+                ReceiptFooter = StoreSettingsService.Get("ReceiptFooter", "Thank you for your business!"),
+                LogoPath = StoreSettingsService.Get("LogoPath", ""),
                 Subtotal = sale.Subtotal,
                 Tax = sale.Tax,
                 Total = sale.Total,

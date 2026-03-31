@@ -181,3 +181,7 @@ D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\Views\ManagerOverrideWin
 D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\Views\ManagerOverrideWindow.g.cs
 D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\Views\ReturnItemWindow.baml
 D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\Views\ReturnItemWindow.g.cs
+D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\Views\PrintReceiptWindow.baml
+D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\Views\PrintReceiptWindow.g.cs
+D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\Views\DevPanelWindow.baml
+D:\POS\PointofSale\PointofSale\obj\Debug\net8.0-windows\Views\DevPanelWindow.g.cs

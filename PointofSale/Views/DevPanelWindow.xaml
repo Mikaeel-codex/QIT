@@ -1,0 +1,568 @@
+﻿<Window x:Class="PointofSale.Views.DevPanelWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="⚙ Developer Panel — Quick Inventory Till"
+        Width="780" Height="680"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize"
+        Background="#0D0D0D">
+
+    <Window.Resources>
+
+        <Style x:Key="SectionHeader" TargetType="TextBlock">
+            <Setter Property="Foreground"  Value="#F4C542"/>
+            <Setter Property="FontSize"    Value="11"/>
+            <Setter Property="FontWeight"  Value="Bold"/>
+            <Setter Property="Margin"      Value="0,16,0,8"/>
+        </Style>
+
+        <Style x:Key="DevLabel" TargetType="TextBlock">
+            <Setter Property="Foreground"          Value="#CCCCCC"/>
+            <Setter Property="FontSize"            Value="12"/>
+            <Setter Property="VerticalAlignment"   Value="Center"/>
+        </Style>
+
+        <Style x:Key="DevInput" TargetType="TextBox">
+            <Setter Property="Background"               Value="#1A1A1A"/>
+            <Setter Property="Foreground"               Value="White"/>
+            <Setter Property="BorderBrush"              Value="#333333"/>
+            <Setter Property="BorderThickness"          Value="1"/>
+            <Setter Property="Height"                   Value="28"/>
+            <Setter Property="Padding"                  Value="6,2"/>
+            <Setter Property="FontSize"                 Value="12"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+
+        <Style x:Key="DevToggle" TargetType="CheckBox">
+            <Setter Property="Foreground" Value="#CCCCCC"/>
+            <Setter Property="FontSize"   Value="12"/>
+            <Setter Property="Margin"     Value="0,4,0,4"/>
+        </Style>
+
+        <Style x:Key="FlagNote" TargetType="TextBlock">
+            <Setter Property="Foreground"   Value="#555555"/>
+            <Setter Property="FontSize"     Value="10"/>
+            <Setter Property="Margin"       Value="20,0,0,8"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+        </Style>
+
+        <Style x:Key="DevBtn" TargetType="Button">
+            <Setter Property="Background"      Value="#222222"/>
+            <Setter Property="Foreground"      Value="#CCCCCC"/>
+            <Setter Property="BorderBrush"     Value="#444444"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Height"          Value="30"/>
+            <Setter Property="Padding"         Value="14,0"/>
+            <Setter Property="FontSize"        Value="12"/>
+            <Setter Property="Cursor"          Value="Hand"/>
+        </Style>
+
+        <Style x:Key="DangerBtn" TargetType="Button">
+            <Setter Property="Background"      Value="#3A0000"/>
+            <Setter Property="Foreground"      Value="#FF6B6B"/>
+            <Setter Property="BorderBrush"     Value="#660000"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Height"          Value="30"/>
+            <Setter Property="Padding"         Value="14,0"/>
+            <Setter Property="FontSize"        Value="12"/>
+            <Setter Property="Cursor"          Value="Hand"/>
+        </Style>
+
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header bar -->
+        <Border Grid.Row="0"
+                Background="#111111"
+                BorderBrush="#F4C542"
+                BorderThickness="0,0,0,1"
+                Padding="16,10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel>
+                    <TextBlock Text="⚙  Developer Panel"
+                               Foreground="#F4C542" FontSize="16" FontWeight="Bold"/>
+                    <TextBlock Text="Internal use only — not visible to clients"
+                               Foreground="#666666" FontSize="10" Margin="0,2,0,0"/>
+                </StackPanel>
+                <TextBlock Grid.Column="1"
+                           x:Name="ClientIdTxt"
+                           Foreground="#444444" FontSize="10"
+                           VerticalAlignment="Center"/>
+            </Grid>
+        </Border>
+
+        <!-- Tabs -->
+        <TabControl Grid.Row="1"
+                    Background="#0D0D0D"
+                    BorderBrush="#222222">
+
+            <TabControl.Resources>
+                <Style TargetType="TabItem">
+                    <Setter Property="Background"  Value="#111111"/>
+                    <Setter Property="Foreground"  Value="#888888"/>
+                    <Setter Property="FontSize"    Value="12"/>
+                    <Setter Property="Padding"     Value="12,6"/>
+                    <Setter Property="BorderBrush" Value="#222222"/>
+                    <Style.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Background" Value="#1A1A1A"/>
+                            <Setter Property="Foreground" Value="#F4C542"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </TabControl.Resources>
+
+            <!-- ── TAB 1: FEATURES ── -->
+            <TabItem Header="🧩  Features">
+                <ScrollViewer Margin="16" VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+
+                        <TextBlock Style="{StaticResource SectionHeader}"
+                                   Text="MODULE VISIBILITY"/>
+                        <TextBlock Foreground="#555555" FontSize="10" Margin="0,0,0,16"
+                                   Text="Unchecking a module completely removes it — no trace left for the client."/>
+
+                        <!-- Customers -->
+                        <CheckBox x:Name="FeatureCustomers"
+                                  Content="Customers module"
+                                  Style="{StaticResource DevToggle}"/>
+                        <TextBlock Style="{StaticResource FlagNote}"
+                                   Text="Hides: Customers tile, customer search bar in POS, Account payment button."/>
+
+                        <!-- Inventory -->
+                        <CheckBox x:Name="FeatureInventory"
+                                  Content="Inventory (Products)"
+                                  Style="{StaticResource DevToggle}"/>
+                        <TextBlock Style="{StaticResource FlagNote}"
+                                   Text="Hides: Inventory tile."/>
+
+                        <!-- Receive Stock -->
+                        <CheckBox x:Name="FeatureReceiveStock"
+                                  Content="Receive Stock"
+                                  Style="{StaticResource DevToggle}"/>
+                        <TextBlock Style="{StaticResource FlagNote}"
+                                   Text="Hides: Receive Stock tile."/>
+
+                        <!-- Sales History -->
+                        <CheckBox x:Name="FeatureSalesHistory"
+                                  Content="Sales History"
+                                  Style="{StaticResource DevToggle}"/>
+                        <TextBlock Style="{StaticResource FlagNote}"
+                                   Text="Hides: Sales History tile."/>
+
+                        <!-- Reports -->
+                        <CheckBox x:Name="FeatureReports"
+                                  Content="Reports"
+                                  Style="{StaticResource DevToggle}"/>
+                        <TextBlock Style="{StaticResource FlagNote}"
+                                   Text="Hides: Reports tile."/>
+
+                        <!-- Suppliers -->
+                        <CheckBox x:Name="FeatureSuppliers"
+                                  Content="Suppliers"
+                                  Style="{StaticResource DevToggle}"/>
+                        <TextBlock Style="{StaticResource FlagNote}"
+                                   Text="Hides: Suppliers tile."/>
+
+                        <!-- Departments -->
+                        <CheckBox x:Name="FeatureDepartments"
+                                  Content="Departments"
+                                  Style="{StaticResource DevToggle}"/>
+                        <TextBlock Style="{StaticResource FlagNote}"
+                                   Text="Hides: Departments tile."/>
+
+                        <!-- End of Day -->
+                        <CheckBox x:Name="FeatureEndOfDay"
+                                  Content="End of Day"
+                                  Style="{StaticResource DevToggle}"/>
+                        <TextBlock Style="{StaticResource FlagNote}"
+                                   Text="Hides: End of Day tile."/>
+
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <!-- ── TAB 2: ADMIN ── -->
+            <TabItem Header="👤  Admin">
+                <ScrollViewer Margin="16" VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource SectionHeader}"
+                                   Text="CREATE ADMIN ACCOUNT"/>
+                        <TextBlock Foreground="#555555" FontSize="10" Margin="0,0,0,12"
+                                   Text="Quickly create an admin account for a new client deployment."/>
+
+                        <Grid Margin="0,0,0,8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="120"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Full Name" Style="{StaticResource DevLabel}"/>
+                            <TextBox x:Name="AdminFullNameBox"
+                                     Grid.Column="1" Style="{StaticResource DevInput}"/>
+                        </Grid>
+                        <Grid Margin="0,0,0,8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="120"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Username" Style="{StaticResource DevLabel}"/>
+                            <TextBox x:Name="AdminUsernameBox"
+                                     Grid.Column="1" Style="{StaticResource DevInput}"/>
+                        </Grid>
+                        <Grid Margin="0,0,0,16">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="120"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Password" Style="{StaticResource DevLabel}"/>
+                            <PasswordBox x:Name="AdminPasswordBox"
+                                         Grid.Column="1"
+                                         Height="28" Padding="6,2"
+                                         Background="#1A1A1A" Foreground="White"
+                                         BorderBrush="#333333" BorderThickness="1"/>
+                        </Grid>
+                        <Button Content="Create Admin Account"
+                                Style="{StaticResource DevBtn}"
+                                HorizontalAlignment="Left"
+                                Click="CreateAdminBtn_Click"/>
+
+                        <TextBlock Style="{StaticResource SectionHeader}"
+                                   Text="MASTER UNLOCK CODE"/>
+                        <TextBlock Foreground="#555555" FontSize="10" Margin="0,0,0,12"
+                                   Text="Used to bypass login lockout or emergency access."/>
+                        <Grid Margin="0,0,0,8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="120"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Master Code" Style="{StaticResource DevLabel}"/>
+                            <PasswordBox x:Name="MasterCodeBox"
+                                         Grid.Column="1"
+                                         Height="28" Padding="6,2"
+                                         Background="#1A1A1A" Foreground="White"
+                                         BorderBrush="#333333" BorderThickness="1"
+                                         Margin="0,0,8,0"/>
+                            <Button Content="Save" Grid.Column="2"
+                                    Style="{StaticResource DevBtn}"
+                                    Click="SaveMasterCodeBtn_Click"/>
+                        </Grid>
+
+                        <TextBlock Style="{StaticResource SectionHeader}"
+                                   Text="DEV SECRET CODE"/>
+                        <TextBlock Foreground="#555555" FontSize="10" Margin="0,0,0,12"
+                                   Text="The code required to open this panel (entered after Ctrl+Shift+D)."/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="120"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Dev Code" Style="{StaticResource DevLabel}"/>
+                            <PasswordBox x:Name="DevCodeBox"
+                                         Grid.Column="1"
+                                         Height="28" Padding="6,2"
+                                         Background="#1A1A1A" Foreground="White"
+                                         BorderBrush="#333333" BorderThickness="1"
+                                         Margin="0,0,8,0"/>
+                            <Button Content="Save" Grid.Column="2"
+                                    Style="{StaticResource DevBtn}"
+                                    Click="SaveDevCodeBtn_Click"/>
+                        </Grid>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <!-- ── TAB 3: BACKUP ── -->
+            <TabItem Header="💾  Backup">
+                <ScrollViewer Margin="16" VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource SectionHeader}"
+                                   Text="AUTO BACKUP"/>
+                        <Grid Margin="0,0,0,12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="200"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Auto backup every (hours):"
+                                       Style="{StaticResource DevLabel}"/>
+                            <TextBox x:Name="BackupIntervalBox"
+                                     Grid.Column="1" Style="{StaticResource DevInput}"
+                                     Margin="8,0,8,0"/>
+                            <Button Content="Save" Grid.Column="2"
+                                    Style="{StaticResource DevBtn}"
+                                    Click="SaveBackupIntervalBtn_Click"/>
+                        </Grid>
+                        <TextBlock x:Name="LastBackupTxt"
+                                   Foreground="#555555" FontSize="10"
+                                   Margin="0,0,0,16"/>
+
+                        <TextBlock Style="{StaticResource SectionHeader}"
+                                   Text="MANUAL BACKUP &amp; RESTORE"/>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                            <Button Content="📦  Backup Now"
+                                    Style="{StaticResource DevBtn}"
+                                    Margin="0,0,12,0"
+                                    Click="BackupNowBtn_Click"/>
+                            <Button Content="🔄  Restore from Backup"
+                                    Style="{StaticResource DevBtn}"
+                                    Click="RestoreBackupBtn_Click"/>
+                        </StackPanel>
+                        <TextBlock x:Name="BackupStatusTxt"
+                                   Foreground="#4CAF50" FontSize="11"
+                                   Margin="0,8,0,0" Visibility="Collapsed"/>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <!-- ── TAB 4: CURRENCY ── -->
+            <TabItem Header="💱  Currency">
+                <ScrollViewer Margin="16" VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource SectionHeader}"
+                                   Text="CURRENCY SETTINGS"/>
+                        <TextBlock Foreground="#555555" FontSize="10" Margin="0,0,0,16"
+                                   Text="Controls how prices are displayed throughout the system."/>
+
+                        <Grid Margin="0,0,0,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="160"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Currency Symbol (e.g. R)"
+                                       Style="{StaticResource DevLabel}"/>
+                            <TextBox x:Name="CurrencySymbolBox"
+                                     Grid.Column="1" Style="{StaticResource DevInput}"
+                                     MaxLength="5"/>
+                        </Grid>
+                        <Grid Margin="0,0,0,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="160"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Currency Code (e.g. ZAR)"
+                                       Style="{StaticResource DevLabel}"/>
+                            <TextBox x:Name="CurrencyCodeBox"
+                                     Grid.Column="1" Style="{StaticResource DevInput}"
+                                     MaxLength="5"/>
+                        </Grid>
+                        <Grid Margin="0,0,0,16">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="160"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Decimal Places (0–4)"
+                                       Style="{StaticResource DevLabel}"/>
+                            <ComboBox x:Name="DecimalPlacesBox"
+                                      Grid.Column="1"
+                                      Height="28" Padding="6,2"
+                                      Background="#1A1A1A" Foreground="White"
+                                      BorderBrush="#333333">
+                                <ComboBoxItem Content="0"/>
+                                <ComboBoxItem Content="1"/>
+                                <ComboBoxItem Content="2" IsSelected="True"/>
+                                <ComboBoxItem Content="3"/>
+                                <ComboBoxItem Content="4"/>
+                            </ComboBox>
+                        </Grid>
+                        <Button Content="Save Currency Settings"
+                                Style="{StaticResource DevBtn}"
+                                HorizontalAlignment="Left"
+                                Click="SaveCurrencyBtn_Click"/>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <!-- ── TAB 5: ANALYTICS ── -->
+            <TabItem Header="📊  Analytics">
+                <ScrollViewer Margin="16" VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource SectionHeader}"
+                                   Text="USAGE ANALYTICS"/>
+                        <TextBlock Foreground="#555555" FontSize="10" Margin="0,0,0,16"
+                                   Text="Tracks usage for billing and support purposes."/>
+
+                        <CheckBox x:Name="AnalyticsEnabledCheck"
+                                  Content="Enable usage analytics"
+                                  Style="{StaticResource DevToggle}"
+                                  Margin="0,0,0,12"/>
+
+                        <Grid Margin="0,0,0,8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="140"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Client ID" Style="{StaticResource DevLabel}"/>
+                            <TextBox x:Name="ClientIdBox"
+                                     Grid.Column="1" Style="{StaticResource DevInput}"
+                                     IsReadOnly="True" Foreground="#888888"/>
+                        </Grid>
+
+                        <TextBlock x:Name="AnalyticsStatsTxt"
+                                   Foreground="#888888" FontSize="11"
+                                   Margin="0,12,0,0" TextWrapping="Wrap"/>
+
+                        <Button Content="Refresh Stats"
+                                Style="{StaticResource DevBtn}"
+                                HorizontalAlignment="Left"
+                                Margin="0,12,0,0"
+                                Click="RefreshStatsBtn_Click"/>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <!-- ── TAB 6: REMOTE CONFIG ── -->
+            <TabItem Header="🌐  Remote">
+                <ScrollViewer Margin="16" VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource SectionHeader}"
+                                   Text="REMOTE CONFIGURATION"/>
+                        <TextBlock Foreground="#555555" FontSize="10" Margin="0,0,0,16"
+                                   Text="Push config updates to this client without physical access."/>
+
+                        <CheckBox x:Name="RemoteEnabledCheck"
+                                  Content="Enable remote config sync"
+                                  Style="{StaticResource DevToggle}"
+                                  Margin="0,0,0,12"/>
+
+                        <Grid Margin="0,0,0,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="140"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Config URL" Style="{StaticResource DevLabel}"/>
+                            <TextBox x:Name="RemoteUrlBox"
+                                     Grid.Column="1" Style="{StaticResource DevInput}"
+                                     Text="https://"/>
+                        </Grid>
+
+                        <TextBlock x:Name="RemoteLastSyncTxt"
+                                   Foreground="#555555" FontSize="10"
+                                   Margin="0,8,0,16"/>
+
+                        <StackPanel Orientation="Horizontal">
+                            <Button Content="Save &amp; Test Connection"
+                                    Style="{StaticResource DevBtn}"
+                                    Margin="0,0,12,0"
+                                    Click="SaveRemoteBtn_Click"/>
+                            <Button Content="Sync Now"
+                                    Style="{StaticResource DevBtn}"
+                                    Click="SyncNowBtn_Click"/>
+                        </StackPanel>
+
+                        <TextBlock x:Name="RemoteStatusTxt"
+                                   Foreground="#4CAF50" FontSize="11"
+                                   Margin="0,10,0,0" Visibility="Collapsed"/>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <!-- ── TAB 7: DANGER ZONE ── -->
+            <TabItem Header="⚠  Danger">
+                <ScrollViewer Margin="16" VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource SectionHeader}"
+                                   Text="DANGER ZONE"/>
+                        <TextBlock Foreground="#FF6B6B" FontSize="11"
+                                   TextWrapping="Wrap" Margin="0,0,0,20"
+                                   Text="All actions below are irreversible. Each requires your master dev code."/>
+
+                        <Border Background="#1A0000" BorderBrush="#440000"
+                                BorderThickness="1" CornerRadius="4"
+                                Padding="12" Margin="0,0,0,12">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel>
+                                    <TextBlock Text="Reset Database"
+                                               Foreground="#FF6B6B" FontWeight="Bold"/>
+                                    <TextBlock Text="Deletes all sales, products, customers and users. Keeps settings."
+                                               Foreground="#888888" FontSize="10"
+                                               TextWrapping="Wrap" Margin="0,4,0,0"/>
+                                </StackPanel>
+                                <Button Grid.Column="1" Content="Reset Data"
+                                        Style="{StaticResource DangerBtn}"
+                                        VerticalAlignment="Center"
+                                        Click="ResetDatabaseBtn_Click"/>
+                            </Grid>
+                        </Border>
+
+                        <Border Background="#1A0000" BorderBrush="#440000"
+                                BorderThickness="1" CornerRadius="4"
+                                Padding="12" Margin="0,0,0,12">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel>
+                                    <TextBlock Text="Factory Reset"
+                                               Foreground="#FF6B6B" FontWeight="Bold"/>
+                                    <TextBlock Text="Wipes everything including all settings. Returns to fresh install state."
+                                               Foreground="#888888" FontSize="10"
+                                               TextWrapping="Wrap" Margin="0,4,0,0"/>
+                                </StackPanel>
+                                <Button Grid.Column="1" Content="Factory Reset"
+                                        Style="{StaticResource DangerBtn}"
+                                        VerticalAlignment="Center"
+                                        Click="FactoryResetBtn_Click"/>
+                            </Grid>
+                        </Border>
+
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+        </TabControl>
+
+        <!-- Footer -->
+        <Border Grid.Row="2"
+                Background="#111111"
+                BorderBrush="#222222"
+                BorderThickness="0,1,0,0"
+                Padding="16,10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="8"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock x:Name="StatusTxt"
+                           Foreground="#4CAF50" FontSize="11"
+                           VerticalAlignment="Center"
+                           Visibility="Collapsed"/>
+
+                <Button Grid.Column="1"
+                        Content="Save All"
+                        Width="100" Height="30"
+                        Background="#F4C542" Foreground="#111111"
+                        BorderThickness="0" FontWeight="Bold"
+                        Cursor="Hand"
+                        Click="SaveAllBtn_Click"/>
+
+                <Button Grid.Column="3"
+                        Content="Close"
+                        Width="80" Height="30"
+                        Background="#222222" Foreground="#CCCCCC"
+                        BorderBrush="#444444" BorderThickness="1"
+                        Cursor="Hand"
+                        Click="CloseBtn_Click"/>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>
