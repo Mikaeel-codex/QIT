@@ -35,10 +35,21 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="icon\" />
-  </ItemGroup>
+    <Resource Include="icons\Make A sale.png" />
+    <Resource Include="icons\Held Receipts.png" />
+    <Resource Include="icons\sales History.png" />
+    <Resource Include="icons\Inventory.png" />
+    <Resource Include="icons\Receive stock.png" />
+    <Resource Include="icons\Customers.png" />
+    <Resource Include="icons\Emplyees.png" />
+    <Resource Include="icons\Report.png" />
+    <Resource Include="icons\End of Day.png" />
+    <Resource Include="icons\manufacture.png" />
+    <Resource Include="icons\Department.png" />
+    <Resource Include="icons\settings.png" />
+    <Resource Include="icons\Sales Order.png" />
+    <Resource Include="icons\Sales Order List.png" />
 
-  <ItemGroup>
     <Resource Include="QIT Logo.png" />
     <Resource Include="Views\QIT Logo.png" />
   </ItemGroup>

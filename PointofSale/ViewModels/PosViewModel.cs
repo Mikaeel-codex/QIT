@@ -118,6 +118,7 @@ namespace PointofSale.ViewModels
                     .Where(t => t != null && t != "")
                     .Distinct()
                     .OrderBy(t => t)
+                    .Select(t => t!)
                     .ToList();
 
                 foreach (var standard in new[] { "No Tax", "Tax", "5%", "7.5%", "10%", "15%", "20%" })
@@ -513,7 +514,7 @@ namespace PointofSale.ViewModels
                     ReceiptNumber = sale.Id.ToString(),
                     SaleDate = sale.SaleDate,
                     Cashier = cashierName,
-                    CustomerName = CustomerSearchText,
+                    CustomerName = CustomerSearchText ?? "",
                     Subtotal = Subtotal,
                     Tax = Tax,
                     Total = Total,

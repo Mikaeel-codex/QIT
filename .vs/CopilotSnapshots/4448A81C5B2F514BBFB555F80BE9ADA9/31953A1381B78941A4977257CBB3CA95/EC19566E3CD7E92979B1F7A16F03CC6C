@@ -1,0 +1,520 @@
+﻿using PointofSale.Data;
+using PointofSale.Models;
+using PointofSale.Services;
+using System;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+
+namespace PointofSale.Views
+{
+    public partial class SalesOrderWindow : Window
+    {
+        private readonly AppUser _currentUser;
+        private int? _quoteId;  // null = new quote, not null = editing existing
+
+        private readonly ObservableCollection<QuoteLineItem> _lines = new();
+
+        public SalesOrderWindow(AppUser user, int? existingQuoteId = null)
+        {
+            InitializeComponent();
+            _currentUser = user;
+            _quoteId = existingQuoteId;
+
+            UserLabelTxt.Text = $"{_currentUser.Role}: {_currentUser.Username}";
+            QuoteGrid.ItemsSource = _lines;
+            _lines.CollectionChanged += (_, _) => RefreshTotals();
+
+            ExpiryDatePicker.SelectedDate = DateTime.Today.AddDays(
+                int.TryParse(StoreSettingsService.Get("QuoteExpiryDays", "30"), out var d) ? d : 30);
+
+            if (_quoteId != null)
+                LoadExistingQuote();
+            else
+                InitNewQuote();
+
+            RefreshActionButtons();
+        }
+
+        // ── Init ──────────────────────────────────────────────────────────
+        private void InitNewQuote()
+        {
+            QuoteNumberTxt.Text = "(new)";
+            StatusTxt.Text = "Draft";
+            StatusTxt.Foreground = System.Windows.Media.Brushes.Gray;
+        }
+
+        private void LoadExistingQuote()
+        {
+            using var db = new AppDbContext();
+            var q = db.Quotes.FirstOrDefault(x => x.Id == _quoteId!.Value);
+            if (q == null) { MessageBox.Show("Quote not found."); Close(); return; }
+
+            QuoteNumberTxt.Text = q.QuoteNumber;
+            CustomerNameBox.Text = q.CustomerName;
+            CustomerPhoneBox.Text = q.CustomerPhone;
+            CustomerEmailBox.Text = q.CustomerEmail;
+            NotesBox.Text = q.Notes;
+            ExpiryDatePicker.SelectedDate = q.ExpiresAt;
+
+            // Load items
+            var items = db.QuoteItems.Where(i => i.QuoteId == q.Id).ToList();
+            foreach (var item in items)
+            {
+                _lines.Add(new QuoteLineItem
+                {
+                    ProductId = item.ProductId,
+                    SKU = item.SKU,
+                    Name = item.Name,
+                    Size = item.Size,
+                    Attribute = item.Attribute,
+                    Qty = item.Qty,
+                    UnitPrice = item.UnitPrice,
+                    LineTotal = item.LineTotal,
+                    TaxCode = item.TaxCode,
+                    DiscountPct = item.DiscountPct,
+                });
+            }
+
+            SetStatus(q.Status);
+        }
+
+        // ── Product scan ──────────────────────────────────────────────────
+        private void ScanBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            var query = ScanBox.Text.Trim();
+            if (string.IsNullOrWhiteSpace(query)) { ProductPopup.IsOpen = false; return; }
+
+            using var db = new AppDbContext();
+            var results = db.Products
+                .Where(p => p.Name.Contains(query) || p.SKU.Contains(query) || p.ALU.Contains(query))
+                .OrderBy(p => p.Name)
+                .Take(20)
+                .ToList();
+
+            ProductList.ItemsSource = results;
+            ProductPopup.IsOpen = results.Count > 0;
+        }
+
+        private void ScanBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                // Try exact SKU match first
+                var sku = ScanBox.Text.Trim();
+                using var db = new AppDbContext();
+                var p = db.Products.FirstOrDefault(x => x.SKU == sku || x.ALU == sku);
+                if (p != null) { AddProduct(p); ScanBox.Clear(); }
+                else if (ProductList.Items.Count > 0) ProductList.Focus();
+            }
+            else if (e.Key == Key.Down && ProductPopup.IsOpen)
+            {
+                ProductList.Focus();
+                if (ProductList.Items.Count > 0) ProductList.SelectedIndex = 0;
+                e.Handled = true;
+            }
+            else if (e.Key == Key.Escape)
+            {
+                ProductPopup.IsOpen = false;
+            }
+        }
+
+        private void ScanDropdown_Click(object sender, RoutedEventArgs e)
+        {
+            using var db = new AppDbContext();
+            ProductList.ItemsSource = db.Products.OrderBy(p => p.Name).Take(50).ToList();
+            ProductPopup.IsOpen = true;
+            ScanBox.Focus();
+        }
+
+        private void ProductList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (ProductList.SelectedItem is Product p)
+            {
+                AddProduct(p);
+                ScanBox.Clear();
+                ProductPopup.IsOpen = false;
+            }
+        }
+
+        private void ProductList_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter && ProductList.SelectedItem is Product p)
+            {
+                AddProduct(p);
+                ScanBox.Clear();
+                ProductPopup.IsOpen = false;
+                ScanBox.Focus();
+                e.Handled = true;
+            }
+            else if (e.Key == Key.Escape)
+            {
+                ProductPopup.IsOpen = false;
+                ScanBox.Focus();
+            }
+        }
+
+        private void AddProduct(Product p)
+        {
+            var existing = _lines.FirstOrDefault(l => l.ProductId == p.Id);
+            if (existing != null)
+            {
+                existing.Qty++;
+                existing.LineTotal = existing.Qty * existing.UnitPrice;
+            }
+            else
+            {
+                _lines.Add(new QuoteLineItem
+                {
+                    ProductId = p.Id,
+                    SKU = p.SKU ?? "",
+                    Name = p.Name,
+                    Size = p.Size ?? "",
+                    Attribute = p.Attribute ?? "",
+                    Qty = 1,
+                    UnitPrice = p.Price,
+                    LineTotal = p.Price,
+                    TaxCode = p.Tax ?? "No Tax",
+                    DiscountPct = 0,
+                });
+            }
+            RefreshTotals();
+        }
+
+        private void RemoveLine_Click(object sender, RoutedEventArgs e)
+        {
+            if (QuoteGrid.SelectedItem is QuoteLineItem line)
+                _lines.Remove(line);
+        }
+
+        // ── Totals ────────────────────────────────────────────────────────
+        private void RefreshTotals()
+        {
+            // Recalculate line totals respecting discount
+            foreach (var l in _lines)
+            {
+                var discounted = l.UnitPrice * (1 - l.DiscountPct / 100m);
+                l.LineTotal = Math.Round(discounted * l.Qty, 2);
+            }
+
+            var subtotal = _lines.Sum(l => l.LineTotal);
+            var tax = Math.Round(_lines.Sum(l =>
+                l.TaxCode.Contains("15") ? l.LineTotal * 0.15m : 0m), 2);
+            var total = subtotal + tax;
+
+            SubtotalTxt.Text = $"R {subtotal:N2}";
+            TaxTxt.Text = $"R {tax:N2}";
+            TotalTxt.Text = $"R {total:N2}";
+        }
+
+        // ── Status helpers ────────────────────────────────────────────────
+        private void SetStatus(string status)
+        {
+            StatusTxt.Text = status;
+            StatusTxt.Foreground = status switch
+            {
+                "Draft" => System.Windows.Media.Brushes.Gray,
+                "Pending" => System.Windows.Media.Brushes.Orange,
+                "Approved" => System.Windows.Media.Brushes.LightGreen,
+                "Accepted" => System.Windows.Media.Brushes.LightBlue,
+                "Rejected" => System.Windows.Media.Brushes.OrangeRed,
+                "Expired" => System.Windows.Media.Brushes.DimGray,
+                "Converted" => System.Windows.Media.Brushes.Gold,
+                _ => System.Windows.Media.Brushes.White,
+            };
+        }
+
+        private void RefreshActionButtons()
+        {
+            var isAdmin = _currentUser.Role == "Admin" || _currentUser.Role == "Co-Admin";
+            var status = StatusTxt.Text;
+
+            // Cashier can only: Save Draft, Submit for Approval, Cancel Quote
+            SubmitBtn.Visibility = (status == "Draft") ? Visibility.Visible : Visibility.Collapsed;
+
+            // Admin-only buttons
+            ApproveBtn.Visibility = (isAdmin && status == "Pending") ? Visibility.Visible : Visibility.Collapsed;
+            RejectBtn.Visibility = (isAdmin && status == "Pending") ? Visibility.Visible : Visibility.Collapsed;
+            ConvertBtn.Visibility = (isAdmin && status == "Accepted") ? Visibility.Visible : Visibility.Collapsed;
+
+            // Print/Send only available after admin approval
+            PrintBtn.Visibility = (status == "Approved" || status == "Accepted") ? Visibility.Visible : Visibility.Collapsed;
+            SendBtn.Visibility = (status == "Approved" || status == "Accepted") ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        // ── Action handlers ───────────────────────────────────────────────
+        private void SaveDraft_Click(object sender, RoutedEventArgs e)
+        {
+            var id = SaveQuoteToDb("Draft");
+            if (id > 0)
+            {
+                _quoteId = id;
+                MessageBox.Show("Quote saved as draft.", "Saved",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+        }
+
+        private void SubmitApproval_Click(object sender, RoutedEventArgs e)
+        {
+            if (_lines.Count == 0)
+            { MessageBox.Show("Add at least one item before submitting."); return; }
+
+            var id = SaveQuoteToDb("Pending");
+            if (id > 0)
+            {
+                _quoteId = id;
+                SetStatus("Pending");
+                RefreshActionButtons();
+                MessageBox.Show("Quote submitted for admin approval.\nYou will be notified when it is approved.",
+                    "Submitted", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+        }
+
+        private void ApproveBtn_Click(object sender, RoutedEventArgs e)
+        {
+            UpdateQuoteStatus("Approved");
+            SetStatus("Approved");
+            RefreshActionButtons();
+            MessageBox.Show("Quote approved. Cashier can now print or send it.",
+                "Approved", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        private void RejectBtn_Click(object sender, RoutedEventArgs e)
+        {
+            UpdateQuoteStatus("Rejected");
+            SetStatus("Rejected");
+            RefreshActionButtons();
+            MessageBox.Show("Quote rejected.", "Rejected",
+                MessageBoxButton.OK, MessageBoxImage.Warning);
+        }
+
+        private void PrintBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (_quoteId == null) { MessageBox.Show("Save the quote first."); return; }
+
+            // Log the print action
+            LogPrintAction("Print");
+
+            // Build quote data and print
+            var data = BuildQuoteData();
+            QuotePrinter.PrintQuote(data, this);
+        }
+
+        private void SendBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (_quoteId == null) { MessageBox.Show("Save the quote first."); return; }
+
+            LogPrintAction("Send");
+
+            var data = BuildQuoteData();
+            var win = new SendQuoteWindow(data) { Owner = this };
+            win.ShowDialog();
+        }
+
+        private void ConvertBtn_Click(object sender, RoutedEventArgs e)
+        {
+            var confirm = MessageBox.Show(
+                "Mark this quote as Accepted?\n\nThe cashier can then process the payment at the POS.",
+                "Convert Quote",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
+
+            if (confirm != MessageBoxResult.Yes) return;
+
+            UpdateQuoteStatus("Accepted");
+            SetStatus("Accepted");
+            RefreshActionButtons();
+            MessageBox.Show("Quote marked as Accepted.\nCashier can now process payment at the POS.",
+                "Converted", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        private void CancelQuote_Click(object sender, RoutedEventArgs e)
+        {
+            var confirm = MessageBox.Show("Discard this quote?", "Confirm",
+                MessageBoxButton.YesNo, MessageBoxImage.Warning);
+            if (confirm == MessageBoxResult.Yes)
+                Close();
+        }
+
+        private void HomeBtn_Click(object sender, RoutedEventArgs e) => Close();
+
+        // ── DB helpers ────────────────────────────────────────────────────
+        private int SaveQuoteToDb(string status)
+        {
+            try
+            {
+                using var db = new AppDbContext();
+
+                Quote q;
+                if (_quoteId == null)
+                {
+                    // Generate quote number
+                    var prefix = StoreSettingsService.Get("QuotePrefix", "QTE");
+                    var nextNo = int.TryParse(StoreSettingsService.Get("NextQuoteNumber", "1"), out var n) ? n : 1;
+                    var qNo = $"{prefix}-{nextNo:D4}";
+                    StoreSettingsService.Set("NextQuoteNumber", (nextNo + 1).ToString());
+
+                    q = new Quote { QuoteNumber = qNo, CreatedBy = _currentUser.Username };
+                    db.Quotes.Add(q);
+                }
+                else
+                {
+                    q = db.Quotes.First(x => x.Id == _quoteId.Value);
+                    // Remove old items
+                    var old = db.QuoteItems.Where(i => i.QuoteId == q.Id).ToList();
+                    db.QuoteItems.RemoveRange(old);
+                }
+
+                q.Status = status;
+                q.CustomerName = CustomerNameBox.Text.Trim();
+                q.CustomerPhone = CustomerPhoneBox.Text.Trim();
+                q.CustomerEmail = CustomerEmailBox.Text.Trim();
+                q.Notes = NotesBox.Text.Trim();
+                q.ExpiresAt = ExpiryDatePicker.SelectedDate ?? DateTime.Today.AddDays(30);
+
+                // Recalc totals
+                var sub = _lines.Sum(l => l.LineTotal);
+                var tax = Math.Round(_lines.Sum(l =>
+                    l.TaxCode.Contains("15") ? l.LineTotal * 0.15m : 0m), 2);
+                q.Subtotal = sub;
+                q.Tax = tax;
+                q.Total = sub + tax;
+
+                // Add items
+                foreach (var line in _lines)
+                {
+                    db.QuoteItems.Add(new QuoteItem
+                    {
+                        QuoteId = q.Id,
+                        ProductId = line.ProductId,
+                        SKU = line.SKU,
+                        Name = line.Name,
+                        Size = line.Size,
+                        Attribute = line.Attribute,
+                        Qty = line.Qty,
+                        UnitPrice = line.UnitPrice,
+                        LineTotal = line.LineTotal,
+                        TaxCode = line.TaxCode,
+                        DiscountPct = line.DiscountPct,
+                    });
+                }
+
+                db.SaveChanges();
+                QuoteNumberTxt.Text = q.QuoteNumber;
+                return q.Id;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error saving quote: {ex.Message}");
+                return -1;
+            }
+        }
+
+        private void UpdateQuoteStatus(string status)
+        {
+            if (_quoteId == null) return;
+            using var db = new AppDbContext();
+            var q = db.Quotes.First(x => x.Id == _quoteId.Value);
+            q.Status = status;
+
+            if (status == "Approved")
+            {
+                q.ApprovedBy = _currentUser.Username;
+                q.ApprovedAt = DateTime.Now;
+            }
+
+            db.SaveChanges();
+        }
+
+        private void LogPrintAction(string action)
+        {
+            if (_quoteId == null) return;
+            using var db = new AppDbContext();
+            var q = db.Quotes.First(x => x.Id == _quoteId.Value);
+            var entry = $"{DateTime.Now:yyyy-MM-dd HH:mm}|{_currentUser.Username}|{action}";
+            q.PrintLog = string.IsNullOrWhiteSpace(q.PrintLog)
+                ? entry
+                : q.PrintLog + "|" + entry;
+            db.SaveChanges();
+        }
+
+        private QuoteData BuildQuoteData()
+        {
+            return new QuoteData
+            {
+                QuoteNumber = QuoteNumberTxt.Text,
+                CreatedAt = DateTime.Now,
+                ExpiresAt = ExpiryDatePicker.SelectedDate ?? DateTime.Today.AddDays(30),
+                CustomerName = CustomerNameBox.Text.Trim(),
+                CustomerPhone = CustomerPhoneBox.Text.Trim(),
+                CustomerEmail = CustomerEmailBox.Text.Trim(),
+                Notes = NotesBox.Text.Trim(),
+                CreatedBy = _currentUser.Username,
+                StoreName = StoreSettingsService.Get("StoreName", "My Store"),
+                StoreAddress = StoreSettingsService.Get("StoreAddress", ""),
+                StorePhone = StoreSettingsService.Get("StorePhone", ""),
+                Subtotal = _lines.Sum(l => l.LineTotal),
+                Tax = Math.Round(_lines.Sum(l =>
+                    l.TaxCode.Contains("15") ? l.LineTotal * 0.15m : 0m), 2),
+                Total = _lines.Sum(l => l.LineTotal) + Math.Round(_lines.Sum(l =>
+                    l.TaxCode.Contains("15") ? l.LineTotal * 0.15m : 0m), 2),
+                Lines = _lines.Select(l => new QuoteLineData
+                {
+                    Name = l.Name,
+                    SKU = l.SKU,
+                    Size = l.Size,
+                    Attribute = l.Attribute,
+                    Qty = l.Qty,
+                    UnitPrice = l.UnitPrice,
+                    LineTotal = l.LineTotal,
+                    DiscountPct = l.DiscountPct,
+                    TaxCode = l.TaxCode,
+                }).ToList(),
+            };
+        }
+    }
+
+    // ── Line item view model ──────────────────────────────────────────────
+    public class QuoteLineItem : System.ComponentModel.INotifyPropertyChanged
+    {
+        public int ProductId { get; set; }
+        public string SKU { get; set; } = "";
+        public string Name { get; set; } = "";
+        public string Size { get; set; } = "";
+        public string Attribute { get; set; } = "";
+        public string TaxCode { get; set; } = "";
+
+        private int _qty;
+        public int Qty
+        {
+            get => _qty;
+            set { _qty = value; OnPropertyChanged(nameof(Qty)); }
+        }
+
+        private decimal _unitPrice;
+        public decimal UnitPrice
+        {
+            get => _unitPrice;
+            set { _unitPrice = value; OnPropertyChanged(nameof(UnitPrice)); }
+        }
+
+        private decimal _discountPct;
+        public decimal DiscountPct
+        {
+            get => _discountPct;
+            set { _discountPct = value; OnPropertyChanged(nameof(DiscountPct)); }
+        }
+
+        private decimal _lineTotal;
+        public decimal LineTotal
+        {
+            get => _lineTotal;
+            set { _lineTotal = value; OnPropertyChanged(nameof(LineTotal)); }
+        }
+
+        public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
+        protected void OnPropertyChanged(string name)
+            => PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(name));
+    }}}

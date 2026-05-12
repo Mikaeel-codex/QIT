@@ -14,6 +14,8 @@ namespace PointofSale.Models
         public string? Department { get; set; }
         public string? Description { get; set; }
         public string? Size { get; set; }
+        public string? Attribute { get; set; }
+        public string? ProductType { get; set; }
         public decimal CostPrice { get; set; }
         public string? Tax { get; set; }
         public string? ALU { get; set; }

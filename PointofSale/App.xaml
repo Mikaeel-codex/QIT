@@ -64,6 +64,24 @@
                 </Setter>
             </Style>
 
+            <Style x:Key="TileButton" TargetType="Button">
+                <Setter Property="Background"      Value="Transparent"/>
+                <Setter Property="Foreground"      Value="White"/>
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="Padding"         Value="12,8"/>
+                <Setter Property="Cursor"          Value="Hand"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="Transparent" BorderThickness="0">
+                                <ContentPresenter HorizontalAlignment="Center"
+                                                  VerticalAlignment="Center"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
             <Style x:Key="GoldButton" TargetType="Button" BasedOn="{StaticResource ModernButton}">
                 <Setter Property="Background" Value="{StaticResource GoldBrush}"/>
                 <Setter Property="Foreground" Value="Black"/>

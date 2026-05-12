@@ -326,162 +326,400 @@
         </Border>
 
         <!-- ══ TILE GRID ══ -->
-        <Grid Grid.Row="1" Margin="16">
+        <Grid Grid.Row="1" x:Name="MainGrid">
             <ScrollViewer VerticalScrollBarVisibility="Auto">
-                <UniformGrid Columns="4" Margin="0,0,0,10">
+                <UniformGrid x:Name="TileGrid" Columns="4"
+                             Margin="60,30,60,30"
+                             VerticalAlignment="Center">
 
-                    <Border Margin="0,0,12,12" CornerRadius="16"
-                            Background="{StaticResource PanelBrush}"
-                            BorderBrush="{StaticResource BorderBrush}"
-                            BorderThickness="1" Padding="14">
-                        <Button x:Name="MakeSaleBtn" Style="{StaticResource ModernButton}"
-                                HorizontalContentAlignment="Left" Padding="10" Click="MakeSale_Click">
-                            <StackPanel>
-                                <TextBlock Text="🛒  Make a Sale" FontSize="16" FontWeight="SemiBold"/>
-                                <TextBlock Text="Open POS screen" Foreground="{StaticResource MutedBrush}" Margin="0,6,0,0"/>
+                    <!-- Make a Sale -->
+                    <Border x:Name="MakeSaleTile"
+                            Margin="0,0,0,32"
+                            MouseEnter="Tile_MouseEnter"
+                            MouseLeave="Tile_MouseLeave">
+                        <Button x:Name="MakeSaleBtn" Style="{StaticResource TileButton}"
+                                HorizontalContentAlignment="Center"
+                                Click="MakeSale_Click" Padding="0">
+                            <StackPanel HorizontalAlignment="Center">
+                                <Image Source="/icons/Make A sale.png"
+                                       Width="100" Height="100"
+                                       RenderOptions.BitmapScalingMode="HighQuality"
+                                       HorizontalAlignment="Center"
+                                       Margin="0,0,0,14"/>
+                                <TextBlock Text="Make a Sale"
+                                           Foreground="White"
+                                           FontSize="13" FontWeight="SemiBold"
+                                           HorizontalAlignment="Center"
+                                           Margin="0,0,0,6"/>
+                                <Border x:Name="MakeSaleUnderline"
+                                        Height="3" Width="40" CornerRadius="2"
+                                        Background="#2F66C8"
+                                        HorizontalAlignment="Center"
+                                        Opacity="0"/>
                             </StackPanel>
                         </Button>
                     </Border>
 
-                    <Border Margin="0,0,12,12" CornerRadius="16"
-                            Background="{StaticResource PanelBrush}"
-                            BorderBrush="{StaticResource BorderBrush}"
-                            BorderThickness="1" Padding="14">
-                        <Button x:Name="HeldReceiptsBtn" Style="{StaticResource ModernButton}"
-                                HorizontalContentAlignment="Left" Padding="10" Click="HeldReceipts_Click">
-                            <StackPanel>
-                                <TextBlock Text="📋 Held Receipts" FontSize="16" FontWeight="SemiBold"/>
-                                <TextBlock Text="View Held receipts &amp; totals" Foreground="{StaticResource MutedBrush}" Margin="0,6,0,0"/>
+                    <!-- Held Receipts -->
+                    <Border x:Name="HeldReceiptsTile"
+                            Margin="0,0,0,32"
+                            MouseEnter="Tile_MouseEnter"
+                            MouseLeave="Tile_MouseLeave">
+                        <Button x:Name="HeldReceiptsBtn" Style="{StaticResource TileButton}"
+                                HorizontalContentAlignment="Center"
+                                Click="HeldReceipts_Click" Padding="0">
+                            <StackPanel HorizontalAlignment="Center">
+                                <Image Source="/icons/Held Receipts.png"
+                                       Width="100" Height="100"
+                                       RenderOptions.BitmapScalingMode="HighQuality"
+                                       HorizontalAlignment="Center"
+                                       Margin="0,0,0,14"/>
+                                <TextBlock Text="Held Receipts"
+                                           Foreground="White"
+                                           FontSize="13" FontWeight="SemiBold"
+                                           HorizontalAlignment="Center"
+                                           Margin="0,0,0,6"/>
+                                <Border x:Name="HeldReceiptsUnderline"
+                                        Height="3" Width="40" CornerRadius="2"
+                                        Background="#2F66C8"
+                                        HorizontalAlignment="Center"
+                                        Opacity="0"/>
                             </StackPanel>
                         </Button>
                     </Border>
 
-                    <Border Margin="0,0,12,12" CornerRadius="16"
-                            Background="{StaticResource PanelBrush}"
-                            BorderBrush="{StaticResource BorderBrush}"
-                            BorderThickness="1" Padding="14">
-                        <Button x:Name="SalesHistoryBtn" Style="{StaticResource ModernButton}"
-                                HorizontalContentAlignment="Left" Padding="10" Click="SalesHistory_Click">
-                            <StackPanel>
-                                <TextBlock Text="📒  Sales History" FontSize="16" FontWeight="SemiBold"/>
-                                <TextBlock Text="View receipts &amp; totals" Foreground="{StaticResource MutedBrush}" Margin="0,6,0,0"/>
+                    <!-- Sales History -->
+                    <Border x:Name="SalesHistoryTile"
+                            Margin="0,0,0,32"
+                            MouseEnter="Tile_MouseEnter"
+                            MouseLeave="Tile_MouseLeave">
+                        <Button x:Name="SalesHistoryBtn" Style="{StaticResource TileButton}"
+                                HorizontalContentAlignment="Center"
+                                Click="SalesHistory_Click" Padding="0">
+                            <StackPanel HorizontalAlignment="Center">
+                                <Image Source="/icons/sales History.png"
+                                       Width="100" Height="100"
+                                       RenderOptions.BitmapScalingMode="HighQuality"
+                                       HorizontalAlignment="Center"
+                                       Margin="0,0,0,14"/>
+                                <TextBlock Text="Sales History"
+                                           Foreground="White"
+                                           FontSize="13" FontWeight="SemiBold"
+                                           HorizontalAlignment="Center"
+                                           Margin="0,0,0,6"/>
+                                <Border x:Name="SalesHistoryUnderline"
+                                        Height="3" Width="40" CornerRadius="2"
+                                        Background="#2F66C8"
+                                        HorizontalAlignment="Center"
+                                        Opacity="0"/>
                             </StackPanel>
                         </Button>
                     </Border>
 
-                    <Border Margin="0,0,12,12" CornerRadius="16"
-                            Background="{StaticResource PanelBrush}"
-                            BorderBrush="{StaticResource BorderBrush}"
-                            BorderThickness="1" Padding="14">
-                        <Button x:Name="ProductsBtn_Tile" Style="{StaticResource ModernButton}"
-                                HorizontalContentAlignment="Left" Padding="10" Click="Products_Click">
-                            <StackPanel>
-                                <TextBlock Text="📦  Inventory" FontSize="16" FontWeight="SemiBold"/>
-                                <TextBlock Text="Manage products &amp; stock" Foreground="{StaticResource MutedBrush}" Margin="0,6,0,0"/>
+                    <!-- Inventory -->
+                    <Border x:Name="InventoryTile"
+                            Margin="0,0,0,32"
+                            MouseEnter="Tile_MouseEnter"
+                            MouseLeave="Tile_MouseLeave">
+                        <Button x:Name="ProductsBtn_Tile" Style="{StaticResource TileButton}"
+                                HorizontalContentAlignment="Center"
+                                Click="Products_Click" Padding="0">
+                            <StackPanel HorizontalAlignment="Center">
+                                <Image Source="/icons/Inventory.png"
+                                       Width="100" Height="100"
+                                       RenderOptions.BitmapScalingMode="HighQuality"
+                                       HorizontalAlignment="Center"
+                                       Margin="0,0,0,14"/>
+                                <TextBlock Text="Inventory"
+                                           Foreground="White"
+                                           FontSize="13" FontWeight="SemiBold"
+                                           HorizontalAlignment="Center"
+                                           Margin="0,0,0,6"/>
+                                <Border x:Name="InventoryUnderline"
+                                        Height="3" Width="40" CornerRadius="2"
+                                        Background="#2F66C8"
+                                        HorizontalAlignment="Center"
+                                        Opacity="0"/>
                             </StackPanel>
                         </Button>
                     </Border>
 
-                    <Border Margin="0,0,12,12" CornerRadius="16"
-                            Background="{StaticResource PanelBrush}"
-                            BorderBrush="{StaticResource BorderBrush}"
-                            BorderThickness="1" Padding="14">
-                        <Button x:Name="ReceiveStockBtn_Tile" Style="{StaticResource ModernButton}"
-                                HorizontalContentAlignment="Left" Padding="10" Click="ReceiveStock_Click">
-                            <StackPanel>
-                                <TextBlock Text="📥  Receive Stock" FontSize="16" FontWeight="SemiBold"/>
-                                <TextBlock Text="Record incoming inventory" Foreground="{StaticResource MutedBrush}" Margin="0,6,0,0"/>
+                    <!-- Sales Orders -->
+                    <Border x:Name="SalesOrderTile"
+                            Margin="0,0,0,32"
+                            MouseEnter="Tile_MouseEnter"
+                            MouseLeave="Tile_MouseLeave">
+                        <Button x:Name="SalesOrderBtn_Tile" Style="{StaticResource TileButton}"
+                                HorizontalContentAlignment="Center"
+                                Click="SalesOrder_Click" Padding="0">
+                            <StackPanel HorizontalAlignment="Center">
+                                <Image Source="/icons/Sales Order.png"
+                                       Width="100" Height="100"
+                                       RenderOptions.BitmapScalingMode="HighQuality"
+                                       HorizontalAlignment="Center"
+                                       Margin="0,0,0,14"/>
+                                <TextBlock Text="Sales Orders"
+                                           Foreground="White"
+                                           FontSize="13" FontWeight="SemiBold"
+                                           HorizontalAlignment="Center"
+                                           Margin="0,0,0,6"/>
+                                <Border x:Name="SalesOrderUnderline"
+                                        Height="3" Width="40" CornerRadius="2"
+                                        Background="#2F66C8"
+                                        HorizontalAlignment="Center"
+                                        Opacity="0"/>
                             </StackPanel>
                         </Button>
                     </Border>
 
-                    <Border Margin="0,0,12,12" CornerRadius="16"
-                            Background="{StaticResource PanelBrush}"
-                            BorderBrush="{StaticResource BorderBrush}"
-                            BorderThickness="1" Padding="14">
-                        <Button x:Name="CustomersListBtn_Tile" Style="{StaticResource ModernButton}"
-                                HorizontalContentAlignment="Left" Padding="10" Click="CustomersList_Click">
-                            <StackPanel>
-                                <TextBlock Text="👥  Customers" FontSize="16" FontWeight="SemiBold"/>
-                                <TextBlock Text="Customer list &amp; details" Foreground="{StaticResource MutedBrush}" Margin="0,6,0,0"/>
+                    <!-- Order List -->
+                    <Border x:Name="OrderListTile"
+                            Margin="0,0,0,32"
+                            MouseEnter="Tile_MouseEnter"
+                            MouseLeave="Tile_MouseLeave">
+                        <Button x:Name="OrderListBtn_Tile" Style="{StaticResource TileButton}"
+                                HorizontalContentAlignment="Center"
+                                Click="OrderList_Click" Padding="0">
+                            <StackPanel HorizontalAlignment="Center">
+                                <Image Source="/icons/Sales Order List.png"
+                                       Width="100" Height="100"
+                                       RenderOptions.BitmapScalingMode="HighQuality"
+                                       HorizontalAlignment="Center"
+                                       Margin="0,0,0,14"/>
+                                <TextBlock Text="Order List"
+                                           Foreground="White"
+                                           FontSize="13" FontWeight="SemiBold"
+                                           HorizontalAlignment="Center"
+                                           Margin="0,0,0,6"/>
+                                <Border x:Name="OrderListUnderline"
+                                        Height="3" Width="40" CornerRadius="2"
+                                        Background="#2F66C8"
+                                        HorizontalAlignment="Center"
+                                        Opacity="0"/>
                             </StackPanel>
                         </Button>
                     </Border>
 
-                    <Border Margin="0,0,12,12" CornerRadius="16"
-                            Background="{StaticResource PanelBrush}"
-                            BorderBrush="{StaticResource BorderBrush}"
-                            BorderThickness="1" Padding="14">
-                        <Button x:Name="EmployeesBtn_Tile" Style="{StaticResource ModernButton}"
-                                HorizontalContentAlignment="Left" Padding="10" Click="Users_Click">
-                            <StackPanel>
-                                <TextBlock Text="🧑‍💼  Employees / Users" FontSize="16" FontWeight="SemiBold"/>
-                                <TextBlock Text="Cashiers, roles, access" Foreground="{StaticResource MutedBrush}" Margin="0,6,0,0"/>
+                    <!-- Receive Stock -->
+                    <Border x:Name="ReceiveStockTile"
+                            Margin="0,0,0,32"
+                            MouseEnter="Tile_MouseEnter"
+                            MouseLeave="Tile_MouseLeave">
+                        <Button x:Name="ReceiveStockBtn_Tile" Style="{StaticResource TileButton}"
+                                HorizontalContentAlignment="Center"
+                                Click="ReceiveStock_Click" Padding="0">
+                            <StackPanel HorizontalAlignment="Center">
+                                <Image Source="/icons/Receive stock.png"
+                                       Width="100" Height="100"
+                                       RenderOptions.BitmapScalingMode="HighQuality"
+                                       HorizontalAlignment="Center"
+                                       Margin="0,0,0,14"/>
+                                <TextBlock Text="Receive Stock"
+                                           Foreground="White"
+                                           FontSize="13" FontWeight="SemiBold"
+                                           HorizontalAlignment="Center"
+                                           Margin="0,0,0,6"/>
+                                <Border x:Name="ReceiveStockUnderline"
+                                        Height="3" Width="40" CornerRadius="2"
+                                        Background="#2F66C8"
+                                        HorizontalAlignment="Center"
+                                        Opacity="0"/>
                             </StackPanel>
                         </Button>
                     </Border>
 
-                    <Border Margin="0,0,12,12" CornerRadius="16"
-                            Background="{StaticResource PanelBrush}"
-                            BorderBrush="{StaticResource BorderBrush}"
-                            BorderThickness="1" Padding="14">
-                        <Button x:Name="ReportsBtn_Tile" Style="{StaticResource ModernButton}"
-                                HorizontalContentAlignment="Left" Padding="10" Click="Reports_Click">
-                            <StackPanel>
-                                <TextBlock Text="📊  Reports" FontSize="16" FontWeight="SemiBold"/>
-                                <TextBlock Text="Performance &amp; analytics" Foreground="{StaticResource MutedBrush}" Margin="0,6,0,0"/>
+                    <!-- Customers -->
+                    <Border x:Name="CustomersTile"
+                            Margin="0,0,0,32"
+                            MouseEnter="Tile_MouseEnter"
+                            MouseLeave="Tile_MouseLeave">
+                        <Button x:Name="CustomersListBtn_Tile" Style="{StaticResource TileButton}"
+                                HorizontalContentAlignment="Center"
+                                Click="CustomersList_Click" Padding="0">
+                            <StackPanel HorizontalAlignment="Center">
+                                <Image Source="/icons/Customers.png"
+                                       Width="100" Height="100"
+                                       RenderOptions.BitmapScalingMode="HighQuality"
+                                       HorizontalAlignment="Center"
+                                       Margin="0,0,0,14"/>
+                                <TextBlock Text="Customers"
+                                           Foreground="White"
+                                           FontSize="13" FontWeight="SemiBold"
+                                           HorizontalAlignment="Center"
+                                           Margin="0,0,0,6"/>
+                                <Border x:Name="CustomersUnderline"
+                                        Height="3" Width="40" CornerRadius="2"
+                                        Background="#2F66C8"
+                                        HorizontalAlignment="Center"
+                                        Opacity="0"/>
                             </StackPanel>
                         </Button>
                     </Border>
 
-                    <Border Margin="0,0,12,12" CornerRadius="16"
-                            Background="{StaticResource PanelBrush}"
-                            BorderBrush="{StaticResource BorderBrush}"
-                            BorderThickness="1" Padding="14">
-                        <Button x:Name="EndOfDayBtn_Tile" Style="{StaticResource ModernButton}"
-                                HorizontalContentAlignment="Left" Padding="10" Click="EndOfDay_Click">
-                            <StackPanel>
-                                <TextBlock Text="🧾  End of Day" FontSize="16" FontWeight="SemiBold"/>
-                                <TextBlock Text="Close out daily totals" Foreground="{StaticResource MutedBrush}" Margin="0,6,0,0"/>
+                    <!-- Employees / Users -->
+                    <Border x:Name="EmployeesTile"
+                            Margin="0,0,0,32"
+                            MouseEnter="Tile_MouseEnter"
+                            MouseLeave="Tile_MouseLeave">
+                        <Button x:Name="EmployeesBtn_Tile" Style="{StaticResource TileButton}"
+                                HorizontalContentAlignment="Center"
+                                Click="Users_Click" Padding="0">
+                            <StackPanel HorizontalAlignment="Center">
+                                <Image Source="/icons/Emplyees.png"
+                                       Width="100" Height="100"
+                                       RenderOptions.BitmapScalingMode="HighQuality"
+                                       HorizontalAlignment="Center"
+                                       Margin="0,0,0,14"/>
+                                <TextBlock Text="Employees / Users"
+                                           Foreground="White"
+                                           FontSize="13" FontWeight="SemiBold"
+                                           HorizontalAlignment="Center"
+                                           Margin="0,0,0,6"/>
+                                <Border x:Name="EmployeesUnderline"
+                                        Height="3" Width="40" CornerRadius="2"
+                                        Background="#2F66C8"
+                                        HorizontalAlignment="Center"
+                                        Opacity="0"/>
                             </StackPanel>
                         </Button>
                     </Border>
 
-                    <Border Margin="0,0,12,12" CornerRadius="16"
-                            Background="{StaticResource PanelBrush}"
-                            BorderBrush="{StaticResource BorderBrush}"
-                            BorderThickness="1" Padding="14">
-                        <Button x:Name="SupplierTileBtn" Style="{StaticResource ModernButton}"
-                                HorizontalContentAlignment="Left" Padding="10" Click="Supplier_Click">
-                            <StackPanel>
-                                <TextBlock Text="🏢  Supplier" FontSize="16" FontWeight="SemiBold"/>
-                                <TextBlock Text="Manage supplier records" Foreground="{StaticResource MutedBrush}" Margin="0,6,0,0"/>
+                    <!-- Reports -->
+                    <Border x:Name="ReportsTile"
+                            Margin="0,0,0,32"
+                            MouseEnter="Tile_MouseEnter"
+                            MouseLeave="Tile_MouseLeave">
+                        <Button x:Name="ReportsBtn_Tile" Style="{StaticResource TileButton}"
+                                HorizontalContentAlignment="Center"
+                                Click="Reports_Click" Padding="0">
+                            <StackPanel HorizontalAlignment="Center">
+                                <Image Source="/icons/Report.png"
+                                       Width="100" Height="100"
+                                       RenderOptions.BitmapScalingMode="HighQuality"
+                                       HorizontalAlignment="Center"
+                                       Margin="0,0,0,14"/>
+                                <TextBlock Text="Reports"
+                                           Foreground="White"
+                                           FontSize="13" FontWeight="SemiBold"
+                                           HorizontalAlignment="Center"
+                                           Margin="0,0,0,6"/>
+                                <Border x:Name="ReportsUnderline"
+                                        Height="3" Width="40" CornerRadius="2"
+                                        Background="#2F66C8"
+                                        HorizontalAlignment="Center"
+                                        Opacity="0"/>
                             </StackPanel>
                         </Button>
                     </Border>
 
-                    <Border Margin="0,0,12,12" CornerRadius="16"
-                            Background="{StaticResource PanelBrush}"
-                            BorderBrush="{StaticResource BorderBrush}"
-                            BorderThickness="1" Padding="14">
-                        <Button x:Name="DepartmentsTileBtn" Style="{StaticResource ModernButton}"
-                                HorizontalContentAlignment="Left" Padding="10" Click="Departments_Click">
-                            <StackPanel>
-                                <TextBlock Text="🗂️  Departments" FontSize="16" FontWeight="SemiBold"/>
-                                <TextBlock Text="Set department categories" Foreground="{StaticResource MutedBrush}" Margin="0,6,0,0"/>
+                    <!-- End of Day -->
+                    <Border x:Name="EndOfDayTile"
+                            Margin="0,0,0,32"
+                            MouseEnter="Tile_MouseEnter"
+                            MouseLeave="Tile_MouseLeave">
+                        <Button x:Name="EndOfDayBtn_Tile" Style="{StaticResource TileButton}"
+                                HorizontalContentAlignment="Center"
+                                Click="EndOfDay_Click" Padding="0">
+                            <StackPanel HorizontalAlignment="Center">
+                                <Image Source="/icons/End of Day.png"
+                                       Width="100" Height="100"
+                                       RenderOptions.BitmapScalingMode="HighQuality"
+                                       HorizontalAlignment="Center"
+                                       Margin="0,0,0,14"/>
+                                <TextBlock Text="End of Day"
+                                           Foreground="White"
+                                           FontSize="13" FontWeight="SemiBold"
+                                           HorizontalAlignment="Center"
+                                           Margin="0,0,0,6"/>
+                                <Border x:Name="EndOfDayUnderline"
+                                        Height="3" Width="40" CornerRadius="2"
+                                        Background="#2F66C8"
+                                        HorizontalAlignment="Center"
+                                        Opacity="0"/>
                             </StackPanel>
                         </Button>
                     </Border>
 
-                    <Border Margin="0,0,12,12" CornerRadius="16"
-                            Background="{StaticResource PanelBrush}"
-                            BorderBrush="{StaticResource BorderBrush}"
-                            BorderThickness="1" Padding="14">
-                        <Button x:Name="SettingsBtn_Tile" Style="{StaticResource ModernButton}"
-                                HorizontalContentAlignment="Left" Padding="10" Click="Settings_Click">
-                            <StackPanel>
-                                <TextBlock Text="⚙️  Settings" FontSize="16" FontWeight="SemiBold"/>
-                                <TextBlock Text="System configuration" Foreground="{StaticResource MutedBrush}" Margin="0,6,0,0"/>
+                    <!-- Suppliers -->
+                    <Border x:Name="SuppliersTile"
+                            Margin="0,0,0,32"
+                            MouseEnter="Tile_MouseEnter"
+                            MouseLeave="Tile_MouseLeave">
+                        <Button x:Name="SupplierTileBtn" Style="{StaticResource TileButton}"
+                                HorizontalContentAlignment="Center"
+                                Click="Supplier_Click" Padding="0">
+                            <StackPanel HorizontalAlignment="Center">
+                                <Image Source="/icons/manufacture.png"
+                                       Width="100" Height="100"
+                                       RenderOptions.BitmapScalingMode="HighQuality"
+                                       HorizontalAlignment="Center"
+                                       Margin="0,0,0,14"/>
+                                <TextBlock Text="Suppliers"
+                                           Foreground="White"
+                                           FontSize="13" FontWeight="SemiBold"
+                                           HorizontalAlignment="Center"
+                                           Margin="0,0,0,6"/>
+                                <Border x:Name="SuppliersUnderline"
+                                        Height="3" Width="40" CornerRadius="2"
+                                        Background="#2F66C8"
+                                        HorizontalAlignment="Center"
+                                        Opacity="0"/>
+                            </StackPanel>
+                        </Button>
+                    </Border>
+
+                    <!-- Departments -->
+                    <Border x:Name="DepartmentsTile"
+                            Margin="0,0,0,32"
+                            MouseEnter="Tile_MouseEnter"
+                            MouseLeave="Tile_MouseLeave">
+                        <Button x:Name="DepartmentsTileBtn" Style="{StaticResource TileButton}"
+                                HorizontalContentAlignment="Center"
+                                Click="Departments_Click" Padding="0">
+                            <StackPanel HorizontalAlignment="Center">
+                                <Image Source="/icons/Department.png"
+                                       Width="100" Height="100"
+                                       RenderOptions.BitmapScalingMode="HighQuality"
+                                       HorizontalAlignment="Center"
+                                       Margin="0,0,0,14"/>
+                                <TextBlock Text="Departments"
+                                           Foreground="White"
+                                           FontSize="13" FontWeight="SemiBold"
+                                           HorizontalAlignment="Center"
+                                           Margin="0,0,0,6"/>
+                                <Border x:Name="DepartmentsUnderline"
+                                        Height="3" Width="40" CornerRadius="2"
+                                        Background="#2F66C8"
+                                        HorizontalAlignment="Center"
+                                        Opacity="0"/>
+                            </StackPanel>
+                        </Button>
+                    </Border>
+
+                    <!-- Settings — centred solo tile -->
+                    <Border x:Name="SettingsTile"
+                            Margin="0,0,0,32"
+                            MouseEnter="Tile_MouseEnter"
+                            MouseLeave="Tile_MouseLeave">
+                        <Button x:Name="SettingsBtn_Tile" Style="{StaticResource TileButton}"
+                                HorizontalContentAlignment="Center"
+                                Click="Settings_Click" Padding="0">
+                            <StackPanel HorizontalAlignment="Center">
+                                <Image Source="/icons/settings.png"
+                                       Width="100" Height="100"
+                                       RenderOptions.BitmapScalingMode="HighQuality"
+                                       HorizontalAlignment="Center"
+                                       Margin="0,0,0,14"/>
+                                <TextBlock Text="Settings"
+                                           Foreground="White"
+                                           FontSize="13" FontWeight="SemiBold"
+                                           HorizontalAlignment="Center"
+                                           Margin="0,0,0,6"/>
+                                <Border x:Name="SettingsUnderline"
+                                        Height="3" Width="40" CornerRadius="2"
+                                        Background="#2F66C8"
+                                        HorizontalAlignment="Center"
+                                        Opacity="0"/>
                             </StackPanel>
                         </Button>
                     </Border>

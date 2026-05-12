@@ -31,6 +31,10 @@ namespace PointofSale.Data
         public DbSet<PointofSale.Models.StoreSetting> StoreSettings { get; set; }
         public DbSet<PointofSale.Models.Customer> Customers { get; set; }
 
+        // ── Quotations ────────────────────────────────────────────────────
+        public DbSet<PointofSale.Models.Quote> Quotes { get; set; }
+        public DbSet<PointofSale.Models.QuoteItem> QuoteItems { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // ── Product ───────────────────────────────────────────────────
@@ -89,6 +93,20 @@ namespace PointofSale.Data
             modelBuilder.Entity<AppUser>()
                 .Property(u => u.Permissions)
                 .HasDefaultValue("");
+
+            // ── Quote ─────────────────────────────────────────────────────
+            modelBuilder.Entity<Quote>().Property(q => q.Subtotal).HasConversion<double>();
+            modelBuilder.Entity<Quote>().Property(q => q.Tax).HasConversion<double>();
+            modelBuilder.Entity<Quote>().Property(q => q.Total).HasConversion<double>();
+
+            modelBuilder.Entity<QuoteItem>().Property(qi => qi.UnitPrice).HasConversion<double>();
+            modelBuilder.Entity<QuoteItem>().Property(qi => qi.LineTotal).HasConversion<double>();
+            modelBuilder.Entity<QuoteItem>().Property(qi => qi.DiscountPct).HasConversion<double>();
+
+            modelBuilder.Entity<QuoteItem>()
+                .HasOne(qi => qi.Quote)
+                .WithMany(q => q.Items)
+                .HasForeignKey(qi => qi.QuoteId);
         }
     }
 }

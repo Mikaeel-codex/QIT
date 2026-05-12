@@ -7,7 +7,7 @@ namespace PointofSale.Models
         public int Id { get; set; }
 
         public int SaleId { get; set; }
-        public Sale Sale { get; set; }
+        public Sale? Sale { get; set; }
 
         public int ProductId { get; set; }
 

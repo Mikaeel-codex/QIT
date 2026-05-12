@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
@@ -42,6 +43,8 @@ namespace PointofSale
                 new LoginWindow().ShowDialog();
                 ApplyPermissions();
             }
+
+            if (!IsLoaded) return;
         }
 
         // ── Hamburger toggle ──────────────────────────────────────────────
@@ -60,7 +63,7 @@ namespace PointofSale
         }
 
         private void MainGrid_PreviewMouseLeftButtonDown(object sender,
-            System.Windows.Input.MouseButtonEventArgs e)
+            MouseButtonEventArgs e)
         {
             if (!_profileOpen) return;
             if (ProfileToggle.IsMouseOver) return;
@@ -109,7 +112,7 @@ namespace PointofSale
         private void Subscription_Click(object sender, RoutedEventArgs e)
         {
             CloseProfilePopup();
-            MessageBox.Show("Subscription", "Coming Soon",
+            MessageBox.Show("Subscription coming soon.", "Coming Soon",
                 MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
@@ -130,12 +133,91 @@ namespace PointofSale
                 "Signed Out", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
+        // ── Resume from POS ───────────────────────────────────────────────
+        // Called by PointOfSaleWindow.OnClosed so the dashboard reappears
+        // without being rebuilt from scratch.
+        public void Resume()
+        {
+            ApplyPermissions();
+            _clock.Start();
+            Show();
+        }
+
+        // ── Tile hover effects ────────────────────────────────────────────
+
+        private void Tile_MouseEnter(object sender, MouseEventArgs e)
+        {
+            if (Session.CurrentUser == null) return;
+            if (sender is not Border border) return;
+
+            // Scale up the image
+            var img = FindChild<Image>(border);
+            if (img != null)
+            {
+                var scaleAnim = new DoubleAnimation(1.12,
+                    new Duration(TimeSpan.FromMilliseconds(160)))
+                { EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut } };
+                var st = new ScaleTransform(1, 1);
+                img.RenderTransformOrigin = new System.Windows.Point(0.5, 0.5);
+                img.RenderTransform = st;
+                st.BeginAnimation(ScaleTransform.ScaleXProperty, scaleAnim);
+                st.BeginAnimation(ScaleTransform.ScaleYProperty, scaleAnim);
+            }
+
+            // Fade in the underline
+            var underline = FindChild<Border>(border, "Underline");
+            if (underline != null)
+                underline.BeginAnimation(OpacityProperty,
+                    new DoubleAnimation(1, new Duration(TimeSpan.FromMilliseconds(160))));
+        }
+
+        private void Tile_MouseLeave(object sender, MouseEventArgs e)
+        {
+            if (Session.CurrentUser == null) return;
+            if (sender is not Border border) return;
+
+            // Scale image back
+            var img = FindChild<Image>(border);
+            if (img?.RenderTransform is ScaleTransform st)
+            {
+                var scaleAnim = new DoubleAnimation(1.0,
+                    new Duration(TimeSpan.FromMilliseconds(160)))
+                { EasingFunction = new CubicEase { EasingMode = EasingMode.EaseIn } };
+                st.BeginAnimation(ScaleTransform.ScaleXProperty, scaleAnim);
+                st.BeginAnimation(ScaleTransform.ScaleYProperty, scaleAnim);
+            }
+
+            // Fade out the underline
+            var underline = FindChild<Border>(border, "Underline");
+            if (underline != null)
+                underline.BeginAnimation(OpacityProperty,
+                    new DoubleAnimation(0, new Duration(TimeSpan.FromMilliseconds(200))));
+        }
+
+        /// <summary>Walks the visual tree to find a child of type T.</summary>
+        private static T? FindChild<T>(DependencyObject parent,
+            string nameContains = "") where T : DependencyObject
+        {
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
+            {
+                var child = VisualTreeHelper.GetChild(parent, i);
+                if (child is T match)
+                {
+                    if (string.IsNullOrEmpty(nameContains)) return match;
+                    if (child is FrameworkElement fe &&
+                        fe.Name.Contains(nameContains)) return match;
+                }
+                var result = FindChild<T>(child, nameContains);
+                if (result != null) return result;
+            }
+            return null;
+        }
+
         // ── Permissions + feature flags ───────────────────────────────────
         private void ApplyPermissions()
         {
             var user = Session.CurrentUser;
 
-            // Step 1 — Apply dev feature flags first (hides tiles completely)
             ApplyFeatureFlags();
 
             if (user == null)
@@ -156,7 +238,8 @@ namespace PointofSale
                     EmployeesBtn_Tile, ReportsBtn_Tile,
                     EndOfDayBtn_Tile, SalesHistoryBtn,
                     SettingsBtn_Tile, SupplierTileBtn,
-                    DepartmentsTileBtn, ReceiveStockBtn_Tile);
+                    DepartmentsTileBtn, ReceiveStockBtn_Tile,
+                    SalesOrderBtn_Tile, OrderListBtn_Tile);
 
                 UpdateButtonVisuals();
                 return;
@@ -173,9 +256,10 @@ namespace PointofSale
             HelpCenterMenuItem.Visibility = Visibility.Visible;
             SignOutMenuItem.Visibility = Visibility.Visible;
 
-            // Step 2 — Apply user role permissions
             SetEnabled(user.CanMakeSales, MakeSaleBtn);
             SetEnabled(user.CanMakeSales, HeldReceiptsBtn);
+            SetEnabled(user.CanMakeSales, SalesOrderBtn_Tile);
+            SetEnabled(user.CanMakeSales, OrderListBtn_Tile);
             SetEnabled(user.CanMakeSales, EndOfDayBtn_Tile);
             SetEnabled(user.CanViewInventory, ProductsBtn_Tile);
             SetEnabled(user.CanManageInventory, ReceiveStockBtn_Tile);
@@ -187,7 +271,6 @@ namespace PointofSale
             SetEnabled(user.CanManageSuppliers, SupplierTileBtn);
             SetEnabled(user.CanManageSuppliers, DepartmentsTileBtn);
 
-            // Step 3 — Feature flags override permissions (disabled = also force off)
             if (!DevSettings.CustomersEnabled) SetEnabled(false, CustomersListBtn_Tile);
             if (!DevSettings.InventoryEnabled) SetEnabled(false, ProductsBtn_Tile);
             if (!DevSettings.ReceiveStockEnabled) SetEnabled(false, ReceiveStockBtn_Tile);
@@ -200,10 +283,6 @@ namespace PointofSale
             UpdateButtonVisuals();
         }
 
-        /// <summary>
-        /// Collapses entire tile cards based on dev feature flags.
-        /// Runs before permission checks — zero trace for disabled features.
-        /// </summary>
         private void ApplyFeatureFlags()
         {
             SetVisible(DevSettings.CustomersEnabled, CustomersListBtn_Tile);
@@ -216,15 +295,10 @@ namespace PointofSale
             SetVisible(DevSettings.EndOfDayEnabled, EndOfDayBtn_Tile);
         }
 
-        /// <summary>
-        /// Walks up the visual tree to find the wrapping Border tile
-        /// and collapses the whole card — not just the button.
-        /// </summary>
         private static void SetVisible(bool visible, Button? btn)
         {
             if (btn == null) return;
             var visibility = visible ? Visibility.Visible : Visibility.Collapsed;
-
             var parent = VisualTreeHelper.GetParent(btn);
             while (parent != null)
             {
@@ -235,8 +309,6 @@ namespace PointofSale
                 }
                 parent = VisualTreeHelper.GetParent(parent);
             }
-
-            // Fallback
             btn.Visibility = visibility;
         }
 
@@ -274,6 +346,7 @@ namespace PointofSale
                 btn.IsTabStop = btn.IsEnabled;
             }
             Apply(MakeSaleBtn); Apply(HeldReceiptsBtn);
+            Apply(SalesOrderBtn_Tile); Apply(OrderListBtn_Tile);
             Apply(ProductsBtn_Tile); Apply(CustomersListBtn_Tile);
             Apply(EmployeesBtn_Tile); Apply(ReportsBtn_Tile);
             Apply(EndOfDayBtn_Tile); Apply(SalesHistoryBtn);
@@ -297,12 +370,24 @@ namespace PointofSale
         }
 
         // ── Tile handlers ─────────────────────────────────────────────────
+        private void SalesOrder_Click(object sender, RoutedEventArgs e)
+        {
+            if (!RequireLogin()) return;
+            new SalesOrderWindow(Session.CurrentUser!) { Owner = this }.ShowDialog();
+        }
+
+        private void OrderList_Click(object sender, RoutedEventArgs e)
+        {
+            if (!RequireLogin()) return;
+            new OrderListWindow { Owner = this }.ShowDialog();
+        }
+
         private void MakeSale_Click(object sender, RoutedEventArgs e)
         {
             if (!RequireLogin()) return;
             _clock.Stop();
             new PointOfSaleWindow(Session.CurrentUser!).Show();
-            Close();
+            Hide();
         }
 
         private void HeldReceipts_Click(object sender, RoutedEventArgs e)
@@ -316,7 +401,7 @@ namespace PointofSale
                 posWin.Show();
                 if (posWin.DataContext is PosViewModel vm)
                     vm.RestoreFromHeld(held);
-                Close();
+                Hide();
             };
             win.ShowDialog();
         }

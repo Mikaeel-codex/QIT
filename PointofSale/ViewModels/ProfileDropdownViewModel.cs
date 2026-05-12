@@ -14,7 +14,6 @@ namespace PointofSale.ViewModels
         private string _loggedInUserName = "Guest";
         private string _loggedInUserRole = "";
         private string _loggedInUserInitials = "?";
-        private string _loggedInUserFullName = "";
         private bool _isProfileOpen = false;
 
         // ── Bindable properties ───────────────────────────────────────────
